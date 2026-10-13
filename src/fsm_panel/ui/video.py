@@ -158,8 +158,9 @@ class VideoPanel(QWidget):
         except Exception as error:
             # Do not copy file contents or arbitrary exception strings into logs.
             response["error"] = getattr(error, "code", "video_operation_failed")
-            if getattr(error, "backup_path", None) is not None:
-                response["backup_path"] = str(error.backup_path)
+            backup_path = getattr(error, "backup_path", None)
+            if backup_path is not None:
+                response["backup_path"] = str(backup_path)
         return response
 
     @Slot(object)
