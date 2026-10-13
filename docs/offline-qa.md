@@ -1,13 +1,14 @@
 # Independent offline reconstruction QA
 
 Date: 2026-10-13. Review started at `791cd8a`; fixes were independently checked
-through `91a3bdf` in a separate QA worktree. The reviewer owns the tests and this
+through `d262e64` in a separate QA worktree. The reviewer owns the tests and this
 report, not the implementation.
 
-The video and BES checks found three issues: lost recovery metadata, a delayed
-admission race and an unguarded original-distribution path. Independent regressions
-reproduced these issues before the fixes and pass after integration. A separate
-source-derived BES worker-start ownership race remains under review below.
+The video, BES and launch checks found five issues: lost recovery metadata, a
+delayed admission race, an unguarded original-distribution path, missing exported
+error policy and an uncaught JSON limit error. Independent regressions reproduced
+them before the fixes and pass after integration. A separate source-derived BES
+worker-start ownership race remains under review below.
 
 The original panel, BES and Steam were not executed. Fixtures contain synthetic
 configuration text in temporary directories. Qt checks run the reconstructed UI
@@ -144,6 +145,39 @@ identity if the panel exits before BES. The change is pending implementation and
 independent review. Original-process behavior still requires the stand; this issue
 is not counted as resolved by the existing synthetic transport tests.
 
+## Pure launch planning and proposal export
+
+[The independent launch tests](../tests/qa/test_offline_launch.py) add 18 cases.
+The review compared `launch_plan.py` and `launch_preview.py` against the three
+sanitized launch preparation, loginusers preparation and userdata-ID reports.
+Public evidence addresses and deliberate validation differences are recorded in
+[the launch contract](launch-plan.md).
+
+The recovered transformations remain deliberately literal. Tests check combined
+Steam-only/update/NO_AVAST branches, ASCII-space splitting, preserved tabs and
+zero-width text, broad Dota substitution before logfile/additional options,
+substring suppression and negative/positive ties-to-even timestamps. No test
+executes a proposed command or applies a loginusers/registry action.
+
+Finding L1, P2: the CLI omitted `profile_directory_on_exception="propagate"` from
+the exported proposal. It exported the shader group's catch-and-continue policy,
+so a reviewer could not distinguish the initial directory action's failure path.
+The fix exports that field. The regression checks both policies alongside a
+missing-USERPROFILE shader result.
+
+Finding L2, P2: a valid JSON numeric token containing 5,000 digits raised a plain
+`ValueError` from Python's integer conversion limit. It bypassed the CLI's
+content-free JSON error response. The fix preserves specific `LaunchPlanError`
+codes, then converts other input `ValueError` failures to `launch_invalid_input`.
+The regression fixes the conversion limit locally for repeatability, restores it
+afterward, and checks that no output file is created.
+
+Both regressions failed before `d262e64` and pass afterward. Additional export
+checks confirm that invalid Unicode is rejected before output creation, concurrent
+exports cannot overwrite one proposal, and a failed write cannot print success or
+caller data. A failed write can leave a partial new output file; exclusive creation
+will refuse that path on retry. No atomic-export guarantee is claimed.
+
 ## Reproduction environment and results
 
 Windows, Python 3.14.6, PySide6 6.12.0, pytest 9.1.1. Dependencies were installed
@@ -155,8 +189,9 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m pytest tests/adapters/test_video.py tests/ui/test_video_panel.py tests/test_maintenance.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_video.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_bes.py tests/adapters/test_bes.py tests/test_cpu.py tests/ui/test_cpu_panel.py -q
-.venv/Scripts/python.exe -m ruff check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py
-.venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py
+.venv/Scripts/python.exe -m pytest tests/qa/test_offline_launch.py tests/adapters/test_launch_plan.py tests/test_launch_preview.py -q
+.venv/Scripts/python.exe -m ruff check tests/qa/test_offline_*.py
+.venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_*.py
 ```
 
 - Existing video suite: **81 passed, 4 skipped**. The skipped cases require
@@ -170,6 +205,9 @@ $env:QT_QPA_PLATFORM = 'offscreen'
   through `91a3bdf`.
 - The same checks plus the existing video adapter, UI and CLI suite:
   **181 passed, 4 skipped** through `91a3bdf`.
+- Independent launch baseline: **16 passed, 2 failed** before `d262e64` (L1/L2).
+  After the fixes: **18 passed**. Combined with the 99 existing launch cases:
+  **117 passed** through `d262e64`.
 - Ruff checks and formatting: **pass**.
 - Pytest emitted an existing Starlette/httpx deprecation warning through the
   shared QA fixture imports; it did not affect the file or UI results.
