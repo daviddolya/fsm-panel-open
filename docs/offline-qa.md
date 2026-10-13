@@ -1,8 +1,8 @@
 # Independent offline reconstruction QA
 
 Date: 2026-10-13. Review started at `791cd8a`; fixes were independently checked
-through `a9451cd` in a separate QA worktree. The reviewer owns the tests and this
-report, not the implementation.
+through the BES integration `a9451cd` and config integration `2448aae` in a
+separate QA worktree. The reviewer owns the tests and this report, not the implementation.
 
 The video, BES and launch checks found five issues: lost recovery metadata, a
 delayed admission race, an unguarded original-distribution path, missing exported
@@ -10,6 +10,8 @@ error policy and an uncaught JSON limit error. Independent regressions reproduce
 them before the fixes and pass after integration. The review also identified a
 source-derived BES worker-start ownership race and a child-identity loss during
 handle cleanup. Both have integrated fixes and the bounded checks described below.
+Config review found two further directory-transaction cleanup issues before the
+first feature commit; independent regressions cover their integrated fixes.
 
 The original panel, BES and Steam were not executed. Fixtures contain synthetic
 configuration text in temporary directories. Qt checks run the reconstructed UI
@@ -211,6 +213,54 @@ exports cannot overwrite one proposal, and a failed write cannot print success o
 caller data. A failed write can leave a partial new output file; exclusive creation
 will refuse that path on retry. No atomic-export guarantee is claimed.
 
+## Isolated account config and autoexec copies
+
+[The independent config tests](../tests/qa/test_offline_configs.py) add 30 cases.
+The review compared `account_config.py`, `autoexec.py`, and the five packaged
+generic templates with the sanitized config-writer and autoexec specifications
+dated 2026-10-13. The [public contract](account-config.md) records native evidence
+addresses, exact template hashes, APIs, deliberate changes and remaining limits.
+
+The pure plans describe recovered order and exception scopes. Their handler
+descriptions are not an executable simulator of the original. The separate writer
+requires an adapter-created marker and fixed paths beneath a new offline workspace.
+Whole-tree staging, backups, stale-preview validation and explicit failures are
+new safeguards, replacing the original's partial writes and swallowed errors.
+
+| Requirement | Independent check | Result at `2448aae` |
+| --- | --- | --- |
+| Preserve force semantics and effect scope | Both force values perform the same removals/copies; only logs differ. Another account, source files and game cfg stay unchanged; backup is the exact previous account tree | Pass |
+| Preserve literal localconfig predicates | None, empty string and false mapping values select distinct branches; NO_AVAST prevents restoration; a non-string restore cannot truncate a copied file | Pass |
+| Preserve equal autoexec and legacy file | CRLF/CR/LF sources compare after text decoding; equal content creates no stage, backup, write or deletion and retains file identity/timestamps | Pass |
+| Revalidate no-op proposals | Source, destination, unrelated legacy file and workspace marker changes each invalidate an otherwise equal-content preview | Pass |
+| Enforce containment | Traversal/reserved/stream filenames, a hardlinked unrelated account member and a real Windows junction inserted after preview are rejected without external mutation | Pass |
+| Recover directory moves | I/O or stale-read failures after moving the original either restore its exact contents or return the retained backup with failed-rollback status | Four cases pass |
+| Preserve an independent replacement | A new target created after original-to-backup movement is never overwritten by rollback | Pass; original remains in reported backup |
+| Preserve cleanup outcomes | Failed stage removal retains primary error and stage path; KeyboardInterrupt restores the original before propagating | Pass |
+| Own every cleanup target | A pre-existing stage directory survives a failed reservation unchanged | Pass |
+| Serialize simultaneous applies | Two autoexec applies from one preview produce one successful change, one stale rejection and one exact backup | Pass |
+
+Finding C1, P2: the first transaction implementation rethrew every
+`ConfigStalePreviewError` without attempting rollback. Revalidation during the
+second directory move can raise that error after the original has already moved
+to backup, leaving the target missing and hiding its backup path. The fix bypasses
+rollback only for stale errors before original movement. The independent tests
+inject the late error with both successful and denied rollback, checking exact
+restoration or structured recovery metadata.
+
+Finding C2, P2: cleanup originally ran even if stage creation failed because the
+random stage path already existed. That could remove a directory this attempt
+did not create. Natural UUID collisions are unlikely; the regression fixes the
+generated name to a pre-existing synthetic tree to test the ownership invariant.
+The fix reserves the directory first and records successful creation before
+allowing cleanup. The pre-existing tree retains its bytes, identity and timestamp.
+
+Both findings were accepted and fixed before `2448aae`. The two renames still
+leave a brief missing-target interval and are not a crash-safe transaction.
+Hostile concurrent namespace changes, NTFS metadata beyond the documented copy
+policy and live Steam integration remain outside these offline tests. These tests
+cover the source API; command-line integration is reviewed separately when available.
+
 ## Reproduction environment and results
 
 Windows, Python 3.14.6, PySide6 6.12.0, pytest 9.1.1. Dependencies were installed
@@ -223,8 +273,11 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_video.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_bes.py tests/adapters/test_bes.py tests/test_cpu.py tests/ui/test_cpu_panel.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_launch.py tests/adapters/test_launch_plan.py tests/test_launch_preview.py -q
+.venv/Scripts/python.exe -m pytest tests/qa/test_offline_configs.py tests/adapters/test_account_config.py tests/adapters/test_autoexec.py -q
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
+.venv/Scripts/python.exe -m ruff check tests/qa/test_offline_configs.py
+.venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_configs.py
 ```
 
 - Existing video suite: **81 passed, 4 skipped**. The skipped cases require
@@ -244,6 +297,9 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 - Independent launch baseline: **16 passed, 2 failed** before `d262e64` (L1/L2).
   After the fixes: **18 passed**. Combined with the 99 existing launch cases:
   **117 passed** through `d262e64`.
+- Independent config/autoexec cases: **30 passed** at `2448aae`. Combined with
+  the 91 implementation-owner cases: **121 passed**. The junction check used
+  a real synthetic Windows junction; it is skipped on other operating systems.
 - Ruff checks and formatting: **pass**.
 - Pytest emitted an existing Starlette/httpx deprecation warning through the
   shared QA fixture imports; it did not affect the file or UI results.
