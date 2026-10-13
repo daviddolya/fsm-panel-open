@@ -81,6 +81,45 @@ watching is used. The target must exactly match a repository record, including
 its token/account, PID, creation time, and executable. The Win32 driver holds
 read-only process handles and checks identity before addressing a window.
 
+The target also needs a handle whose lifetime outlasts the caller. BES acknowledges
+the PID command after creating a worker (`wndproc.cpp:406,862–866`); that worker
+does work before opening the target (`hack.cpp:134,178–199`). A temporary parent
+guard alone therefore leaves a PID reuse race after acknowledgement or panel crash.
+
+`WindowsBesDriver.spawn(argv, *, target)` opens a fresh target handle with only
+`PROCESS_QUERY_LIMITED_INFORMATION | SYNCHRONIZE` rights. It verifies identity
+before acquisition, through the acquired handle, and immediately before spawning.
+The dedicated child inherits that handle through an explicit
+`STARTUPINFO.lpAttributeList["handle_list"]`, with `close_fds=True`. Standard streams
+are redirected to `DEVNULL`; unrelated handles and handle values in argv are excluded.
+The driver refuses any argv other than the idle launch sequence. It attempts to
+reset the parent's inheritance flag and closes only the parent's copy in `finally`.
+A reset-only error does not discard a successful child identity when closing the
+parent copy succeeds. A close error with a known child identity is journalled as
+an idle `cleanup_required` session before reporting it.
+
+The child retains its own reference until exit, including after the panel crashes.
+An open process handle keeps the original process object and PID allocated after
+termination, as described by [Microsoft's process-ID lifetime explanation](https://devblogs.microsoft.com/oldnewthing/20110107-00/?p=11803).
+The [Python Windows subprocess contract](https://docs.python.org/3.14/library/subprocess.html#subprocess.STARTUPINFO)
+requires the listed handle to be temporarily inheritable. New process launchers
+must use explicit handle lists or `close_fds=True`; concurrent launchers that inherit
+every handle could leak this temporary reference into an unrelated child.
+
+Retention by BES is a **source-based assumption awaiting a stand test**. A bounded
+inspection of the supplied `src/*.cpp` and `src/*.h` found no enumeration or blanket
+closure of inherited handles. Visible `CloseHandle` calls release handles opened
+or created by BES itself (for example `main.cpp:66–166`, `hack.cpp:178–199,876–914`,
+and `wndproc.cpp:1920–1930`). The disabled console fragment at `main.cpp:470–481`
+does not establish an active closure path. Linked runtime code and the exact
+executable's retention behavior are not proven by this source inspection.
+
+New journal rows record `target_lifetime_pin=True`. Older rows without that field
+remain recoverable but cannot receive further PID limit commands; stop the old
+instance before creating a new session. An exited target object retained by the
+child pin is safe for cleanup: a signalled verified process handle establishes
+exit. A failed wait/query is an error and never establishes that the target is gone.
+
 BES ownership is stored separately from the generic process controller, which can
 force-kill processes. Before sending the first or updated PID command, the adapter
 commits the instance identity, target identity, window handle, baseline BES thread
@@ -111,6 +150,9 @@ measurement of game responsiveness or successful throttling.
 | `resumed` | Stop completed and zero suspend counts were observed after workers left, or no limit had been sent. |
 | `cleanup_required` | Ownership retained. Retry `stop` or `recover` after resolving the error. |
 | `bes_target_resume_probe_required` | Cannot safely observe the target before limiting. No instance is launched. |
+| `bes_target_lifetime_pin_required` | The session predates the child lifetime pin. Stop/recover it before a new limit. |
+| `bes_target_pin_unavailable` | No verified read-only lifetime handle could be acquired; no BES is launched. |
+| `bes_target_pin_release_failed_cleanup_required` | Parent handle cleanup failed; a known idle child is retained for recovery. |
 | `bes_startup_timeout_cleanup_required` | Idle instance did not expose its expected window; ownership remains for retry. |
 | `bes_resume_unconfirmed_cleanup_required` | No exit request is sent. Keep BES alive and investigate its window/permissions on the stand. |
 | `bes_owner_lost_resume_unconfirmed` | Owned BES disappeared or PID was reused; target resume remains unconfirmed. No foreign process is signalled. |
@@ -125,7 +167,9 @@ cancellation so the caller receives an actionable error. Other accounts are stil
 attempted if one session fails during recovery.
 
 A process crash between idle spawn and its first journal write can leave an idle
-orphan. No target command is sent in that interval. A process crash after the
+orphan. Failure to read the new child's identity can also leave an idle orphan
+holding a read-only target reference. No target command is sent in either case.
+A process crash after the
 in-flight record is committed retains the information needed for recovery.
 The journal holds a process-wide file lock to reject a second controller. Preserve
 the journal until recovery succeeds; deleting it discards the ownership evidence.
@@ -170,3 +214,11 @@ atomic HWND-ownership-check-and-send API; process/window identities are rechecke
 immediately before commands, and handles are retained during an operation. These
 limits, external BES interference, UIPI/elevation, worker timing, INI writes, and
 real effect/resume measurements belong to the separate Windows stand gate.
+
+The stand must additionally verify the exact child retains the inherited target
+handle during delayed worker startup and after abrupt panel exit. Terminate a
+synthetic target during that delay and confirm no replacement PID is addressed.
+Verify the reference disappears after BES exits, no unrelated handles are inherited,
+and recovery handles an exited target object still retained by BES. The automated
+tests exercise a synthetic Win32/Popen boundary; they do not launch the supplied
+BES or prove these operating-system observations.

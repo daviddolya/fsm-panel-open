@@ -3,9 +3,11 @@
 import asyncio
 import ctypes
 import hashlib
+import json
 import os
 import re
 import struct
+import subprocess
 import threading
 from contextlib import contextmanager
 from dataclasses import replace
@@ -44,6 +46,7 @@ class SyntheticDriver:
         }
         self.window_map = {}
         self.argv = []
+        self.inherited_targets = {}
         self.operations = []
         self.baselines = {}
         self.active = {}
@@ -70,11 +73,16 @@ class SyntheticDriver:
             and os.path.normcase(current.executable) == os.path.normcase(process.executable)
         )
 
-    def spawn(self, argv):
+    def spawn(self, argv, *, target):
+        assert tuple(argv) == launch_argv(argv[0])
+        assert self.identities[target.pid] == ProcessIdentity(
+            target.pid, target.create_time, target.executable
+        )
         self.argv.append(tuple(argv))
         pid = 1000 + len(self.argv)
         identity = ProcessIdentity(pid, 100.0 + pid, os.path.normcase(str(Path(argv[0]).resolve())))
         self.identities[pid] = identity
+        self.inherited_targets[pid] = target
         self.baselines[pid] = ((pid * 10, 5),)
         if self.spawn_mode == "normal":
             self.window_map[pid * 100] = BesWindow(pid * 100, pid)
@@ -106,6 +114,7 @@ class SyntheticDriver:
             if not self.exit_hangs:
                 del self.identities[window.pid]
                 del self.window_map[window.handle]
+                self.inherited_targets.pop(window.pid, None)
             return 0  # Actual BES returns FALSE for its EXITNOW handler.
         assert command == BES_COMMAND_PARSE
         text = payload[16:].decode("utf-16-le").rstrip("\x00")
@@ -232,6 +241,8 @@ async def test_limit_update_unlimit_and_stop_are_addressed_and_idempotent(rig):
     rig.driver.window_map[99] = BesWindow(99, 999)
     session = await rig.service.limit(rig.target, 25)
     assert session.state == "delivered" and session.session_id == session.token
+    assert session.target_lifetime_pin
+    assert rig.driver.inherited_targets[session.instance.pid] == rig.target
     assert len(rig.repo.owned_processes()) == 1  # BES is not in the force-kill controller.
     updated = await rig.service.limit(rig.target, 67)
     assert updated.token == session.token and updated.reduction_percent == 67
@@ -571,3 +582,293 @@ def test_win32_message_boundary_preserves_payload_and_zero_exit_reply(monkeypatc
     user.SendMessageTimeoutW = lambda *_: 0
     with pytest.raises(BesError, match="message_timeout_or_failed"):
         driver.send_stop(window, 0.1)
+
+
+@pytest.fixture
+def native_spawn(tmp_path, monkeypatch):
+    """An in-memory kernel/Popen boundary; no native API or executable is called."""
+    from ctypes import wintypes
+
+    target = OwnedProcess(
+        "native-target", "account", 421, 1234.0, str(tmp_path / "synthetic-target.exe")
+    )
+    path = tmp_path / "synthetic-BES.exe"
+    events = []
+    state = SimpleNamespace(
+        current=ProcessIdentity(target.pid, target.create_time, target.executable),
+        pinned=None,
+        opened=False,
+        alive=True,
+        inherited=False,
+        child_references=[],
+        denied=False,
+        query_failed=False,
+        wait_failed=False,
+        fail_enable=False,
+        fail_disable=False,
+        fail_spawn=False,
+        fail_child_identity=False,
+        fail_close=False,
+        after_open=None,
+        after_inherit=None,
+    )
+    target_handle = 0xD00D
+
+    def open_process(access, inherit, pid):
+        events.append(("open", access, inherit, pid))
+        assert (access, inherit, pid) == (0x101000, False, target.pid)
+        if state.denied:
+            return 0
+        state.pinned = state.current
+        state.opened = True
+        if state.after_open:
+            state.after_open()
+        return target_handle
+
+    def close_handle(handle):
+        events.append(("close", handle))
+        assert handle == target_handle and state.opened
+        if state.fail_close:
+            return 0
+        state.opened = False
+        state.inherited = False
+        return 1
+
+    def get_times(handle, created, *_):
+        assert handle == target_handle and state.opened
+        events.append(("query_time",))
+        if state.query_failed:
+            return 0
+        raw = int((state.pinned.create_time + 11644473600) * 10_000_000)
+        created._obj.dwHighDateTime = raw >> 32
+        created._obj.dwLowDateTime = raw & 0xFFFFFFFF
+        return 1
+
+    def get_image(handle, _, buffer, size):
+        assert handle == target_handle and state.opened
+        events.append(("query_executable",))
+        buffer.value = state.pinned.executable
+        return 1
+
+    def wait(handle, timeout):
+        assert (handle, timeout) == (target_handle, 0)
+        events.append(("check_alive",))
+        return 0xFFFFFFFF if state.wait_failed else 258 if state.alive else 0
+
+    kernel = SimpleNamespace(
+        OpenProcess=open_process,
+        CloseHandle=close_handle,
+        GetProcessTimes=get_times,
+        QueryFullProcessImageNameW=get_image,
+        WaitForSingleObject=wait,
+    )
+    driver = WindowsBesDriver()
+    monkeypatch.setattr(driver, "_native", lambda: (kernel, None, None, wintypes))
+
+    def lookup(pid):
+        assert pid == target.pid
+        events.append(("lookup",))
+        return state.current
+
+    monkeypatch.setattr(driver, "identity", lookup)
+
+    def set_inheritable(handle, flag):
+        assert handle == target_handle and state.opened
+        events.append(("inherit", flag))
+        if flag and state.fail_enable or not flag and state.fail_disable:
+            raise OSError("synthetic inherit error")
+        state.inherited = flag
+        if flag and state.after_inherit:
+            state.after_inherit()
+
+    monkeypatch.setattr(os, "set_handle_inheritable", set_inheritable, raising=False)
+    monkeypatch.setattr(
+        subprocess, "STARTUPINFO", lambda **kwargs: SimpleNamespace(**kwargs), raising=False
+    )
+    monkeypatch.setattr(subprocess, "CREATE_NO_WINDOW", 0x08000000, raising=False)
+
+    def child_time():
+        if state.fail_child_identity:
+            raise psutil.AccessDenied()
+        return 9999.0
+
+    def fake_popen(argv, **options):
+        events.append(("spawn", tuple(argv), options))
+        assert state.opened and state.inherited
+        assert state.pinned == ProcessIdentity(target.pid, target.create_time, target.executable)
+        assert tuple(argv) == launch_argv(path)  # Must still be idle and without a PID.
+        assert options["shell"] is False and options["close_fds"] is True
+        assert options["creationflags"] == 0x08000000
+        assert options["stdin"] == options["stdout"] == options["stderr"] == subprocess.DEVNULL
+        assert options["startupinfo"].lpAttributeList == {"handle_list": [target_handle]}
+        if state.fail_spawn:
+            raise OSError("synthetic CreateProcess failure")
+        # Emulate the child's independent kernel reference. Closing the parent's
+        # handle or losing the panel cannot remove this reference.
+        state.child_references.append(state.pinned)
+        return SimpleNamespace(pid=700, create_time=child_time, exe=lambda: str(path))
+
+    monkeypatch.setattr(psutil, "Popen", fake_popen)
+    return SimpleNamespace(
+        driver=driver, state=state, target=target, path=path, events=events, handle=target_handle
+    )
+
+
+def test_spawn_inherits_only_verified_read_only_target_handle_until_child_exit(native_spawn):
+    rig = native_spawn
+    identity = rig.driver.spawn(launch_argv(rig.path), target=rig.target)
+    assert identity.pid == 700 and identity.create_time == 9999.0
+    assert not rig.state.opened and not rig.state.inherited
+    assert rig.state.child_references == [
+        ProcessIdentity(rig.target.pid, rig.target.create_time, rig.target.executable)
+    ]
+    assert rig.events[0] == ("lookup",)  # Verify before acquiring the handle.
+    assert [event[0] for event in rig.events].count("query_time") == 2
+    assert [event[0] for event in rig.events].count("query_executable") == 2
+    spawn_index = next(i for i, event in enumerate(rig.events) if event[0] == "spawn")
+    assert rig.events[spawn_index - 1] == ("check_alive",)  # Recheck before child creation.
+    assert rig.events[-2:] == [("inherit", False), ("close", rig.handle)]
+    # Parent disappearance cannot erase the simulated child's target reference.
+    rig.state.current = None
+    assert rig.state.child_references[0].pid == rig.target.pid
+
+
+@pytest.mark.parametrize("fault", ["before_open", "during_open", "before_spawn", "target_exited"])
+def test_spawn_identity_races_fail_closed_without_child(native_spawn, fault):
+    rig = native_spawn
+    wrong = ProcessIdentity(rig.target.pid, rig.target.create_time + 1, rig.target.executable)
+    if fault == "before_open":
+        rig.state.current = wrong
+    elif fault == "during_open":
+        rig.state.after_open = lambda: setattr(rig.state, "pinned", wrong)
+    elif fault == "before_spawn":
+        rig.state.after_inherit = lambda: setattr(rig.state, "current", wrong)
+    else:
+        rig.state.after_inherit = lambda: setattr(rig.state, "alive", False)
+    with pytest.raises(BesError, match="target_identity_changed"):
+        rig.driver.spawn(launch_argv(rig.path), target=rig.target)
+    assert not rig.state.opened and not rig.state.inherited
+    assert not rig.state.child_references
+    assert not any(event[0] == "spawn" for event in rig.events)
+    if fault == "before_open":
+        assert rig.events == [("lookup",)]
+    else:
+        assert rig.events[-1] == ("close", rig.handle)
+
+
+@pytest.mark.parametrize(
+    "fault",
+    [
+        "denied",
+        "query_failed",
+        "wait_failed",
+        "fail_enable",
+        "fail_spawn",
+        "fail_child_identity",
+    ],
+)
+def test_spawn_faults_restore_parent_flags_and_release_its_copy(native_spawn, fault):
+    rig = native_spawn
+    setattr(rig.state, fault, True)
+    with pytest.raises((BesError, OSError, psutil.AccessDenied)):
+        rig.driver.spawn(launch_argv(rig.path), target=rig.target)
+    assert not rig.state.opened and not rig.state.inherited
+    if fault == "denied":
+        assert not any(event[0] == "close" for event in rig.events)
+    else:
+        assert rig.events[-1] == ("close", rig.handle)
+    if fault in {"fail_enable", "fail_spawn", "fail_child_identity"}:
+        assert ("inherit", False) in rig.events
+    if fault == "fail_child_identity":
+        # The only possible orphan is idle; its child copy is never closed here.
+        assert rig.state.child_references
+    else:
+        assert not rig.state.child_references
+
+
+def test_inherit_reset_failure_does_not_orphan_child_when_parent_copy_closes(native_spawn):
+    rig = native_spawn
+    rig.state.fail_disable = True
+    identity = rig.driver.spawn(launch_argv(rig.path), target=rig.target)
+    assert identity.pid == 700
+    assert not rig.state.opened and not rig.state.inherited
+    assert rig.events[-2:] == [("inherit", False), ("close", rig.handle)]
+    assert rig.state.child_references
+
+
+def test_parent_handle_close_failure_retains_known_child_identity(native_spawn):
+    rig = native_spawn
+    rig.state.fail_close = True
+    with pytest.raises(bes._SpawnedBesError, match="pin_release_failed") as error:
+        rig.driver.spawn(launch_argv(rig.path), target=rig.target)
+    assert error.value.identity.pid == 700
+    assert rig.state.child_references and not rig.state.inherited
+
+
+async def test_spawn_cleanup_error_is_journalled_before_being_reported(rig, monkeypatch):
+    original_spawn = rig.driver.spawn
+
+    def spawn(argv, *, target):
+        identity = original_spawn(argv, target=target)
+        raise bes._SpawnedBesError("bes_target_pin_release_failed_cleanup_required", identity)
+
+    monkeypatch.setattr(rig.driver, "spawn", spawn)
+    with pytest.raises(BesError, match="pin_release_failed"):
+        await rig.service.limit(rig.target, 30)
+    assert rig.service.sessions()[0].state == "cleanup_required"
+    assert not rig.service.sessions()[0].may_have_limited
+    assert rig.service.sessions()[0].instance.pid == 1001
+    assert not rig.driver.operations
+    await rig.service.recover()
+    assert not rig.service.sessions()
+
+
+def test_spawn_refuses_a_command_that_could_limit_before_journalling(native_spawn):
+    rig = native_spawn
+    with pytest.raises(BesError, match="idle_launch_required"):
+        rig.driver.spawn([str(rig.path), "PID:421", "50", "--selfish"], target=rig.target)
+    assert rig.events == []
+
+
+async def test_legacy_journal_session_without_child_pin_allows_cleanup_only(rig):
+    session = await rig.service.limit(rig.target, 30)
+    old_payload = json.loads(
+        rig.journal._db.execute(
+            "SELECT payload FROM bes_sessions WHERE token=?", (session.token,)
+        ).fetchone()[0]
+    )
+    del old_payload["target_lifetime_pin"]
+    with rig.journal._db:
+        rig.journal._db.execute(
+            "UPDATE bes_sessions SET payload=? WHERE token=?",
+            (json.dumps(old_payload), session.token),
+        )
+    assert rig.journal.sessions()[0].target_lifetime_pin is False
+    before = list(rig.driver.operations)
+    with pytest.raises(BesError, match="lifetime_pin_required"):
+        await rig.service.limit(rig.target, 40)
+    assert rig.driver.operations == before
+    await rig.service.unlimit(rig.target)
+    with pytest.raises(BesError, match="lifetime_pin_required"):
+        await rig.service.limit(rig.target, 40)
+    await rig.service.recover()
+    assert not rig.service.sessions()
+
+
+async def test_exited_target_object_retained_by_child_pin_does_not_block_recovery(rig, monkeypatch):
+    await rig.service.limit(rig.target, 30)
+    original_guard = rig.driver.guard
+
+    @contextmanager
+    def guard(process):
+        if process.pid == rig.target.pid:
+            yield False  # Signalled process handle; identity is still queryable.
+        else:
+            with original_guard(process) as valid:
+                yield valid
+
+    monkeypatch.setattr(rig.driver, "guard", guard)
+    monkeypatch.setattr(rig.driver, "resumed", lambda _: pytest.fail("cannot probe exited target"))
+    assert rig.driver.identity(rig.target.pid) is not None
+    await rig.service.recover()
+    assert not rig.service.sessions()

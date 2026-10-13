@@ -120,6 +120,14 @@ class ProcessIdentity:
     executable: str = field(repr=False)
 
 
+class _SpawnedBesError(BesError):
+    """Preserve the known idle child when cleanup of a parent resource fails."""
+
+    def __init__(self, code: str, identity: ProcessIdentity) -> None:
+        super().__init__(code)
+        self.identity = identity
+
+
 @dataclass(frozen=True, slots=True)
 class BesWindow:
     handle: int
@@ -134,11 +142,13 @@ class BesDriver(Protocol):
     """Synchronous bounded transport; tests inject a synthetic implementation.
 
     guard must pin/recheck PID, birth time and image while inside the context.
+    spawn must give the idle child its own verified read-only target handle, kept
+    until that child exits, including when the parent application crashes.
     resumed is read-only: True only if all threads were observed unsuspended;
     False/None never authorizes exit. Transport must recheck HWND owner at send.
     """
 
-    def spawn(self, argv: Sequence[str]) -> ProcessIdentity: ...
+    def spawn(self, argv: Sequence[str], *, target: OwnedProcess) -> ProcessIdentity: ...
     def identity(self, pid: int) -> ProcessIdentity | None: ...
     def guard(self, process: OwnedProcess) -> AbstractContextManager[bool]: ...
     def windows(self, pid: int) -> list[BesWindow]: ...
@@ -161,6 +171,7 @@ class BesSession:
     state: str = "idle"
     may_have_limited: bool = False
     error_code: str | None = None
+    target_lifetime_pin: bool = False
 
     @property
     def account_id(self) -> str:
@@ -261,6 +272,7 @@ class BesJournal:
                     or session.state
                     not in {"idle", "delivered", "unknown", "cleanup_required", "resumed"}
                     or type(session.may_have_limited) is not bool
+                    or type(session.target_lifetime_pin) is not bool
                     or not _valid_identity(session.target)
                     or not _valid_identity(session.instance)
                     or (
@@ -470,7 +482,11 @@ class OwnedBesService:
         if executable is None:
             raise BesError("bes_reviewed_executable_required")
         path = verify_executable(executable)
-        identity = self.driver.spawn(launch_argv(path))
+        launch_error: str | None = None
+        try:
+            identity = self.driver.spawn(launch_argv(path), target=target)
+        except _SpawnedBesError as error:
+            identity, launch_error = error.identity, error.code
         if not _valid_identity(identity) or _path(identity.executable) != _path(path):
             raise BesError("bes_spawn_identity_invalid")
         instance = OwnedProcess(
@@ -480,7 +496,11 @@ class OwnedBesService:
             identity.create_time,
             _path(identity.executable),
         )
-        session = self._save(BesSession(str(uuid.uuid4()), target, instance))
+        session = self._save(
+            BesSession(str(uuid.uuid4()), target, instance, target_lifetime_pin=True)
+        )
+        if launch_error is not None:
+            self._error(session, launch_error)
         deadline = time.monotonic() + self.startup_timeout
         while time.monotonic() < deadline:
             if not _same(instance, self.driver.identity(instance.pid)):
@@ -519,6 +539,10 @@ class OwnedBesService:
             session.target != target or session.state not in {"idle", "delivered", "resumed"}
         ):
             raise BesError("bes_recovery_required")
+        if session is not None and not session.target_lifetime_pin:
+            # Old journal rows remain recoverable, but a parent-only guard cannot
+            # protect BES's asynchronous worker after the parser has returned.
+            raise BesError("bes_target_lifetime_pin_required")
         with self.driver.guard(target) as valid:
             if not valid:
                 raise BesError("bes_target_identity_changed")
@@ -561,7 +585,10 @@ class OwnedBesService:
             # The original target no longer exists. Never probe/control a reused PID.
             return True
         with self.driver.guard(session.target) as valid:
-            return valid and self.driver.resumed(session.target) is True
+            # The child pin can keep an EXITED process object queryable. guard
+            # reports False for an exited/mismatched identity; probe failures
+            # raise instead, and must never be mistaken for a departed target.
+            return not valid or self.driver.resumed(session.target) is True
 
     def _unlimit_target(self, target: OwnedProcess) -> None:
         for session in self.sessions(target.account_id):
@@ -702,9 +729,27 @@ class WindowsBesDriver:
         except psutil.NoSuchProcess:
             return None
 
+    def _handle_matches(self, handle: int, process: OwnedProcess) -> bool:
+        kernel, _, _, w = self._native()
+        times = [w.FILETIME() for _ in range(4)]
+        size, buffer = w.DWORD(32768), ctypes.create_unicode_buffer(32768)
+        if not kernel.GetProcessTimes(handle, *[ctypes.byref(t) for t in times]) or not (
+            kernel.QueryFullProcessImageNameW(handle, 0, buffer, ctypes.byref(size))
+        ):
+            raise BesError("bes_process_identity_unreadable")
+        created = (
+            (times[0].dwHighDateTime << 32) | times[0].dwLowDateTime
+        ) / 10_000_000 - 11644473600
+        wait_result = kernel.WaitForSingleObject(handle, 0)
+        if wait_result not in {0, 258}:  # WAIT_OBJECT_0 / WAIT_TIMEOUT
+            raise BesError("bes_process_identity_unreadable")
+        return wait_result == 258 and _same(
+            process, ProcessIdentity(process.pid, created, buffer.value)
+        )
+
     @contextmanager
     def guard(self, process: OwnedProcess) -> Iterator[bool]:
-        kernel, _, _, w = self._native()
+        kernel, _, _, _ = self._native()
         handle = kernel.OpenProcess(0x1000 | 0x100000, False, process.pid)
         if not handle:
             if ctypes.get_last_error() == 87:  # ERROR_INVALID_PARAMETER: no such PID.
@@ -712,34 +757,69 @@ class WindowsBesDriver:
                 return
             raise BesError("bes_process_identity_unreadable")
         try:
-            times = [w.FILETIME() for _ in range(4)]
-            size, buffer = w.DWORD(32768), ctypes.create_unicode_buffer(32768)
-            if not kernel.GetProcessTimes(handle, *[ctypes.byref(t) for t in times]) or not (
-                kernel.QueryFullProcessImageNameW(handle, 0, buffer, ctypes.byref(size))
-            ):
-                raise BesError("bes_process_identity_unreadable")
-            created = (
-                (times[0].dwHighDateTime << 32) | times[0].dwLowDateTime
-            ) / 10_000_000 - 11644473600
-            yield kernel.WaitForSingleObject(handle, 0) == 258 and _same(
-                process, ProcessIdentity(process.pid, created, buffer.value)
-            )
+            yield self._handle_matches(handle, process)
         finally:
             kernel.CloseHandle(handle)
 
-    def spawn(self, argv: Sequence[str]) -> ProcessIdentity:
-        self._native()
-        process = psutil.Popen(
-            list(argv),
-            shell=False,
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            cwd=str(Path(argv[0]).parent),
-            close_fds=True,
-            creationflags=subprocess.CREATE_NO_WINDOW,
-        )
-        return ProcessIdentity(process.pid, process.create_time(), _path(process.exe()))
+    def spawn(self, argv: Sequence[str], *, target: OwnedProcess) -> ProcessIdentity:
+        """Give this idle BES a target lifetime pin independent of the parent.
+
+        BES's parser starts a worker asynchronously. A successful message return
+        therefore cannot authorize releasing the only handle protecting its PID.
+        The child inherits one read-only process handle, never a control handle.
+        The reviewed source does not close arbitrary inherited handles; retention
+        by the shipped executable remains an explicit Windows stand requirement.
+        """
+        kernel, _, _, _ = self._native()
+        if not argv or tuple(argv) != launch_argv(argv[0]):
+            raise BesError("bes_idle_launch_required")
+        if not _same(target, self.identity(target.pid)):
+            raise BesError("bes_target_identity_changed")
+        handle = kernel.OpenProcess(0x1000 | 0x100000, False, target.pid)
+        if not handle:
+            raise BesError("bes_target_pin_unavailable")
+        identity: ProcessIdentity | None = None
+        try:
+            if not self._handle_matches(handle, target):
+                raise BesError("bes_target_identity_changed")
+            startup = subprocess.STARTUPINFO(lpAttributeList={"handle_list": [handle]})
+            try:
+                # This fresh handle starts non-inheritable. Popen requires this
+                # temporary flag even with an explicit STARTUPINFOEX handle list.
+                os.set_handle_inheritable(handle, True)
+                if not _same(target, self.identity(target.pid)) or not self._handle_matches(
+                    handle, target
+                ):
+                    raise BesError("bes_target_identity_changed")
+                process = psutil.Popen(
+                    list(argv),
+                    shell=False,
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    cwd=str(Path(argv[0]).parent),
+                    close_fds=True,
+                    creationflags=subprocess.CREATE_NO_WINDOW,
+                    startupinfo=startup,
+                )
+            finally:
+                try:
+                    os.set_handle_inheritable(handle, False)
+                except OSError:
+                    # The outer finally must close this fresh handle anyway.
+                    # A reset-only failure must not orphan an identifiable child
+                    # after the parent handle has been successfully released.
+                    pass
+            identity = ProcessIdentity(process.pid, process.create_time(), _path(process.exe()))
+            return identity
+        finally:
+            # Only this parent's copy is closed. The child's copy keeps the old
+            # process object/PID alive until BES exits, even after a panel crash.
+            if not kernel.CloseHandle(handle):
+                code = "bes_target_pin_release_failed_cleanup_required"
+                if identity is not None:
+                    raise _SpawnedBesError(code, identity)
+                raise BesError(code)
 
     def window(self, handle: int) -> BesWindow | None:
         import win32gui
