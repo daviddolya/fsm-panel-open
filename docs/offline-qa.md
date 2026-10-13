@@ -1,19 +1,20 @@
 # Independent offline reconstruction QA
 
 Date: 2026-10-13. Review started at `791cd8a`; fixes were independently checked
-through `d262e64` in a separate QA worktree. The reviewer owns the tests and this
+through `a9451cd` in a separate QA worktree. The reviewer owns the tests and this
 report, not the implementation.
 
 The video, BES and launch checks found five issues: lost recovery metadata, a
 delayed admission race, an unguarded original-distribution path, missing exported
 error policy and an uncaught JSON limit error. Independent regressions reproduced
-them before the fixes and pass after integration. A separate source-derived BES
-worker-start ownership race remains under review below.
+them before the fixes and pass after integration. The review also identified a
+source-derived BES worker-start ownership race and a child-identity loss during
+handle cleanup. Both have integrated fixes and the bounded checks described below.
 
 The original panel, BES and Steam were not executed. Fixtures contain synthetic
 configuration text in temporary directories. Qt checks run the reconstructed UI
-with a simulated coordinator. A Windows binding check queries only the test
-Python process, using read-only handles. No real window receives a message.
+with a simulated coordinator. Windows checks use read-only handles to inspect the
+test Python process and disposable Python children. No real window receives a message.
 These checks do not establish original runtime parity or live Steam compatibility.
 
 ## Evidence and review scope
@@ -87,7 +88,7 @@ four removal paths in `f4542bf`. All 25 independent video cases pass after that 
 
 ## BES, CPU admission and Windows bindings
 
-[The independent BES tests](../tests/qa/test_offline_bes.py) add 18 cases. The
+[The independent BES tests](../tests/qa/test_offline_bes.py) add 22 cases. The
 adapter review used [its documented source contract](bes.md), the supplied BES
 source, `src/fsm_panel/cpu.py` and the desktop composition. No C++ source or binary
 is copied into these tests.
@@ -99,7 +100,7 @@ Class 35 and the suspend-count type were checked against the
 [System Informer native declarations](https://github.com/winsiderss/phnt/blob/master/ntpsapi.h).
 Microsoft still documents [NtQueryInformationThread as an internal API that can change](https://learn.microsoft.com/en-us/windows/win32/api/winternl/nf-winternl-ntqueryinformationthread).
 
-| Requirement | Independent check | Result through `91a3bdf` |
+| Requirement | Independent check | Result through `a9451cd` |
 | --- | --- | --- |
 | Recheck admission after waiting | During the initial lease request, account becomes STOPPING, runtime closes, simulation disables limits, or recovery becomes incomplete | Four regressions reproduced before the fix; pass after |
 | Preserve original evidence | A matching mocked hash does not authorize an original-marked image or a hardlinked image | Two regressions reproduced before the fix; pass after |
@@ -109,6 +110,9 @@ Microsoft still documents [NtQueryInformationThread as an internal API that can 
 | Require workers to finish after target exit | Missing or reused target does not authorize BES exit while added workers remain; reused target is never probed | Pass |
 | Exercise real binding declarations without BES | Read-only guard, thread identity and zero-suspend-count queries inspect only the test Python process | Pass on this Windows host |
 | Fail closed on native probe errors | Wrong thread owner, failed time query, negative status, wrong result length, nonzero count, changing snapshot and failed handle acquisition | Seven cases pass; every acquired synthetic handle closes |
+| Preserve child identity through parent cleanup | Real STARTUPINFO layout with mocked handles; inheritance-flag reset succeeds or raises after child creation, followed by successful parent-handle closure | Both cases return the created child's identity |
+| Recover a retained exited target | Identity lookup still sees the old object, but a verified guard reports exit; recovery does not probe target threads | Pass; stop and exit complete and the journal clears |
+| Exercise actual Windows handle inheritance | Two disposable Python children, the driver's unmodified process-creation options, one extra inheritable process handle, and normal target exit | Child receives only the requested target pin, retains its identity after target exit, and the parent's copy closes |
 
 Finding B1, P2: the runtime originally checked account and lifecycle state only
 before awaiting admission. A stop or close during that wait still allowed a new
@@ -130,20 +134,49 @@ The documentation now reflects that decision. Source `hack.cpp:178–248,906`
 shows a successfully opened target process handle retained through the worker's
 lifetime, which protects that opened identity while generic target cleanup runs.
 
-### Remaining worker-start ownership concern
+### Finding B3: worker-start target ownership gap
 
 The parser acknowledgement does not prove BES has opened the target. The supplied
 `wndproc.cpp:406` creates its worker asynchronously; `hack.cpp:134` queries cached
-process/thread pairs before the first `OpenProcess` at line 178. The adapter's
-target guard ends after the acknowledgement. A target could exit after that
+process/thread pairs before the first `OpenProcess` at line 178. The previous
+adapter's target guard ended after the acknowledgement. A target could exit after that
 guard ends, and a reused PID could be opened by the delayed worker.
 
 This is an inference from complete source paths, not a reproduced live race.
-The integration owner accepted the issue and assigned an inherited, read-only
-target handle to the dedicated BES child. That design can also retain the target
-identity if the panel exits before BES. The change is pending implementation and
-independent review. Original-process behavior still requires the stand; this issue
-is not counted as resolved by the existing synthetic transport tests.
+The integrated fix in `a9451cd` gives the dedicated idle BES child a verified,
+read-only target handle through an explicit STARTUPINFO handle list. The parent
+resets inheritance and closes only its own copy. The child's reference can retain
+the target identity if the panel exits first. Legacy journal rows without evidence
+of this pin remain available for cleanup but cannot accept new limit commands.
+
+An independent Windows test substitutes a small Python probe at the Popen boundary,
+preserving all process-creation options. The child receives the requested process
+handle and excludes an unrelated inheritable process handle. After the parent's
+copy closes and the target exits normally, the child's handle still yields the
+original target PID and reports the process as signalled. Both disposable children
+exit and all test-owned parent handles are released. This tests actual Windows
+inheritance, without invoking BES or waiting for PID reuse.
+
+The source review found no wholesale closure of inherited handles. Retention by
+the exact shipped BES executable, including through its initialization and parent
+failure, remains a stand requirement. The Python child test proves the Windows
+transport behavior, not that external application behavior or complete parity.
+
+### Finding B4: parent cleanup can hide a created child
+
+Review of the first pin implementation found that an exception while resetting
+the parent's inheritance flag could override a successful child creation. The
+service would lose the child identity needed for its recovery journal. The fix
+suppresses a reset-only error when the parent handle subsequently closes. If that
+close also fails after child identity is known, a typed failure preserves the
+identity and the service records the idle child as `cleanup_required` before
+surfacing the error. No limit command is sent on that path.
+
+The independent reset-failure regression passes; the implementation owner's
+additional tests cover failed parent closure and subsequent journal recovery.
+Failure to read a newly created child's identity, or a crash before journalling,
+can still leave an idle child. This documented boundary does not authorize a
+limit command or generic termination of that child.
 
 ## Pure launch planning and proposal export
 
@@ -190,8 +223,8 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_video.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_bes.py tests/adapters/test_bes.py tests/test_cpu.py tests/ui/test_cpu_panel.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_launch.py tests/adapters/test_launch_plan.py tests/test_launch_preview.py -q
-.venv/Scripts/python.exe -m ruff check tests/qa/test_offline_*.py
-.venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_*.py
+.venv/Scripts/python.exe -m ruff check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
+.venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 ```
 
 - Existing video suite: **81 passed, 4 skipped**. The skipped cases require
@@ -199,8 +232,11 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 - Independent video baseline: **24 passed, 1 failed** at `791cd8a` (V1).
   After the fix: **25 passed**.
 - Independent BES baseline: **12 passed, 6 failed** before `91a3bdf` (B1/B2).
-  After the fixes: **18 passed**, with no expected-failure or skipped tests on this
-  Windows host. Eight Windows ABI cases are explicitly skipped on other systems.
+  After those fixes: **18 passed**. With the target-pin additions through
+  `a9451cd`: **22 passed**, with no expected-failure or skipped tests on this
+  Windows host. Eleven Windows ABI/inheritance cases are skipped on other systems.
+- BES QA, BES adapter, CPU runtime and CPU UI together: **96 passed** through
+  `a9451cd`, including the real Windows inheritance test.
 - Video QA, BES QA, BES adapter, CPU runtime and CPU UI together: **100 passed**
   through `91a3bdf`.
 - The same checks plus the existing video adapter, UI and CLI suite:
