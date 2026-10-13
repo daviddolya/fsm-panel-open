@@ -18,6 +18,8 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from fsm_panel.adapters.bes_plan import LEGACY_BES_FALLBACK_PERCENT
+
 
 class CpuPanel(QWidget):
     def __init__(self, owner) -> None:
@@ -44,9 +46,14 @@ class CpuPanel(QWidget):
         self.target = QComboBox()
         self.percent = QSpinBox()
         self.percent.setRange(1, 99)
-        self.percent.setValue(50)
+        self.percent.setValue(LEGACY_BES_FALLBACK_PERCENT)
+        self.settings_button = QPushButton("Прочитать из настроек")
+        self.settings_button.clicked.connect(self.load_percent)
+        percent_row = QHBoxLayout()
+        percent_row.addWidget(self.percent)
+        percent_row.addWidget(self.settings_button)
         form.addRow("Принадлежащий панели процесс", self.target)
-        form.addRow("Уменьшение доступного CPU, %", self.percent)
+        form.addRow("Уменьшение доступного CPU, %", percent_row)
         layout.addLayout(form)
         actions = QGridLayout()
         self.refresh_button = QPushButton("Обновить процессы")
@@ -71,9 +78,20 @@ class CpuPanel(QWidget):
         self.result.setReadOnly(True)
         self.result.setMaximumBlockCount(300)
         layout.addWidget(self.result)
+        self.load_percent()
         owner.bridge.completed.connect(self._completed, Qt.ConnectionType.QueuedConnection)
         owner.bridge.failed.connect(self._failed, Qt.ConnectionType.QueuedConnection)
         self.refresh()
+
+    def load_percent(self) -> None:
+        value = self.owner.settings.get("BES_REDUCTION_PERCENT")
+        if type(value) is int and 1 <= value <= 99:
+            self.percent.setValue(value)
+        else:
+            self.result.appendPlainText(
+                "BES_REDUCTION_PERCENT должен быть целым числом от 1 до 99. "
+                "Текущее значение формы сохранено."
+            )
 
     def _browse(self) -> None:
         filename, _ = QFileDialog.getOpenFileName(self, "BES 1.7.9", "", "Executable (*.exe)")
@@ -97,6 +115,7 @@ class CpuPanel(QWidget):
             self.browse_button,
             self.target,
             self.percent,
+            self.settings_button,
             self.refresh_button,
             self.stop_button,
             self.recover_button,

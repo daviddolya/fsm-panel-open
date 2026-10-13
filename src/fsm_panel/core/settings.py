@@ -1,7 +1,7 @@
 """Lossless JSON settings, with an observed schema and explicit application defaults.
 
 The 49 names/types were observed in the supplied 3.1.2 settings file. Defaults below
-are new safe application defaults, not claims about legacy defaults or semantics.
+are new application defaults, except the specifically recovered BES fallback25.
 """
 
 import copy
@@ -202,7 +202,13 @@ class SettingsStore:
         """New application defaults; every unattended legacy action starts disabled."""
         values = {key: expected() for key, expected in SETTINGS_TYPES.items()}
         values.update(
-            {"ACCOUNT_LOGIN_ATTEMPTS": 1, "GUI_SCALING": "100%", "CS_RESOLUTION": "640x480"}
+            {
+                "ACCOUNT_LOGIN_ATTEMPTS": 1,
+                "GUI_SCALING": "100%",
+                "CS_RESOLUTION": "640x480",
+                # Panel.exe settings fallback at 0x1406b2e28; does not enable BES.
+                "BES_REDUCTION_PERCENT": 25,
+            }
         )
         return SettingsDocument(values)
 

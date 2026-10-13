@@ -5,6 +5,7 @@ import pytest
 from fsm_panel.adapters.bes import OwnedBesService
 from fsm_panel.adapters.fakes import FakeGame, FakeLease, MemorySecretStore
 from fsm_panel.core import AccountRepository, Coordinator
+from fsm_panel.core.settings import SettingsDocument
 from fsm_panel.ui.window import MainWindow
 
 
@@ -37,6 +38,18 @@ def test_empty_processes_and_simulator_never_enable_live_bes(qtbot, window):
     panel._submit("limit")
     assert panel._future is None
     assert not window.cpu_runtime.enabled
+
+
+def test_cpu_setting_passes_through_without_inversion_or_clamp(window):
+    panel = window.cpu
+    assert panel.percent.value() == 25
+    window.settings = SettingsDocument({"BES_REDUCTION_PERCENT": 37})
+    panel.settings_button.click()
+    assert panel.percent.value() == 37
+    window.settings = SettingsDocument({"BES_REDUCTION_PERCENT": 150})
+    panel.settings_button.click()
+    assert panel.percent.value() == 37
+    assert "от 1 до 99" in panel.result.toPlainText()
 
 
 def test_selection_and_errors_are_visible_without_claiming_throttle(qtbot, window):

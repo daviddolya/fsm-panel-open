@@ -3,7 +3,7 @@
 The adapter implements the supplied BES 1.7.9 source contract for a process already
 owned by FSM Panel Open. The original executable was **not run** during development.
 Synthetic tests verify our commands and lifecycle rules. They do not prove Windows
-throttling, source-to-binary correspondence, original Panel invocation, or game parity.
+throttling, source-to-binary correspondence, live invocation, or game parity.
 
 ## Integration contract
 
@@ -53,8 +53,10 @@ cleanup. Startup must finish recovery before enabling commands; the recovery
 button can retry a failed startup. Simulation disables new real CPU limits even
 if a process record exists. Stop/recovery remain available without a lease.
 No real game processes are registered by the currently unavailable GameAdapter.
-`BES_REDUCTION_PERCENT` is not automatically applied: its original consumer and
-scale remain unproven. The new CPU tab takes an explicit 1..99 percent reduction.
+The CPU tab starts with `BES_REDUCTION_PERCENT` when it is a valid integer 1..99;
+the operator can reload the saved setting explicitly. It passes through unchanged,
+without inversion or clamping. The recovered fallback is 25. Invalid values retain
+the current form value and report an error. No limit is applied automatically.
 
 `sessions(account_id=None)` returns immutable `BesSession` objects with `session_id`,
 `target`, `instance`, `state`, `reduction_percent`, and `error_code`. Paths and process
@@ -176,9 +178,32 @@ the journal until recovery succeeds; deleting it discards the ownership evidence
 
 ## Source evidence
 
-All locations below refer to the supplied `BES/src` tree. They are static source
-observations; the original Panel-to-BES call and `BES_REDUCTION_PERCENT` mapping
-remain unestablished. The SHA-256 values identify the exact inspected files.
+The following source table refers to the supplied `BES/src` tree. These are static
+source observations; the SHA-256 values identify the exact inspected files.
+
+The Panel consumer is separately recovered at `0x1409572d0..0x140958353`,
+source line23516, in Panel.exe SHA256
+`3731a48590e3169071b81aab9338a36b38a788133adfd43fada99ad3add1f308`.
+`build_legacy_bes_plan` in `adapters/bes_plan.py` reproduces its inert command:
+
+```text
+<cwd>\BES\BES.exe -J "<CSGO_PATH>\game\bin\win64\cs2.exe" <percent> "<Steam-dir>\bin\cef\cef.win64\steamwebhelper.exe" <percent>
+```
+
+The consumer splits Steam's path on literal backslashes and drops its final part.
+It passes one positional string to synchronous `subprocess.call`, with no keyword
+arguments, no application exception handler, and no use of the return code. A
+wrapper at `0x140956f50` starts it on a daemon thread. The BES image path is unquoted;
+both target paths are quoted. The printed debug list instead contains a shorter
+CS2 path, GameOverlayUI and hardcoded50; it is never passed to the subprocess.
+Actual percent values are formatted unchanged twice. The settings fallback25
+is assigned at `0x1406b2e28`; present values are not cast by the original loader.
+
+The pure planner accepts only typed string/integer inputs, but preserves out-of-range
+integers for characterization. It has no executor. The owned live adapter deliberately
+replaces path-wide `-J` discovery with registered PIDs, addressed commands, lifetime
+handles and a1..99 range. Full UI routing/launch gating remains unresolved; this
+finding does not prove automatic BES activation on every game launch.
 
 | Source | Observation used by the adapter |
 | --- | --- |
