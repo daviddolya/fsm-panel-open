@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (
     QComboBox,
     QFileDialog,
     QFormLayout,
+    QGridLayout,
     QHBoxLayout,
     QLabel,
     QLineEdit,
@@ -47,7 +48,7 @@ class CpuPanel(QWidget):
         form.addRow("Принадлежащий панели процесс", self.target)
         form.addRow("Уменьшение доступного CPU, %", self.percent)
         layout.addLayout(form)
-        actions = QHBoxLayout()
+        actions = QGridLayout()
         self.refresh_button = QPushButton("Обновить процессы")
         self.limit_button = QPushButton("Применить ограничение")
         self.stop_button = QPushButton("Снять ограничения выбранного аккаунта")
@@ -56,13 +57,15 @@ class CpuPanel(QWidget):
         self.limit_button.clicked.connect(lambda: self._submit("limit"))
         self.stop_button.clicked.connect(lambda: self._submit("stop"))
         self.recover_button.clicked.connect(lambda: self._submit("recover"))
-        for button in (
-            self.refresh_button,
-            self.limit_button,
-            self.stop_button,
-            self.recover_button,
+        for index, button in enumerate(
+            (
+                self.refresh_button,
+                self.limit_button,
+                self.stop_button,
+                self.recover_button,
+            )
         ):
-            actions.addWidget(button)
+            actions.addWidget(button, index // 2, index % 2)
         layout.addLayout(actions)
         self.result = QPlainTextEdit()
         self.result.setReadOnly(True)
