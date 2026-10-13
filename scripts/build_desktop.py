@@ -4,10 +4,13 @@ import argparse
 import hashlib
 import json
 import platform
+import re
 import shutil
 import subprocess
 import sys
 from pathlib import Path
+
+import pefile
 
 from collect_notices import collect
 
@@ -15,6 +18,56 @@ from collect_notices import collect
 def digest(path: Path) -> str:
     with path.open("rb") as source:
         return hashlib.file_digest(source, "sha256").hexdigest()
+
+
+def use_windows_icu(target: Path) -> list[dict[str, str]]:
+    """Qt uses Windows ICU's unversioned exports, not an unrelated PATH ICU.
+
+    The freezer can select Git's icuuc.dll with only *_78 exports. Verify the
+    actual Qt imports against the host OS and remove that generated shadow copy.
+    The Windows system library itself is neither modified nor redistributed.
+    """
+    import os
+
+    internal = target / "_internal"
+    with pefile.PE(str(internal / "PySide6/Qt6Core.dll")) as qt:
+        required = {
+            symbol.name
+            for library in qt.DIRECTORY_ENTRY_IMPORT
+            if library.dll.lower() == b"icuuc.dll"
+            for symbol in library.imports
+            if symbol.name
+        }
+    if not required:
+        return []
+    system = Path(os.environ["WINDIR"]) / "System32/icuuc.dll"
+    with pefile.PE(str(system)) as os_icu:
+        exported = {symbol.name for symbol in os_icu.DIRECTORY_ENTRY_EXPORT.symbols}
+    if not required <= exported:
+        raise RuntimeError("The target Qt runtime requires compatible Windows system ICU")
+    bundled = internal / "icuuc.dll"
+    if not bundled.exists():
+        return []
+    with pefile.PE(str(bundled)) as foreign:
+        supporting = [
+            library.dll.decode("ascii")
+            for library in foreign.DIRECTORY_ENTRY_IMPORT
+            if re.fullmatch(rb"icudt\d+\.dll", library.dll, re.IGNORECASE)
+        ]
+    excluded = []
+    for candidate in [bundled, *(internal / name for name in supporting)]:
+        if candidate.exists():
+            if not candidate.resolve().is_relative_to(target.resolve()):
+                raise RuntimeError("Unexpected binary staging path")
+            excluded.append(
+                {
+                    "name": candidate.name,
+                    "sha256": digest(candidate),
+                    "reason": "use_verified_Windows_system_ICU",
+                }
+            )
+            candidate.unlink()
+    return excluded
 
 
 def main() -> None:
@@ -49,6 +102,7 @@ def main() -> None:
     ]
     subprocess.run(options + [str(root / "src/fsm_panel/__main__.py")], cwd=root, check=True)
     target = root / "dist/FSMPanelOpen"
+    excluded_binaries = use_windows_icu(target)
     for name in ("LICENSE", "README.md"):
         shutil.copy2(root / name, target / name)
     shutil.copy2(root / "docs/STATUS.md", target / "RESEARCH-STATUS.md")
@@ -108,6 +162,7 @@ def main() -> None:
         "kind": "research_build",
         "parity": "not_verified",
         "python": platform.python_version(),
+        "excluded_binaries": excluded_binaries,
         "source_commit": subprocess.check_output(
             ["git", "rev-parse", "HEAD"], cwd=root, text=True
         ).strip(),
