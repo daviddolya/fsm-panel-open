@@ -1387,6 +1387,44 @@
       "verification": "stand_not_run"
     },
     {
+      "feature_id": "CONFIG.ACCOUNT",
+      "action": "Prepare copied userdata configs, generic VDF templates and optional localconfig restore",
+      "evidence": "Panel.exe 0x140bfb3d0, 0x140bfc590, 0x140b71430; docs/account-config.md",
+      "confidence": "static_contract",
+      "implementation": "implemented_offline_copy_writer_and_cli",
+      "runtime_parity": "not_verified",
+      "tests": [
+        "tests/adapters/test_account_config.py",
+        "tests/test_config_cli.py",
+        "tests/qa/test_offline_configs.py"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
+    },
+    {
+      "feature_id": "CONFIG.AUTOEXEC",
+      "action": "Synchronize autoexec in a copied game cfg tree; preserve equal file and timestamps",
+      "evidence": "Panel.exe 0x140bf9e40; docs/account-config.md",
+      "confidence": "static_contract",
+      "implementation": "implemented_offline_copy_writer_and_cli",
+      "runtime_parity": "not_verified",
+      "tests": [
+        "tests/adapters/test_autoexec.py",
+        "tests/test_config_cli.py",
+        "tests/qa/test_offline_configs.py"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
+    },
+    {
       "feature_id": "GAME.LAUNCH.PREPARE",
       "action": "Pure argv, profile/shader, conditional environment, loginusers and registry proposals",
       "evidence": "Panel.exe 0x14067ae90; docs/launch-plan.md",

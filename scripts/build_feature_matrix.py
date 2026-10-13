@@ -95,6 +95,28 @@ def main() -> None:
         )
     for identifier, action, status, evidence, tests in [
         (
+            "CONFIG.ACCOUNT",
+            "Prepare copied userdata configs, generic VDF templates and optional localconfig restore",
+            "implemented_offline_copy_writer_and_cli",
+            "Panel.exe 0x140bfb3d0, 0x140bfc590, 0x140b71430; docs/account-config.md",
+            [
+                "tests/adapters/test_account_config.py",
+                "tests/test_config_cli.py",
+                "tests/qa/test_offline_configs.py",
+            ],
+        ),
+        (
+            "CONFIG.AUTOEXEC",
+            "Synchronize autoexec in a copied game cfg tree; preserve equal file and timestamps",
+            "implemented_offline_copy_writer_and_cli",
+            "Panel.exe 0x140bf9e40; docs/account-config.md",
+            [
+                "tests/adapters/test_autoexec.py",
+                "tests/test_config_cli.py",
+                "tests/qa/test_offline_configs.py",
+            ],
+        ),
+        (
             "GAME.LAUNCH.PREPARE",
             "Pure argv, profile/shader, conditional environment, loginusers and registry proposals",
             "implemented_offline_planner_no_executor",

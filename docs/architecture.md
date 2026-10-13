@@ -34,5 +34,13 @@ facts, timestamp and random suffix make the recovered transformations testable
 without calling Steam, a shell, registry APIs or the filesystem. The proposal
 CLI performs only explicit input/output file access; it has no executor.
 
+`account_config` and `autoexec` separate pure legacy plans from guarded offline
+workspace writes. Logical Steam/game paths never choose a write destination.
+Bounded source and tree snapshots are rechecked before commit; directory staging
+preserves unrelated files and retains the previous tree as a backup. Two renames
+are not an atomic directory exchange, so power-loss recovery is an explicit limit.
+The shared template package verifies its generic recovered constants by hash;
+the frozen desktop smoke also loads that package to check resource delivery.
+
 Original architecture and new design are deliberately documented separately. The legacy
 source establishes an event/callback looter, but does not establish Panel.exe's module graph.

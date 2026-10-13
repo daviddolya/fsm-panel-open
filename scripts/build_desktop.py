@@ -98,6 +98,8 @@ def main() -> None:
         "PySide6.QtWebEngineCore",
         "--exclude-module",
         "PySide6.QtWebEngineWidgets",
+        "--collect-data",
+        "fsm_panel.config_templates",
     ]
     subprocess.run(options + [str(root / "src/fsm_panel/__main__.py")], cwd=root, check=True)
     target = root / "dist/FSMPanelOpen"

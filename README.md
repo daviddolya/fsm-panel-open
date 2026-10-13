@@ -42,6 +42,11 @@ DPAPI защищает импортируемые пароли в текущем
 подключение к игровому запуску и проверка фактического CPU остаются следующими
 этапами. [Контракт BES](docs/bes.md) описывает эти ограничения.
 
+Подготовка userdata и autoexec доступна в отдельной рабочей копии через
+[CLI конфигов](docs/config-tools.md): предпросмотр, проверка отпечатка, запись с
+резервной копией. [Планировщик запуска](docs/launch-plan.md) вычисляет аргументы,
+окружение и файловые предложения без запуска Steam и изменений реестра.
+
 ## Лицензирование
 
 См. `docs/licensing.md` для сервера, выдачи ключа и CLI. Оплата полностью выполняется
@@ -108,6 +113,7 @@ uv run python scripts/verify_desktop.py dist/FSMPanelOpen/FSMPanelOpen.exe --out
 - `docs/core.md`, `docs/licensing.md` — контракты и эксплуатация подсистем.
 - `docs/steam.md`, `docs/gsi.md` — интеграции и их границы доказательств.
 - `docs/video.md`, `docs/bes.md`, `docs/launch-plan.md` — восстановленные локальные контракты.
+- `docs/account-config.md`, `docs/config-tools.md` — запись конфигов в рабочую копию.
 - `docs/operations.md`, `docs/development.md` — работа, резервные копии и передача команды.
 - `docs/stand-acceptance.md` — отложенные реальные проверки.
 - `.codex/agents/` — полные инструкции ролей, `.github/workflows/` — CI.
