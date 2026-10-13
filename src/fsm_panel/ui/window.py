@@ -30,6 +30,7 @@ from fsm_panel.core.contracts import SecretStore
 from fsm_panel.core.settings import SECRET_KEYS, SETTINGS_TYPES, SettingsDocument
 
 from .bridge import AsyncBridge
+from .trades import TradePanel
 
 
 class MainWindow(QMainWindow):
@@ -83,6 +84,8 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.tabs)
         self._build_accounts()
         self._build_settings()
+        self.trades = TradePanel(self)
+        self.tabs.addTab(self.trades, "Предметы и обмены")
         self._build_license()
         self.bridge.license_state.connect(self.license_status.setText)
         self._build_compatibility()
@@ -93,6 +96,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central)
         self.refresh_accounts()
         self.start_button.setEnabled(False)
+        self.pause_button.setEnabled(False)
+        self.resume_button.setEnabled(False)
         self._startup = self.bridge.submit(self.coordinator.recover())
 
     def _build_accounts(self) -> None:
@@ -110,11 +115,11 @@ class MainWindow(QMainWindow):
         self.start_button.clicked.connect(self.start_selected)
         self.stop_button = QPushButton("Остановить выбранные")
         self.stop_button.clicked.connect(self.stop_selected)
-        pause = QPushButton("Пауза")
-        pause.clicked.connect(lambda: self._selected_command("pause"))
-        resume = QPushButton("Продолжить")
-        resume.clicked.connect(lambda: self._selected_command("resume"))
-        for button in (self.start_button, self.stop_button, pause, resume):
+        self.pause_button = QPushButton("Пауза")
+        self.pause_button.clicked.connect(lambda: self._selected_command("pause"))
+        self.resume_button = QPushButton("Продолжить")
+        self.resume_button.clicked.connect(lambda: self._selected_command("resume"))
+        for button in (self.start_button, self.stop_button, self.pause_button, self.resume_button):
             actions.addWidget(button)
         layout.addLayout(actions)
         self.table = QTableWidget(0, 4)
@@ -246,6 +251,8 @@ class MainWindow(QMainWindow):
         self._selected_command("stop")
 
     def _selected_command(self, name: str) -> None:
+        if name != "stop" and (not self.ready or self._closing):
+            return
         for account_id in self.selected_ids():
             self.bridge.submit(getattr(self.coordinator, name)(account_id))
 
@@ -351,6 +358,8 @@ class MainWindow(QMainWindow):
         if not self.ready and self._startup.done() and self._startup.exception() is None:
             self.ready = True
             self.start_button.setEnabled(True)
+            self.pause_button.setEnabled(True)
+            self.resume_button.setEnabled(True)
         self.refresh_accounts()
 
     @Slot(object)
@@ -376,7 +385,10 @@ class MainWindow(QMainWindow):
                 if self.license_runtime:
                     await self.license_runtime.close()
             finally:
-                await self.coordinator.close()
+                try:
+                    await self.trades.aclose()
+                finally:
+                    await self.coordinator.close()
 
         self.bridge.request_shutdown(cleanup())
 

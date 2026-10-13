@@ -286,6 +286,10 @@ class Coordinator:
             account = self.repository.get(account_id)
             if account.state != AccountState.RUNNING:
                 return account
+            if self._closing or self._recovering:
+                raise StateConflict("coordinator_not_accepting_commands")
+            if account_id not in self._sessions:
+                raise StateConflict("recovery_required")
             try:
                 await asyncio.wait_for(self.game.pause(account), timeout=self.retry.launch_timeout)
                 return self._state(account_id, AccountState.PAUSED)
@@ -297,6 +301,10 @@ class Coordinator:
             account = self.repository.get(account_id)
             if account.state != AccountState.PAUSED:
                 return account
+            if self._closing or self._recovering:
+                raise StateConflict("coordinator_not_accepting_commands")
+            if account_id not in self._sessions:
+                raise StateConflict("recovery_required")
             if not await self._admitted(account_id):
                 return self._state(account_id, AccountState.PAUSED, "lease_denied")
             try:

@@ -132,3 +132,20 @@ def test_restart_recovers_before_enabling_launch(qtbot, qapp, tmp_path):
     qtbot.waitUntil(lambda: widget._closed)
     repo.close()
     widget.deleteLater()
+
+
+def test_simulated_inventory_and_trade_cross_real_node_pipe(qtbot, window):
+    window.add_sample()
+    window.table.selectRow(0)
+    panel = window.trades
+    panel.inventory_button.click()
+    qtbot.waitUntil(lambda: panel.inventory_button.isEnabled(), timeout=15000)
+    assert "1 предметов" in panel.result.toPlainText()
+    panel.send_button.click()
+    qtbot.waitUntil(lambda: panel.send_button.isEnabled(), timeout=15000)
+    assert ": sent;" in panel.result.toPlainText()
+    original = panel.operation_id
+    panel.reconcile_button.click()
+    qtbot.waitUntil(lambda: panel.reconcile_button.isEnabled(), timeout=15000)
+    assert panel.operation_id == original
+    assert len(window.repository.list_effects()) == 1
