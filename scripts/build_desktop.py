@@ -11,7 +11,6 @@ import sys
 from pathlib import Path
 
 import pefile
-
 from collect_notices import collect
 
 
