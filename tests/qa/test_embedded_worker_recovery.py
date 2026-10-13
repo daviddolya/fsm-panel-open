@@ -13,6 +13,7 @@ from fsm_panel.trading import (
     Asset,
     NodeWorkerClient,
     SteamCredentials,
+    TradeError,
     TradeService,
     TradeState,
 )
@@ -79,10 +80,12 @@ async def test_authoritative_cancelled_activity_can_release_core_unknown_after_r
 
     with AccountRepository(core_path) as repository:
         async with _worker(tmp_path, {"activity_delay_ms": 0}) as worker:
-            service = TradeService(repository, worker, _admit)
+            # Viewing/reconciling a terminal outcome remains available after lease loss.
+            service = TradeService(repository, worker)
             status = await service.activity_status(account.id, "first-activity")
             assert status.state == "cancelled"
             assert repository.list_effects()[0].state == EffectState.FAILED_CONFIRMED
+            service.admission = _admit
             result = await service.activity(account.id, "next-activity", CREDENTIALS, [730], 1)
             assert result.state == "completed"
 
@@ -115,3 +118,25 @@ async def test_batch_id_cannot_be_reused_to_dispatch_a_different_group_after_res
                     selected_assets=[Asset(440, "2", "1002", 1)],
                 )
             assert {effect.id for effect in repository.list_effects()} == previous_effect_ids
+
+
+async def test_unknown_activity_status_after_restart_cannot_authorize_another_dispatch(tmp_path):
+    core_path = tmp_path / "core.sqlite"
+    with AccountRepository(core_path) as repository:
+        account = repository.add_account("synthetic_unknown_activity")
+        async with _worker(tmp_path, {"free_license_error": True}) as worker:
+            service = TradeService(repository, worker, _admit)
+            result = await service.activity(account.id, "uncertain-activity", CREDENTIALS, [730], 1)
+            assert result.state == "unknown_outcome"
+            assert repository.list_effects()[0].state == EffectState.UNKNOWN
+
+    with AccountRepository(core_path) as repository:
+        async with _worker(tmp_path, {"activity_delay_ms": 0}) as worker:
+            service = TradeService(repository, worker)
+            status = await service.activity_status(account.id, "uncertain-activity")
+            assert status.state == "unknown_outcome"
+            assert repository.list_effects()[0].state == EffectState.UNKNOWN
+            service.admission = _admit
+            with pytest.raises(TradeError, match="^unresolved_operation$"):
+                await service.activity(account.id, "new-activity", CREDENTIALS, [730], 1)
+            assert len(repository.list_effects()) == 1
