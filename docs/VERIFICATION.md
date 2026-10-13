@@ -76,7 +76,9 @@ uv run --no-project --python 3.11 research/verify_panel_constants.py '..\FSM_PAN
 
 Без тестового PostgreSQL выбирайте `-m 'not stand and not postgres'` и указывайте
 пропуск отдельно. CI имеет собственную службу PostgreSQL и отдельную Windows-сборку;
-наличие workflow не означает, что удалённый CI уже был запущен. Git remote не настроен.
+наличие workflow не означает, что удалённый CI прошёл. Этот отчёт фиксирует локальную
+проверку; результаты последующих запусков доступны в
+[GitHub Actions](https://github.com/daviddolya/fsm-panel-open/actions/workflows/checks.yml).
 
 ## Не закрытые выпускные риски
 

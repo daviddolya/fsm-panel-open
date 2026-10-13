@@ -86,6 +86,7 @@ uv run python scripts/verify_desktop.py dist/FSMPanelOpen/FSMPanelOpen.exe --out
 
 ## Документация
 
+- [Начать работу коллеге](docs/development.md) — клонирование, карта проекта и передача материалов исследования.
 - `FSM_PANEL_REBUILD_PLAN.md` — утверждённый план и десять ролей.
 - `docs/STATUS.md` — состояние реализации и ограничения.
 - `docs/VERIFICATION.md`, `docs/qa-review.md` — выполненные проверки и независимые находки.
