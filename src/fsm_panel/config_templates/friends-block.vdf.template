@@ -1,0 +1,13 @@
+{
+		"Notifications_ShowIngame"		"0"
+		"Notifications_ShowOnline"		"0"
+		"Notifications_ShowMessage"		"0"
+		"Notifications_EventsAndAnnouncements"		"0"
+		"Sounds_PlayIngame"		"0"
+		"Sounds_PlayOnline"		"0"
+		"Sounds_PlayMessage"		"0"
+		"Sounds_EventsAndAnnouncements"		"0"
+		"ChatFlashMode"		"2"
+		"DoNotDisturb"		"1"
+		"SignIntoFriends"		"1"
+	}

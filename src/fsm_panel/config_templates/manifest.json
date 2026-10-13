@@ -1,0 +1,57 @@
+[
+  {
+    "file": "remotecache.vdf.template",
+    "method": "FgjIBEnvLtkT",
+    "factory": "0x1405eb8e0",
+    "literal_load": "0x1405eb927",
+    "constant_indices": [
+      7727
+    ],
+    "sha256": "62c024c60fd08ab27e04e565df19118968027acc9c0b7a4f84ff939752c7370d",
+    "utf8_bytes": 8
+  },
+  {
+    "file": "sharedconfig.vdf.template",
+    "method": "aeCtnZZYHoWk",
+    "factory": "0x1405ec150",
+    "literal_load": "0x1405ec197",
+    "constant_indices": [
+      7730
+    ],
+    "sha256": "5d34f9de9d87d9228d468c0314c91ea1be9176797253bd3e0b7fcde8c3823af8",
+    "utf8_bytes": 1588
+  },
+  {
+    "file": "friends-block.vdf.template",
+    "method": "MfcPtAkvdAtz",
+    "factory": "0x1405ec490",
+    "literal_load": "0x1405ec4d7",
+    "constant_indices": [
+      7732
+    ],
+    "sha256": "1282c8651d9b9563529c153e3bc54fec1ad99d519dda4527cd77da0026617809",
+    "utf8_bytes": 344
+  },
+  {
+    "file": "localconfig.vdf.template",
+    "method": "iKOUJShEcFml",
+    "factory": "0x1405ec500",
+    "literal_load": "0x1405ec547",
+    "constant_indices": [
+      7734
+    ],
+    "sha256": "73beb6443801d572a2cd09207383c7a6f4b8074cddb7874d956982a72610757a",
+    "utf8_bytes": 1592
+  },
+  {
+    "file": "serverbrowser_hist.vdf.template",
+    "method": "CnytmbLQbUnR",
+    "root": "0x140b71430",
+    "constant_indices": [
+      407
+    ],
+    "substitution": "template % str(round(time.time() - 60))",
+    "sha256": "ab016f4bf58a86f478b9baa0eb1e0d8b4b7fcb4950d0016af4e0ab81b5e59230",
+    "utf8_bytes": 70
+  }
+]

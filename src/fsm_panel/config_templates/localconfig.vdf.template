@@ -1,0 +1,69 @@
+"UserLocalConfigStore"
+{
+    "friends"
+	{
+		"Notifications_ShowIngame"		"0"
+		"Notifications_ShowOnline"		"0"
+		"Notifications_ShowMessage"		"0"
+		"Notifications_EventsAndAnnouncements"		"0"
+		"Sounds_PlayIngame"		"0"
+		"Sounds_PlayOnline"		"0"
+		"Sounds_PlayMessage"		"0"
+		"Sounds_EventsAndAnnouncements"		"0"
+		"ChatFlashMode"		"2"
+		"DoNotDisturb"		"1"
+		"SignIntoFriends"		"1"
+	}
+
+	"system"
+	{
+		"PushToTalkKey"		"0"
+		"EnableGameOverlay"		"0"
+		"EnableSCTenFootOverlayCheckNew"		"0"
+		"DisableLaunchInVR"		"1"
+		"InGameOverlayShortcutKey"		"Shift	KEY_TAB"
+		"InGameOverlayScreenshotNotification"		"0"
+		"InGameOverlayScreenshotPlaySound"		"0"
+		"InGameOverlayScreenshotSaveUncompressed"		"0"
+		"InGameOverlayShowFPSContrast"		"0"
+		"InGameOverlayShowFPSCorner"		"0"
+		"InGameOverlayScreenshotHotKey"		"KEY_NONE"
+		"NetworkingAllowShareIP"		"0"
+		"NavUrlBar"		"0"
+		"displayratesasbits"		"0"
+		"GameOverlayHomePage"		"http://www.google.com"
+	}
+	"apps"
+	{
+		"730"
+		{
+			"DisableLaunchInVR"		"1"
+			"OverlayAppEnable"		"1"
+			"UseSteamControllerConfig"		"0"
+			"SteamControllerRumble"		"-1"
+			"SteamControllerRumbleIntensity"		"320"
+		}
+	}
+	"HideSharingNotifications"		"0"
+	"News"
+	{
+		"NotifyAvailableGames"		"0"
+	}
+	"LibraryDisplaySize"		"0"
+	"LibraryLowBandwidthMode"		"1"
+	"LibraryLowPerfMode"		"1"
+	"LibraryDisableCommunityContent"		"1"
+	"LibraryDisplayIconInGameList"		"1"
+	"SteamController_DisableTwoFootNotifications"		"0"
+	"DualSense_DisableUpdateNotifications"		"0"
+	"CloudManager"
+	{
+		"HintAppsToPreload"		""
+	}
+	"StartupState.Friends"		"0"
+	"nettickets"
+	{
+		"730"		""
+	}
+
+}
