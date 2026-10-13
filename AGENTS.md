@@ -1,6 +1,6 @@
 # Project operating rules
 
-Use the approved FSM_PANEL_REBUILD_PLAN.md in the parent workspace as the project charter.
+Use this repository's approved FSM_PANEL_REBUILD_PLAN.md as the project charter.
 Delegate independent work to the ten configured roles; at most three children plus coordinator.
 Use gpt-6-astra, effort max for analysis/review and xhigh for ordinary implementation.
 Keep original FSM_PANEL files immutable. Never commit credentials, real account fixtures,

@@ -73,6 +73,9 @@ uv run python -m fsm_panel --simulate --smoke-test --data-dir .\test-results\fre
 
 ## Сборка
 
+Зафиксируйте проверенные изменения в Git перед сборкой: вместе с EXE создаётся
+`dist/FSMPanelOpen-source.zip` с исходниками того же commit. Нужен чистый checkout.
+
 ```powershell
 uv run python scripts/build_desktop.py --research-build
 uv run python scripts/verify_desktop.py dist/FSMPanelOpen/FSMPanelOpen.exe --output test-results/packaged-smoke.json
