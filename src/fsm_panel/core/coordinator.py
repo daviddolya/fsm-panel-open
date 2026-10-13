@@ -73,6 +73,7 @@ class Coordinator:
         self.lease_poll_interval = lease_poll_interval
         self._semaphore = asyncio.Semaphore(max_concurrency)
         self._locks: dict[str, asyncio.Lock] = {}
+        self._lease_check_lock = asyncio.Lock()
         self._starts: dict[str, asyncio.Task[Account]] = {}
         self._sessions: set[str] = set()
         self._subscribers: list[Callable[[Event], None]] = []
@@ -355,19 +356,22 @@ class Coordinator:
 
     async def check_leases(self) -> list[Account]:
         """Fail closed on revocation/offline; call explicitly for deterministic clock tests."""
-        stopped: list[Account] = []
-        for account_id in tuple(self._sessions):
-            if self.repository.get(account_id).state not in {
-                AccountState.RUNNING,
-                AccountState.PAUSED,
-            }:
-                continue
-            if not await self._admitted(account_id):
-                account = await self.stop(account_id)
-                if account.state == AccountState.STOPPED:
-                    account = self._state(account_id, AccountState.STOPPED, "lease_lost")
-                stopped.append(account)
-        return stopped
+        # A manual check must join an ongoing monitor sweep, not skip its STOPPING
+        # accounts and report completion while revoked resources are still running.
+        async with self._lease_check_lock:
+            stopped: list[Account] = []
+            for account_id in tuple(self._sessions):
+                if self.repository.get(account_id).state not in {
+                    AccountState.RUNNING,
+                    AccountState.PAUSED,
+                }:
+                    continue
+                if not await self._admitted(account_id):
+                    account = await self.stop(account_id)
+                    if account.state == AccountState.STOPPED:
+                        account = self._state(account_id, AccountState.STOPPED, "lease_lost")
+                    stopped.append(account)
+            return stopped
 
     async def _watch_leases(self) -> None:
         while self._sessions and not self._closing:

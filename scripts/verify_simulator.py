@@ -33,24 +33,28 @@ async def exercise(clients: int, cycles: int, directory: Path) -> dict:
         accounts = [repo.add_account(f"synthetic_{number}") for number in range(clients)]
         ids = [account.id for account in accounts]
         coordinator = Coordinator(repo, game=game, lease=lease, max_concurrency=5)
-        for iteration in range(cycles):
-            # A confirmed pre-launch error is safe to retry after cleanup.
-            game.fail_next(ids[iteration % clients])
-            began = time.monotonic()
-            result = await coordinator.start_batch(ids)
-            assert all(account.state == AccountState.RUNNING for account in result)
-            assert len(game.running) == clients
-            await asyncio.gather(*(coordinator.pause(account_id) for account_id in ids))
-            await asyncio.gather(*(coordinator.resume(account_id) for account_id in ids))
-            lease.allowed = False
-            await coordinator.check_leases()
-            assert not game.running
-            assert all(account.state == AccountState.STOPPED for account in repo.list_accounts())
-            denied = await coordinator.start(ids[0])
-            assert denied.state == AccountState.BLOCKED
-            lease.allowed = True
-            timings.append(time.monotonic() - began)
-        await coordinator.close()
+        try:
+            for iteration in range(cycles):
+                # A confirmed pre-launch error is safe to retry after cleanup.
+                game.fail_next(ids[iteration % clients])
+                began = time.monotonic()
+                result = await coordinator.start_batch(ids)
+                assert all(account.state == AccountState.RUNNING for account in result)
+                assert len(game.running) == clients
+                await asyncio.gather(*(coordinator.pause(account_id) for account_id in ids))
+                await asyncio.gather(*(coordinator.resume(account_id) for account_id in ids))
+                lease.allowed = False
+                await coordinator.check_leases()
+                assert not game.running
+                assert all(
+                    account.state == AccountState.STOPPED for account in repo.list_accounts()
+                )
+                denied = await coordinator.start(ids[0])
+                assert denied.state == AccountState.BLOCKED
+                lease.allowed = True
+                timings.append(time.monotonic() - began)
+        finally:
+            await coordinator.close()
         assert game.max_launching <= 5
         assert not repo.owned_processes()
     await asyncio.sleep(0)
