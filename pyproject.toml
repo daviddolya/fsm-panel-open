@@ -1,0 +1,43 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fsm-panel-open"
+version = "0.1.0"
+description = "Evidence-driven reconstruction of FSM_PANEL"
+requires-python = ">=3.14,<3.15"
+license = "GPL-3.0-only"
+dependencies = [
+  "pyside6>=6.10,<7", "psutil>=7,<8", "pywin32>=311; sys_platform == 'win32'",
+  "fastapi>=0.118,<1", "uvicorn>=0.37,<1", "sqlalchemy>=2.0,<3",
+  "psycopg[binary]>=3.2,<4", "alembic>=1.16,<2", "cryptography>=46,<50",
+  "httpx>=0.28,<1", "pydantic>=2.11,<3",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.4,<10", "pytest-asyncio>=1.2,<2", "pytest-qt>=4.5,<5", "pytest-cov>=7,<8", "hypothesis>=6.140,<7", "ruff>=0.13,<1", "mypy>=1.18,<2", "pyinstaller>=6.16,<7"]
+
+[project.scripts]
+fsm-panel = "fsm_panel.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/fsm_panel", "src/fsm_license"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+markers = ["stand: requires the dedicated Windows/Steam test stand", "postgres: requires FSM_TEST_POSTGRES_URL"]
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP"]
+
+[tool.mypy]
+python_version = "3.14"
+ignore_missing_imports = true
+check_untyped_defs = true
+
