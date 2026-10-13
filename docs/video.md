@@ -6,6 +6,26 @@ read-only. It does not locate Steam, select an account, launch a process, instal
 the template into Steam, or wait five seconds. Caller scheduling remains separate.
 No proprietary template is included.
 
+## Operator entry points
+
+The desktop's **Видео-конфиг** tab selects a writable template copy and a read-only
+Steam config. Preview shows the resulting text and actual GPU identifiers. Apply
+is enabled only for a changed preview and becomes unavailable when inputs change.
+File work runs off the Qt thread; shutdown waits for an in-progress write.
+This is an offline preparation action available without a license or game launch.
+
+From source, the same operations are available without Qt:
+
+```powershell
+uv run python -m fsm_panel.maintenance video --template C:\work\cs2_video.txt --steam-config C:\source\cs2_video.txt
+uv run python -m fsm_panel.maintenance video --template C:\work\cs2_video.txt --steam-config C:\source\cs2_video.txt --apply
+```
+
+Commands emit JSON. Add `--policy legacy` only to request the recovered global
+replacement. Optional `--expect-template-sha256` and `--expect-source-sha256`
+bind a later apply command to hashes returned by a previous preview. An error
+returns exit code 2; failed apply also reports its retained backup, when available.
+
 ```python
 from fsm_panel.adapters.video import preview_video_template, apply_video_template
 

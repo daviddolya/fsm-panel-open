@@ -31,6 +31,7 @@ from fsm_panel.core.settings import SECRET_KEYS, SETTINGS_TYPES, SettingsDocumen
 
 from .bridge import AsyncBridge
 from .trades import TradePanel
+from .video import VideoPanel
 
 
 class MainWindow(QMainWindow):
@@ -84,6 +85,8 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.tabs)
         self._build_accounts()
         self._build_settings()
+        self.video = VideoPanel(self)
+        self.tabs.addTab(self.video, "Видео-конфиг")
         self.trades = TradePanel(self)
         self.tabs.addTab(self.trades, "Предметы и обмены")
         self._build_license()
@@ -386,7 +389,10 @@ class MainWindow(QMainWindow):
                     await self.license_runtime.close()
             finally:
                 try:
-                    await self.trades.aclose()
+                    try:
+                        await self.video.aclose()
+                    finally:
+                        await self.trades.aclose()
                 finally:
                     await self.coordinator.close()
 
