@@ -184,3 +184,34 @@ Checks minimize ordinary stale/copy races; external processes do not share the
 adapter lock. These limitations reinforce the dedicated offline-copy boundary.
 The wider call schedule, mapping population, GSI generation, and CONFIG_FILE_NAME
 initialization remain outside this recovered slice.
+
+## Desktop controls
+
+`ConfigFilesWidget` provides separate account and autoexec tabs. First create a
+new workspace or open one previously created by the adapter. Account preparation
+requires an explicit JSON settings import containing `STEAM_PATH`,
+`DISABLE_STEAM_OVERLAY` and `NO_AVAST_MODE`; missing keys are rejected rather than
+filled with presumed legacy defaults. Enter Steam ID, login, the two source
+templates, and the injected Unix timestamp. The mapped localconfig copy is
+optional. UTF-8 and unchecked force are visible new-interface choices.
+
+Settings and mapped-copy files use the public guarded `read_config_input` API:
+they must stay outside the workspace, reject link aliases, use bounded reads and
+universal newline decoding, and retain their stat/hash snapshots. Those snapshots
+are attached to the account preview for another check after staging, immediately
+before the directory replacement. Editing either file during staging therefore
+invalidates the attempt without changing the target.
+
+Preview displays the same fingerprint function used by the CLI, write/removal
+counts, and localconfig action. It does not display raw config text, settings
+secrets, or arbitrary exception strings. Every input edit invalidates stored
+previews and clears displayed fingerprints. Equal autoexec content disables
+apply and preserves both destination files. Successful apply reports the backup
+path; recovery failures retain and show backup/staging paths and rollback status.
+
+Filesystem work runs through `asyncio.to_thread`; queued Qt slots update the
+controls. Closing waits for pending file operations rather than cancelling a
+thread in the middle of a directory replacement. The standalone widget creates
+and closes its own `AsyncBridge`. A host window can instead construct
+`ConfigFilesWidget(shared_bridge)` and must `await widget.aclose()` before shutting
+down that bridge. The widget never reads host-window settings implicitly.
