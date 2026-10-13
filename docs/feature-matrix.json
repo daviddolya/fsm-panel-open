@@ -1,0 +1,679 @@
+{
+  "schema_version": 1,
+  "catalog_complete": false,
+  "original_sha256": "3731a48590e3169071b81aab9338a36b38a788133adfd43fada99ad3add1f308",
+  "features": [
+    {
+      "feature_id": "SETTING.STEAM_PATH",
+      "action": "Import/export STEAM_PATH",
+      "input_type": "str",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.CSGO_PATH",
+      "action": "Import/export CSGO_PATH",
+      "input_type": "str",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.ADDITIONAL_LAUNCH_OPTIONS",
+      "action": "Import/export ADDITIONAL_LAUNCH_OPTIONS",
+      "input_type": "str",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.DISABLE_STEAM_OVERLAY",
+      "action": "Import/export DISABLE_STEAM_OVERLAY",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.TG_BOT_API_KEY",
+      "action": "Import/export TG_BOT_API_KEY",
+      "input_type": "str",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.TG_BOT_CHAT_ID",
+      "action": "Import/export TG_BOT_CHAT_ID",
+      "input_type": "str",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.BES_REDUCTION_PERCENT",
+      "action": "Import/export BES_REDUCTION_PERCENT",
+      "input_type": "int",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.SORT_ACCOUNTS_BY_LVL",
+      "action": "Import/export SORT_ACCOUNTS_BY_LVL",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.TRADEOFFER_LINK",
+      "action": "Import/export TRADEOFFER_LINK",
+      "input_type": "str",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.AUTO_LOOT",
+      "action": "Import/export AUTO_LOOT",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.DELAY_BETWEEN_TRADES",
+      "action": "Import/export DELAY_BETWEEN_TRADES",
+      "input_type": "int",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.ITEM_PICTURES_IN_TG",
+      "action": "Import/export ITEM_PICTURES_IN_TG",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.STEAM_LAUNCH_OPTIONS",
+      "action": "Import/export STEAM_LAUNCH_OPTIONS",
+      "input_type": "str",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.REPLACE_ERROR_ACCOUNT",
+      "action": "Import/export REPLACE_ERROR_ACCOUNT",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.ACCOUNTS_LAUNCH_DELAY",
+      "action": "Import/export ACCOUNTS_LAUNCH_DELAY",
+      "input_type": "int",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.AUTODISCONNECTS_DELAY",
+      "action": "Import/export AUTODISCONNECTS_DELAY",
+      "input_type": "int",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.AUTODISCONNECTS",
+      "action": "Import/export AUTODISCONNECTS",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.AVASTSANDBOX_FOLDER",
+      "action": "Import/export AVASTSANDBOX_FOLDER",
+      "input_type": "str",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.ANTI_AFK",
+      "action": "Import/export ANTI_AFK",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.ANTI_AFK_DELAY",
+      "action": "Import/export ANTI_AFK_DELAY",
+      "input_type": "int",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.ANTI_AFK_MINIMIZE",
+      "action": "Import/export ANTI_AFK_MINIMIZE",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.DISABLE_CS2_BACKGROUND",
+      "action": "Import/export DISABLE_CS2_BACKGROUND",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.CS_RESOLUTION",
+      "action": "Import/export CS_RESOLUTION",
+      "input_type": "str",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.MAP_LOAD_DELAY",
+      "action": "Import/export MAP_LOAD_DELAY",
+      "input_type": "int",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.AUTODISCONNECTS_CHANGE_TEAMS_DELAY",
+      "action": "Import/export AUTODISCONNECTS_CHANGE_TEAMS_DELAY",
+      "input_type": "int",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.ANTI_AFK_POWER",
+      "action": "Import/export ANTI_AFK_POWER",
+      "input_type": "int",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.PANEL_POSITION",
+      "action": "Import/export PANEL_POSITION",
+      "input_type": "str",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.KILL_MONITOR_POSITION",
+      "action": "Import/export KILL_MONITOR_POSITION",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.ALTERNATIVE_AUTOACCEPTER",
+      "action": "Import/export ALTERNATIVE_AUTOACCEPTER",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.ENABLE_AUTOACCEPT",
+      "action": "Import/export ENABLE_AUTOACCEPT",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.START_FARM_WHEN_LAUNCHED",
+      "action": "Import/export START_FARM_WHEN_LAUNCHED",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.LOBBY_CREATION_ATTEMPTS_BEFORE_SHUFFLE",
+      "action": "Import/export LOBBY_CREATION_ATTEMPTS_BEFORE_SHUFFLE",
+      "input_type": "int",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.SEARCH_RETRIES_BEFORE_SHUFFLE",
+      "action": "Import/export SEARCH_RETRIES_BEFORE_SHUFFLE",
+      "input_type": "int",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.GAME_SEARCH_TIMEOUT",
+      "action": "Import/export GAME_SEARCH_TIMEOUT",
+      "input_type": "int",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.CHANGE_BATCH_AFTER_N_MINUTES",
+      "action": "Import/export CHANGE_BATCH_AFTER_N_MINUTES",
+      "input_type": "int",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.GUI_SCALING",
+      "action": "Import/export GUI_SCALING",
+      "input_type": "str",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.STATS_SKIN_PRICE",
+      "action": "Import/export STATS_SKIN_PRICE",
+      "input_type": "float",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.LOBBY_INVITE_MODE",
+      "action": "Import/export LOBBY_INVITE_MODE",
+      "input_type": "int",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.FARMING_MODE",
+      "action": "Import/export FARMING_MODE",
+      "input_type": "int",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.RUNNING2VS2",
+      "action": "Import/export RUNNING2VS2",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.DROP_HISTORY_CACHE",
+      "action": "Import/export DROP_HISTORY_CACHE",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.ROUND_TARGET",
+      "action": "Import/export ROUND_TARGET",
+      "input_type": "int",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.ACCOUNTS_SORT_MODE",
+      "action": "Import/export ACCOUNTS_SORT_MODE",
+      "input_type": "int",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.ACCOUNT_LOGIN_ATTEMPTS",
+      "action": "Import/export ACCOUNT_LOGIN_ATTEMPTS",
+      "input_type": "int",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.CS2_AUTOUPDATER_ENABLED",
+      "action": "Import/export CS2_AUTOUPDATER_ENABLED",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.ANCIENT_MAP_PRELOAD",
+      "action": "Import/export ANCIENT_MAP_PRELOAD",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.AUTOSHUFFLE_AFTER_GAME",
+      "action": "Import/export AUTOSHUFFLE_AFTER_GAME",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.NO_AVAST_MODE",
+      "action": "Import/export NO_AVAST_MODE",
+      "input_type": "bool",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "SETTING.AUTOACCEPT_READ_TIME",
+      "action": "Import/export AUTOACCEPT_READ_TIME",
+      "input_type": "int",
+      "evidence": "settings/settings.json (key/type only)",
+      "confidence": "observed-schema",
+      "original_consumer": "unknown",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "TRADE.LOGIN",
+      "action": "Steam login and TOTP",
+      "evidence": "looter_core.js:34-50",
+      "confidence": "observed-source",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "TRADE.INVENTORY",
+      "action": "Parallel tradable inventories; tolerate partial failures",
+      "evidence": "looter_core.js:59-95",
+      "confidence": "observed-source",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "TRADE.SEND",
+      "action": "One outgoing offer from successful inventories",
+      "evidence": "looter_core.js:97-108",
+      "confidence": "observed-source",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "TRADE.CONFIRM",
+      "action": "Confirm pending offer",
+      "evidence": "looter_core.js:100-108",
+      "confidence": "observed-source",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "CPU.BES",
+      "action": "CPU limiter process",
+      "evidence": "BES/src/hack.cpp",
+      "confidence": "observed-source",
+      "implementation": "pending",
+      "runtime_parity": "not_verified",
+      "tests": []
+    },
+    {
+      "feature_id": "GUI.ALL",
+      "evidence": "Not yet recovered from Panel.exe",
+      "confidence": "unknown",
+      "implementation": "blocked_specification",
+      "runtime_parity": "blocked_original_license",
+      "tests": []
+    },
+    {
+      "feature_id": "GAME.LAUNCH",
+      "evidence": "Not yet recovered from Panel.exe",
+      "confidence": "unknown",
+      "implementation": "blocked_specification",
+      "runtime_parity": "blocked_original_license",
+      "tests": []
+    },
+    {
+      "feature_id": "GAME.SANDBOX",
+      "evidence": "Not yet recovered from Panel.exe",
+      "confidence": "unknown",
+      "implementation": "blocked_specification",
+      "runtime_parity": "blocked_original_license",
+      "tests": []
+    },
+    {
+      "feature_id": "GAME.LOBBY",
+      "evidence": "Not yet recovered from Panel.exe",
+      "confidence": "unknown",
+      "implementation": "blocked_specification",
+      "runtime_parity": "blocked_original_license",
+      "tests": []
+    },
+    {
+      "feature_id": "GAME.SEARCH",
+      "evidence": "Not yet recovered from Panel.exe",
+      "confidence": "unknown",
+      "implementation": "blocked_specification",
+      "runtime_parity": "blocked_original_license",
+      "tests": []
+    },
+    {
+      "feature_id": "GAME.AUTOACCEPT",
+      "evidence": "Not yet recovered from Panel.exe",
+      "confidence": "unknown",
+      "implementation": "blocked_specification",
+      "runtime_parity": "blocked_original_license",
+      "tests": []
+    },
+    {
+      "feature_id": "GAME.ANTIAFK",
+      "evidence": "Not yet recovered from Panel.exe",
+      "confidence": "unknown",
+      "implementation": "blocked_specification",
+      "runtime_parity": "blocked_original_license",
+      "tests": []
+    },
+    {
+      "feature_id": "GAME.RECONNECT",
+      "evidence": "Not yet recovered from Panel.exe",
+      "confidence": "unknown",
+      "implementation": "blocked_specification",
+      "runtime_parity": "blocked_original_license",
+      "tests": []
+    },
+    {
+      "feature_id": "GAME.BATCHES",
+      "evidence": "Not yet recovered from Panel.exe",
+      "confidence": "unknown",
+      "implementation": "blocked_specification",
+      "runtime_parity": "blocked_original_license",
+      "tests": []
+    },
+    {
+      "feature_id": "DROP.STATISTICS",
+      "evidence": "Not yet recovered from Panel.exe",
+      "confidence": "unknown",
+      "implementation": "blocked_specification",
+      "runtime_parity": "blocked_original_license",
+      "tests": []
+    },
+    {
+      "feature_id": "LEGACY.LICENSE",
+      "evidence": "Not yet recovered from Panel.exe",
+      "confidence": "unknown",
+      "implementation": "blocked_specification",
+      "runtime_parity": "blocked_original_license",
+      "tests": []
+    }
+  ]
+}

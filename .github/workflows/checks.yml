@@ -1,0 +1,38 @@
+name: Checks
+on: [push, pull_request]
+jobs:
+  python:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen --group dev
+      - run: uv run ruff check src tests scripts
+      - run: uv run mypy src
+      - run: uv run pytest -m "not stand and not postgres" --junitxml=test-results/python.xml
+        env:
+          QT_QPA_PLATFORM: offscreen
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: python-test-results
+          path: test-results/
+  postgres:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: fsm_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen --group dev
+      - run: uv run pytest tests/licensing -m postgres
+        env:
+          FSM_TEST_POSTGRES_URL: postgresql+psycopg://postgres:ci-only-password@localhost:5432/fsm_test
