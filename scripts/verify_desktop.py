@@ -52,11 +52,9 @@ def verify(executable: Path, output: Path) -> None:
             process.kill()
             process.communicate()
             raise RuntimeError("packaged_smoke_timeout") from None
-        if process.returncode or not report.is_file():
+        if not report.is_file():
             raise RuntimeError("packaged_smoke_failed")
         result = json.loads(report.read_text(encoding="utf-8"))
-        if result.get("passed") is not True:
-            raise RuntimeError("packaged_smoke_failed")
         result.update(
             {
                 "developer_runtime_paths": "removed",
@@ -68,6 +66,8 @@ def verify(executable: Path, output: Path) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result))
+    if process.returncode or result.get("passed") is not True:
+        raise RuntimeError("packaged_smoke_failed")
 
 
 if __name__ == "__main__":
