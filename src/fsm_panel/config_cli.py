@@ -6,6 +6,7 @@ import json
 from collections.abc import Sequence
 from dataclasses import fields, is_dataclass
 from pathlib import Path
+from typing import Never
 
 from fsm_panel.adapters.account_config import (
     AccountConfigPreview,
@@ -13,10 +14,13 @@ from fsm_panel.adapters.account_config import (
     ConfigApplyError,
     ConfigError,
     ConfigStalePreviewError,
+    ConfigWorkspace,
+    SourceSnapshot,
     apply_account_config,
     create_config_workspace,
     open_config_workspace,
     preview_account_config,
+    read_config_input,
 )
 from fsm_panel.adapters.autoexec import AutoexecPreview, apply_autoexec, preview_autoexec
 from fsm_panel.core import SettingsStore
@@ -59,16 +63,24 @@ def preview_fingerprint(value: object) -> str:
     return digest.hexdigest()
 
 
-def _input(path: Path) -> bytes:
-    with path.open("rb") as source:
-        raw = source.read(MAX_INPUT_BYTES + 1)
-    if len(raw) > MAX_INPUT_BYTES:
+def _input(
+    path: Path, workspace: ConfigWorkspace, encoding: str = "utf-8-sig"
+) -> tuple[str, SourceSnapshot]:
+    text, snapshot = read_config_input(path, workspace, encoding)
+    if snapshot.state.size > MAX_INPUT_BYTES:
         raise ConfigError("config_cli_input_too_large")
-    return raw
+    return text, snapshot
+
+
+class _Parser(argparse.ArgumentParser):
+    def error(self, message: str) -> Never:
+        # argparse normally echoes malformed values, which may contain a pasted
+        # secret. Keep diagnostics stable, including subparser conversion errors.
+        raise ConfigError("config_invalid_arguments")
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = _Parser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     create = commands.add_parser("workspace", help="Create a new isolated workspace")
     create.add_argument("path", type=Path)
@@ -89,9 +101,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         command.add_argument("--encoding", default="utf-8")
         command.add_argument("--apply", action="store_true")
         command.add_argument("--expect-fingerprint", help="Digest from the reviewed preview")
-    args = parser.parse_args(argv)
     result: dict[str, object]
     try:
+        args = parser.parse_args(argv)
         if args.command == "workspace":
             create_config_workspace(args.path)
             result = {"operation": "workspace_created", "isolated_copy_only": True}
@@ -100,14 +112,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             input_snapshots = []
             preview: AccountConfigPreview | AutoexecPreview
             if args.command == "account":
-                settings_raw = _input(args.settings)
-                settings = SettingsStore.loads(settings_raw)
-                input_snapshots.append((args.settings, settings_raw))
+                settings_text, settings_snapshot = _input(args.settings, workspace)
+                settings = SettingsStore.loads(settings_text)
+                input_snapshots.append((args.settings, "utf-8-sig", settings_snapshot))
                 mapped = None
                 if args.localconfig_copy:
-                    raw = _input(args.localconfig_copy)
-                    mapped = raw.decode(args.encoding)
-                    input_snapshots.append((args.localconfig_copy, raw))
+                    mapped, local_snapshot = _input(args.localconfig_copy, workspace, args.encoding)
+                    input_snapshots.append((args.localconfig_copy, args.encoding, local_snapshot))
                 preview = preview_account_config(
                     workspace,
                     AccountConfigSettings(
@@ -133,7 +144,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     encoding=args.encoding,
                 )
                 changed = preview.plan.changed
-            fingerprint = preview_fingerprint(preview)
+            fingerprint = preview_fingerprint((preview, input_snapshots))
             if args.expect_fingerprint is not None and args.expect_fingerprint != fingerprint:
                 raise ConfigStalePreviewError()
             result = {
@@ -146,8 +157,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "removals": len(preview.transaction.removals),
             }
             if args.apply:
-                for path, raw in input_snapshots:
-                    if _input(path) != raw:
+                for path, encoding, snapshot in input_snapshots:
+                    if _input(path, workspace, encoding)[1] != snapshot:
                         raise ConfigStalePreviewError()
                 applied = (
                     apply_account_config(preview)

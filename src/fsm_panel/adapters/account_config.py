@@ -404,7 +404,7 @@ def _check_workspace(workspace: ConfigWorkspace) -> None:
     try:
         raw, _ = _read_file(marker)
         value = json.loads(raw)
-    except OSError, ValueError:
+    except OSError, ValueError, RecursionError:
         raise ConfigError("config_workspace_marker_required") from None
     if value != {"version": 1, "purpose": "offline-config-copy", "token": workspace.token}:
         raise ConfigError("config_workspace_marker_invalid")
@@ -445,7 +445,7 @@ def open_config_workspace(root: str | Path) -> ConfigWorkspace:
     try:
         raw, _ = _read_file(marker)
         token = json.loads(raw)["token"]
-    except OSError, ValueError, KeyError, TypeError:
+    except OSError, ValueError, KeyError, TypeError, RecursionError:
         raise ConfigError("config_workspace_marker_required") from None
     if (
         type(token) is not str
@@ -541,6 +541,9 @@ class _Source:
     sha256: str
 
 
+SourceSnapshot = _Source
+
+
 @dataclass(frozen=True)
 class _Entry:
     relative_path: str = field(repr=False)
@@ -591,6 +594,18 @@ def _source(path: Path, workspace: ConfigWorkspace, encoding: str) -> tuple[str,
         raise ConfigError("config_source_destination_overlap")
     raw, state = _read_file(path)
     return _decode(raw, encoding), _Source(path, state, hashlib.sha256(raw).hexdigest())
+
+
+def read_config_input(
+    path: str | Path, workspace: ConfigWorkspace, encoding: str = "utf-8"
+) -> tuple[str, SourceSnapshot]:
+    """Read an auxiliary input with the same copy boundary as game templates.
+
+    The returned snapshot tracks raw bytes and identity even when newline
+    normalization produces identical text. Re-read and compare it before apply.
+    """
+    _check_workspace(workspace)
+    return _source(_absolute(path), workspace, encoding)
 
 
 @dataclass(frozen=True)
