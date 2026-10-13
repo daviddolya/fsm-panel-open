@@ -50,8 +50,12 @@ def aware(value: datetime) -> datetime:
 def create_app(
     settings: Settings, database: Database | None = None, *, clock: Callable = utcnow
 ) -> FastAPI:
+    class LicenseAPI(FastAPI):
+        def openapi(self):
+            return documented_openapi()
+
     db = database or Database(settings.database_url)
-    app = FastAPI(title="FSM License Service", version="1.0.0")
+    app = LicenseAPI(title="FSM License Service", version="1.0.0")
     app.state.database = db
 
     def documented_openapi():
@@ -100,8 +104,6 @@ def create_app(
                         ]
             app.openapi_schema = schema
         return app.openapi_schema
-
-    app.openapi = documented_openapi
 
     @app.middleware("http")
     async def private_responses(request: Request, call_next):
@@ -197,6 +199,8 @@ def create_app(
             select(Entitlement).where(Entitlement.id == entitlement_id).with_for_update()
         )
         activation = session.get(Activation, str(activation_id), populate_existing=True)
+        if item is None or activation is None:
+            raise HTTPException(404, "activation not found")
         return item, activation
 
     def lease_view(item: Entitlement, activation: Activation, now: datetime, nonce: str):
@@ -268,9 +272,9 @@ def create_app(
                 .on_conflict_do_nothing(index_elements=["external_id"])
                 .returning(Entitlement.id)
             )
-            item = session.scalar(
+            item = session.execute(
                 select(Entitlement).where(Entitlement.external_id == external_id).with_for_update()
-            )
+            ).scalar_one()
             if created:
                 return view(session, item, key=key, changed=True)
             if payload.revision < item.revision:

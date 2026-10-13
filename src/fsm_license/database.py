@@ -51,9 +51,11 @@ class ProofNonce(Base):
 
 class Database:
     def __init__(self, url: str | None = None, *, engine: Engine | None = None) -> None:
-        if engine is None and url is None:
-            raise ValueError("database URL or engine is required")
-        self.engine = engine if engine is not None else create_engine(url, pool_pre_ping=True)
+        if engine is None:
+            if url is None:
+                raise ValueError("database URL or engine is required")
+            engine = create_engine(url, pool_pre_ping=True)
+        self.engine = engine
         self.sessions = sessionmaker(self.engine, expire_on_commit=False)
 
     def dispose(self) -> None:

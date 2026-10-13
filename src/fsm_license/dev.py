@@ -23,6 +23,8 @@ def main() -> None:
     args = parser.parse_args()
     if bool(args.database_url) == bool(args.sqlite):
         parser.error("select exactly one of --database-url or --sqlite")
+    if args.sqlite is not None:
+        args.sqlite.parent.mkdir(parents=True, exist_ok=True)
     url = args.database_url or "sqlite+pysqlite:///" + args.sqlite.resolve().as_posix()
     root = Path(__file__).resolve().parents[2]
     config = Config(str(root / "alembic.ini"))
