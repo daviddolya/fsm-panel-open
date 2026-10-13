@@ -134,6 +134,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     machine_source=args.machine_source,
                     now=args.timestamp,
                     encoding=args.encoding,
+                    auxiliary_sources=tuple(snapshot for _, _, snapshot in input_snapshots),
                 )
                 changed = True  # Legacy writer rewrites even equal account configs.
             else:

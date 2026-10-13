@@ -608,6 +608,16 @@ def read_config_input(
     return _source(_absolute(path), workspace, encoding)
 
 
+def _verify_auxiliary(workspace: ConfigWorkspace, snapshots: tuple[SourceSnapshot, ...]) -> None:
+    for snapshot in snapshots:
+        _check_path(snapshot.path)
+        if snapshot.path.resolve().is_relative_to(workspace.root.resolve()):
+            raise ConfigError("config_source_destination_overlap")
+        raw, state = _read_file(snapshot.path)
+        if state != snapshot.state or hashlib.sha256(raw).hexdigest() != snapshot.sha256:
+            raise ConfigStalePreviewError()
+
+
 @dataclass(frozen=True)
 class _Transaction:
     workspace: ConfigWorkspace
@@ -629,6 +639,7 @@ class AccountConfigPreview:
     plan: AccountConfigPlan
     sources: tuple[_Source, ...] = field(repr=False)
     transaction: _Transaction = field(repr=False)
+    auxiliary_sources: tuple[SourceSnapshot, ...] = field(default=(), repr=False)
 
     @property
     def target_path(self) -> Path:
@@ -651,9 +662,11 @@ def preview_account_config(
     machine_source: str | Path,
     now: int | float,
     encoding: str = "utf-8",
+    auxiliary_sources: tuple[SourceSnapshot, ...] = (),
 ) -> AccountConfigPreview:
     """Read explicit source files and the isolated account tree; write nothing."""
     _check_workspace(workspace)
+    _verify_auxiliary(workspace, auxiliary_sources)
     uid = str(userdata_id(steam_id))
     _validate_filename(uid)
     relative = "steam/userdata/" + uid
@@ -703,6 +716,7 @@ def preview_account_config(
         plan,
         (video_state, machine_state),
         transaction,
+        auxiliary_sources,
     )
 
 
@@ -716,6 +730,7 @@ def _verify_account(preview: AccountConfigPreview) -> None:
             machine_source=preview.machine_source,
             now=preview.now,
             encoding=preview.encoding,
+            auxiliary_sources=preview.auxiliary_sources,
         )
     except ConfigError, OSError, ValueError:
         raise ConfigStalePreviewError() from None
