@@ -80,4 +80,5 @@ jobs:
           name: FSMPanelOpen-research-windows
           path: |
             dist/FSMPanelOpen/
+            dist/FSMPanelOpen-source.zip
             test-results/packaged-smoke.json

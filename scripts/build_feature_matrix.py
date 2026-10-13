@@ -139,14 +139,14 @@ def main() -> None:
         (
             "TRADE.SELECTED",
             "Selected assets, comments, refresh token, proxy and grouped offers",
-            "implementation_in_progress",
+            "worker_implemented_stand_pending",
             "Embedded script SHA256 d010c676ce33adaee529a79fafc9501fd2ca39c3ca0794e90680ff7cb681302c",
             ["worker/tests", "tests/trading"],
         ),
         (
             "STEAM.ACTIVITY",
             "Free app entitlement request and bounded games-played session",
-            "implementation_in_progress",
+            "worker_implemented_stand_pending",
             "Embedded script SHA256 3349e3c1232551beb4f90f1849c39f289c84e014df0e0cbce07e948f70964f8c",
             ["worker/tests", "tests/trading"],
         ),

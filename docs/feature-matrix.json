@@ -1495,7 +1495,7 @@
       "action": "Selected assets, comments, refresh token, proxy and grouped offers",
       "evidence": "Embedded script SHA256 d010c676ce33adaee529a79fafc9501fd2ca39c3ca0794e90680ff7cb681302c",
       "confidence": "static_contract",
-      "implementation": "implementation_in_progress",
+      "implementation": "worker_implemented_stand_pending",
       "runtime_parity": "not_verified",
       "tests": [
         "worker/tests",
@@ -1513,7 +1513,7 @@
       "action": "Free app entitlement request and bounded games-played session",
       "evidence": "Embedded script SHA256 3349e3c1232551beb4f90f1849c39f289c84e014df0e0cbce07e948f70964f8c",
       "confidence": "static_contract",
-      "implementation": "implementation_in_progress",
+      "implementation": "worker_implemented_stand_pending",
       "runtime_parity": "not_verified",
       "tests": [
         "worker/tests",
