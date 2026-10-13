@@ -51,6 +51,8 @@ available and idempotent. The listener binds only the literal IPv4 address `127.
 A bind conflict raises `RuntimeError("gsi_bind_failed")`; there is no fallback address.
 Closing stops reception but retains memory snapshots until unregistration or receiver disposal.
 The server does not install process signal handlers or trust forwarding headers.
+Cancellation of `close()` is propagated only after bounded shutdown finishes. Repeated cancellation
+cannot detach cleanup: the server retains ownership until transports close and request tasks finish.
 
 ## Registry and snapshots
 

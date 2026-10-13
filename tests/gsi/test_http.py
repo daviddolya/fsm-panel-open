@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import json
 import logging
 import signal
@@ -179,3 +180,58 @@ async def test_ambiguous_content_length_is_rejected(receiver):
         )
     assert response.status_code == 400
     assert response.json() == {"error": "invalid_content_length"}
+
+
+async def test_repeatedly_cancelled_close_joins_owned_connections_before_returning(receiver):
+    server = await GsiServer(receiver, body_timeout=3).start()
+    port = server.port
+    owned_server, owned_serve_task = server._server, server._task
+    reader, writer = await asyncio.open_connection("127.0.0.1", port)
+    encoded = json.dumps(body(round=17)).encode()
+    try:
+        writer.write(
+            f"POST / HTTP/1.1\r\nHost: localhost\r\nContent-Length: {len(encoded)}\r\n\r\n".encode()
+            + encoded[:1]
+        )
+        await writer.drain()
+        async with asyncio.timeout(2):
+            while not owned_server.server_state.tasks:
+                await asyncio.sleep(0)
+        owned_requests = tuple(owned_server.server_state.tasks)
+        closing = asyncio.create_task(server.close())
+        await asyncio.sleep(0)
+        # Keep cancelling throughout graceful shutdown and final cleanup, rather
+        # than only sending multiple cancellations at the first await point.
+        async with asyncio.timeout(6):
+            while not closing.done():
+                closing.cancel()
+                await asyncio.sleep(0.01)
+        with pytest.raises(asyncio.CancelledError):
+            await closing
+        await asyncio.wait_for(server.close(), timeout=1)
+
+        with contextlib.suppress(ConnectionError, OSError):
+            writer.write(encoded[1:])
+            await writer.drain()
+        with contextlib.suppress(ConnectionError, OSError):
+            await asyncio.wait_for(reader.read(), timeout=1)
+        assert receiver.snapshot("synthetic-account") is None
+        assert owned_serve_task.done()
+        assert all(task.done() for task in owned_requests)
+        assert not owned_server.server_state.connections
+        assert not owned_server.server_state.tasks
+        with socket.socket() as probe:
+            probe.settimeout(0.5)
+            assert probe.connect_ex(("127.0.0.1", port)) != 0
+        # Shutdown also leaves the same object safe to start again.
+        async with server:
+            async with httpx.AsyncClient(trust_env=False) as connection:
+                assert (await connection.post(server.url, json=body(round=18))).status_code == 200
+        assert receiver.snapshot("synthetic-account").payload["round"] == 18
+    finally:
+        writer.close()
+        with contextlib.suppress(ConnectionError, OSError):
+            await writer.wait_closed()
+        await server.close()
+        # Keep failed pre-fix runs from leaving a live connection behind.
+        await owned_server.shutdown()

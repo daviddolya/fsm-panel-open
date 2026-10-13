@@ -158,22 +158,54 @@ class GsiServer:
             return self
 
     async def _close(self) -> None:
+        # Keep the lock and all ownership references until cleanup completes. A
+        # caller cancelling close must not cancel uvicorn's serve coroutine: its
+        # normal shutdown is not protected by a finally block.
+        cleanup = asyncio.create_task(self._shutdown_owned())
+        cancelled = False
+        while not cleanup.done():
+            try:
+                await asyncio.shield(cleanup)
+            except asyncio.CancelledError:
+                cancelled = True
+        cleanup.result()
+        if cancelled:
+            raise asyncio.CancelledError
+
+    async def _shutdown_owned(self) -> None:
         task, server, listener = self._task, self._server, self._socket
-        self._task = self._server = self._socket = None
         try:
             if task is not None:
                 if server is not None:
                     server.should_exit = True
                 try:
-                    async with asyncio.timeout(5):
+                    async with asyncio.timeout(3):
                         await asyncio.shield(task)
-                except BaseException:
-                    task.cancel()
-                    await asyncio.gather(task, return_exceptions=True)
-                    raise
+                except Exception, asyncio.CancelledError:
+                    # Failed/cancelled serving also needs the transport cleanup
+                    # below. No upstream exception text leaves this boundary.
+                    pass
         finally:
+            transports = tuple(getattr(server, "servers", ()))
+            for transport in transports:
+                transport.close()
+                transport.abort_clients()
             if listener is not None:
                 listener.close()
+            requests = tuple(server.server_state.tasks) if server is not None else ()
+            owned_tasks = (*requests, task) if task is not None else requests
+            for owned_task in owned_tasks:
+                if not owned_task.done():
+                    owned_task.cancel()
+            try:
+                async with asyncio.timeout(2):
+                    await asyncio.gather(*owned_tasks, return_exceptions=True)
+                    await asyncio.gather(*(transport.wait_closed() for transport in transports))
+            except TimeoutError:
+                # Keep ownership so a later close can retry rather than forgetting
+                # unfinished cleanup. All transports have already been aborted.
+                raise RuntimeError("gsi_shutdown_failed") from None
+        self._task = self._server = self._socket = None
 
     async def close(self) -> None:
         async with self._lifecycle_lock:
