@@ -2,11 +2,11 @@ import asyncio
 from types import SimpleNamespace
 
 import pytest
+
 from fsm_panel.adapters.fakes import FakeGame
+from fsm_panel.application import LicenseAdmission, LicenseRuntime
 from fsm_panel.core import AccountRepository, Coordinator
 from fsm_panel.licensing import LicenseUnavailable
-
-from fsm_panel.application import LicenseAdmission, LicenseRuntime
 
 
 class Gate:
