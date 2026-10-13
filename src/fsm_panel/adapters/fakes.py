@@ -5,6 +5,8 @@ import heapq
 import itertools
 from collections import defaultdict
 
+import psutil
+
 from fsm_panel.core.clock import RealClock as RealClock
 from fsm_panel.core.contracts import Clock
 from fsm_panel.core.models import Account, Admission, StateConflict, TransientError
@@ -48,8 +50,9 @@ class FakeClock:
 class FakeLease:
     """Simulator-only lease admission; revocation/expiry can be changed during a test."""
 
-    def __init__(self, allowed: bool = True, *, clock: Clock | None = None,
-                 valid_until: float | None = None) -> None:
+    def __init__(
+        self, allowed: bool = True, *, clock: Clock | None = None, valid_until: float | None = None
+    ) -> None:
         self.allowed = allowed
         self.clock = clock or RealClock()
         self.valid_until = valid_until
@@ -132,3 +135,71 @@ class MemorySecretStore:
 
     def __repr__(self) -> str:
         return f"MemorySecretStore(entries={len(self._values)}, simulator_only=True)"
+
+
+class FakeProcess:
+    """Synthetic process handle for OwnedProcessController; never starts a process."""
+
+    def __init__(
+        self, pid: int, create_time: float, executable: str, *, hung: bool = False
+    ) -> None:
+        self.pid = pid
+        self.birth = create_time
+        self.executable = executable
+        self.hung = hung
+        self.alive = True
+        self.terminated = False
+        self.killed = False
+        self.descendants: list[FakeProcess] = []
+
+    def create_time(self) -> float:
+        return self.birth
+
+    def exe(self) -> str:
+        return self.executable
+
+    def children(self, recursive: bool = False) -> list[FakeProcess]:
+        return [child for child in self.descendants if child.alive]
+
+    def terminate(self) -> None:
+        self.terminated = True
+        if not self.hung:
+            self.alive = False
+
+    def kill(self) -> None:
+        self.killed = True
+        self.alive = False
+
+    def wait(self, timeout: float | None = None) -> int:
+        if self.alive:
+            raise psutil.TimeoutExpired(timeout or 0, self.pid)
+        return 0
+
+
+class FakeProcessBackend:
+    def __init__(self) -> None:
+        self.processes: dict[int, FakeProcess] = {}
+        self.spawn_options: list[dict[str, object]] = []
+        self._next_pid = 1000
+        self._birth = 100.0
+
+    def spawn(self, argv: list[str], **kwargs: object) -> FakeProcess:
+        self._next_pid += 1
+        self._birth += 1.0
+        process = FakeProcess(self._next_pid, self._birth, argv[0])
+        self.processes[process.pid] = process
+        self.spawn_options.append(kwargs)
+        return process
+
+    def lookup(self, pid: int) -> FakeProcess:
+        process = self.processes.get(pid)
+        if process is None or not process.alive:
+            raise psutil.NoSuchProcess(pid)
+        return process
+
+    def reuse_pid(self, pid: int) -> FakeProcess:
+        previous = self.processes[pid]
+        self._birth += 1.0
+        replacement = FakeProcess(pid, self._birth, previous.executable)
+        self.processes[pid] = replacement
+        return replacement

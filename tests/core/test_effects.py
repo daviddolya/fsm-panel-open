@@ -6,6 +6,7 @@ from fsm_panel.core import (
     EffectState,
     ExternalEffectsLedger,
     StateConflict,
+    ValidationError,
 )
 
 
@@ -65,3 +66,17 @@ def test_explicit_unknown_can_only_be_reconciled():
         with pytest.raises(StateConflict):
             ledger.succeed(effect.id)
         assert ledger.reconcile(effect.id, succeeded=False).state == EffectState.FAILED_CONFIRMED
+
+
+def test_invalid_effect_intents_do_not_reach_ledger():
+    with AccountRepository() as repo:
+        account = repo.add_account("synthetic")
+        with pytest.raises(ValidationError):
+            repo.reserve_effect(account.id, "trade", "")
+        with pytest.raises(KeyError):
+            repo.get_effect("synthetic_missing")
+        assert repo.list_effects() == []
+        effect = repo.reserve_effect(account.id, "trade", "synthetic")
+        with pytest.raises(StateConflict, match="invalid_effect_transition"):
+            repo.transition_effect(effect.id, EffectState.PREPARED, EffectState.SUCCEEDED)
+        assert repo.list_effects() == [effect]

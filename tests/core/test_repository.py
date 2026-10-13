@@ -2,7 +2,7 @@ import concurrent.futures
 
 import pytest
 
-from fsm_panel.core import AccountRepository, AccountState, StateConflict, ValidationError
+from fsm_panel.core import Account, AccountRepository, AccountState, StateConflict, ValidationError
 
 
 def test_snapshot_and_journal_survive_reopen_atomically(tmp_path):
@@ -17,7 +17,8 @@ def test_snapshot_and_journal_survive_reopen_atomically(tmp_path):
         assert repo.get(account.id).state == AccountState.RUNNING
         assert repo.get(account.id).revision == 1
         assert [item.state for item in repo.events(account_id=account.id)] == [
-            AccountState.IDLE, AccountState.RUNNING,
+            AccountState.IDLE,
+            AccountState.RUNNING,
         ]
         assert len(repo.events(after=1)) == 1
 
@@ -71,3 +72,16 @@ def test_missing_account_and_invalid_codes_are_safe():
         with pytest.raises(ValidationError):
             repo.events(limit=0)
         assert repo.get(account.id).revision == 0
+
+
+def test_failed_public_mutations_do_not_add_partial_state():
+    with AccountRepository() as repo:
+        with pytest.raises(ValidationError, match="new_account_must_be_idle"):
+            repo.add_accounts([Account("synthetic", "synthetic", state=AccountState.RUNNING)])
+        assert not repo.list_accounts()
+        with pytest.raises(KeyError):
+            repo.update_state("synthetic_missing", AccountState.RUNNING)
+        account = repo.add_account("synthetic")
+        with pytest.raises(ValidationError):
+            repo.record_retry(account.id, True)
+        assert len(repo.events()) == 1

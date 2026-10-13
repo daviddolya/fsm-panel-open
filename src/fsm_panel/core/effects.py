@@ -34,7 +34,8 @@ class ExternalEffectsLedger:
     def reconcile(self, effect_id: str, *, succeeded: bool) -> Effect:
         """Use only after an authoritative external status check; never resubmits."""
         return self.repository.transition_effect(
-            effect_id, EffectState.UNKNOWN,
+            effect_id,
+            EffectState.UNKNOWN,
             EffectState.SUCCEEDED if succeeded else EffectState.FAILED_CONFIRMED,
         )
 

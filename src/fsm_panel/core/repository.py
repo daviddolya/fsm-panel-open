@@ -10,6 +10,7 @@ from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 
+from .migrations import initialize_schema
 from .models import (
     Account,
     AccountState,
@@ -60,10 +61,9 @@ class AccountRepository:
         self._lock = threading.RLock()
         self._connection = sqlite3.connect(self.path, check_same_thread=False, timeout=10)
         self._connection.row_factory = sqlite3.Row
-        self._connection.execute("PRAGMA foreign_keys=ON")
-        self._connection.execute("PRAGMA journal_mode=WAL")
-        self._connection.execute("PRAGMA synchronous=FULL")
-        self._connection.executescript(
+        initialize_schema(
+            self._connection,
+            self.path,
             """
             CREATE TABLE IF NOT EXISTS accounts (
                 id TEXT PRIMARY KEY,
@@ -102,7 +102,7 @@ class AccountRepository:
                 executable TEXT NOT NULL
             );
             PRAGMA user_version=1;
-            """
+            """,
         )
 
     @contextmanager
@@ -123,33 +123,50 @@ class AccountRepository:
     @staticmethod
     def _account(row: sqlite3.Row) -> Account:
         return Account(
-            id=row["id"], login=row["login"], display_name=row["display_name"],
-            state=AccountState(row["state"]), secret_ref=row["secret_ref"],
-            error_code=row["error_code"], revision=row["revision"],
+            id=row["id"],
+            login=row["login"],
+            display_name=row["display_name"],
+            state=AccountState(row["state"]),
+            secret_ref=row["secret_ref"],
+            error_code=row["error_code"],
+            revision=row["revision"],
         )
 
     @staticmethod
     def _event(row: sqlite3.Row) -> Event:
         return Event(
-            sequence=row["sequence"], account_id=row["account_id"], kind=row["kind"],
-            state=AccountState(row["state"]), code=row["code"],
-            created_at=row["created_at"], data=tuple(json.loads(row["data"]).items()),
+            sequence=row["sequence"],
+            account_id=row["account_id"],
+            kind=row["kind"],
+            state=AccountState(row["state"]),
+            code=row["code"],
+            created_at=row["created_at"],
+            data=tuple(json.loads(row["data"]).items()),
         )
 
     @staticmethod
     def _effect(row: sqlite3.Row) -> Effect:
         return Effect(
-            id=row["id"], account_id=row["account_id"], kind=row["kind"],
-            idempotency_key=row["idempotency_key"], state=EffectState(row["state"]),
-            created_at=row["created_at"], updated_at=row["updated_at"],
+            id=row["id"],
+            account_id=row["account_id"],
+            kind=row["kind"],
+            idempotency_key=row["idempotency_key"],
+            state=EffectState(row["state"]),
+            created_at=row["created_at"],
+            updated_at=row["updated_at"],
         )
 
     def add_account(
-        self, login: str, display_name: str = "", *, secret_ref: str | None = None,
+        self,
+        login: str,
+        display_name: str = "",
+        *,
+        secret_ref: str | None = None,
         account_id: str | None = None,
     ) -> Account:
-        account = Account(account_id or str(uuid.uuid4()), login, display_name,
-                          secret_ref=secret_ref)
+        account = Account(
+            account_id or str(uuid.uuid4()), login, display_name, secret_ref=secret_ref
+        )
         self.add_accounts([account])
         return account
 
@@ -164,8 +181,16 @@ class AccountRepository:
                 for account in accounts:
                     db.execute(
                         "INSERT INTO accounts VALUES (?,?,?,?,?,?,?,?)",
-                        (account.id, account.login, account.login.casefold(), account.display_name,
-                         account.state.value, account.secret_ref, None, 0),
+                        (
+                            account.id,
+                            account.login,
+                            account.login.casefold(),
+                            account.display_name,
+                            account.state.value,
+                            account.secret_ref,
+                            None,
+                            0,
+                        ),
                     )
                     db.execute(
                         "INSERT INTO events(account_id,kind,state,created_at) VALUES (?,?,?,?)",
@@ -190,7 +215,11 @@ class AccountRepository:
         return [self._account(row) for row in rows]
 
     def update_state(
-        self, account_id: str, state: AccountState, *, code: str | None = None,
+        self,
+        account_id: str,
+        state: AccountState,
+        *,
+        code: str | None = None,
         expected_revision: int | None = None,
     ) -> Event:
         """Atomically update the snapshot and append its event; optional optimistic check."""
@@ -222,27 +251,36 @@ class AccountRepository:
             account = self.get(account_id)
             cursor = db.execute(
                 "INSERT INTO events(account_id,kind,state,code,created_at,data) VALUES (?,?,?,?,?,?)",
-                (account_id, "launch_retry", account.state.value, "transient_launch_failure",
-                 utc_now(), json.dumps({"attempt": attempt})),
+                (
+                    account_id,
+                    "launch_retry",
+                    account.state.value,
+                    "transient_launch_failure",
+                    utc_now(),
+                    json.dumps({"attempt": attempt}),
+                ),
             )
             row = db.execute(
                 "SELECT * FROM events WHERE sequence=?", (cursor.lastrowid,)
             ).fetchone()
         return self._event(row)
 
-    def events(self, *, after: int = 0, account_id: str | None = None,
-               limit: int = 1000) -> list[Event]:
+    def events(
+        self, *, after: int = 0, account_id: str | None = None, limit: int = 1000
+    ) -> list[Event]:
         if not 1 <= limit <= 10000:
             raise ValidationError("invalid_event_limit")
         with self._lock:
             if account_id is None:
                 rows = self._connection.execute(
-                    "SELECT * FROM events WHERE sequence>? ORDER BY sequence LIMIT ?", (after, limit)
+                    "SELECT * FROM events WHERE sequence>? ORDER BY sequence LIMIT ?",
+                    (after, limit),
                 ).fetchall()
             else:
                 rows = self._connection.execute(
                     "SELECT * FROM events WHERE sequence>? AND account_id=? "
-                    "ORDER BY sequence LIMIT ?", (after, account_id, limit)
+                    "ORDER BY sequence LIMIT ?",
+                    (after, account_id, limit),
                 ).fetchall()
         return [self._event(row) for row in rows]
 
@@ -256,8 +294,15 @@ class AccountRepository:
             with self._transaction() as db:
                 db.execute(
                     "INSERT INTO effects VALUES (?,?,?,?,?,?,?)",
-                    (effect_id, account_id, kind, idempotency_key, EffectState.PREPARED,
-                     timestamp, timestamp),
+                    (
+                        effect_id,
+                        account_id,
+                        kind,
+                        idempotency_key,
+                        EffectState.PREPARED,
+                        timestamp,
+                        timestamp,
+                    ),
                 )
         except sqlite3.IntegrityError:
             raise DuplicateEffect("effect_already_reserved") from None
@@ -277,11 +322,15 @@ class AccountRepository:
             rows = self._connection.execute("SELECT * FROM effects ORDER BY rowid").fetchall()
         return [self._effect(row) for row in rows]
 
-    def transition_effect(self, effect_id: str, expected: EffectState, state: EffectState) -> Effect:
+    def transition_effect(
+        self, effect_id: str, expected: EffectState, state: EffectState
+    ) -> Effect:
         allowed = {
             EffectState.PREPARED: {EffectState.IN_FLIGHT, EffectState.UNKNOWN},
             EffectState.IN_FLIGHT: {
-                EffectState.SUCCEEDED, EffectState.FAILED_CONFIRMED, EffectState.UNKNOWN,
+                EffectState.SUCCEEDED,
+                EffectState.FAILED_CONFIRMED,
+                EffectState.UNKNOWN,
             },
             EffectState.UNKNOWN: {EffectState.SUCCEEDED, EffectState.FAILED_CONFIRMED},
         }
@@ -301,16 +350,23 @@ class AccountRepository:
         with self._transaction() as db:
             result = db.execute(
                 "UPDATE effects SET state=?,updated_at=? WHERE state IN (?,?)",
-                (EffectState.UNKNOWN.value, utc_now(), EffectState.PREPARED.value,
-                 EffectState.IN_FLIGHT.value),
+                (
+                    EffectState.UNKNOWN.value,
+                    utc_now(),
+                    EffectState.PREPARED.value,
+                    EffectState.IN_FLIGHT.value,
+                ),
             )
         return result.rowcount
 
-    def remember_process(self, token: str, account_id: str, pid: int,
-                         create_time: float, executable: str) -> None:
+    def remember_process(
+        self, token: str, account_id: str, pid: int, create_time: float, executable: str
+    ) -> None:
         with self._transaction() as db:
-            db.execute("INSERT INTO owned_processes VALUES (?,?,?,?,?)",
-                       (token, account_id, pid, create_time, executable))
+            db.execute(
+                "INSERT INTO owned_processes VALUES (?,?,?,?,?)",
+                (token, account_id, pid, create_time, executable),
+            )
 
     def owned_processes(self, account_id: str | None = None) -> list[dict[str, object]]:
         with self._lock:

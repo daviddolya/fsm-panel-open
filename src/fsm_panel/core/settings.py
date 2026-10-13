@@ -80,8 +80,10 @@ def _is_sensitive(key: str) -> bool:
 
 def _redact(value: Any) -> Any:
     if isinstance(value, dict):
-        return {key: "[redacted]" if _is_sensitive(key) else _redact(item)
-                for key, item in value.items()}
+        return {
+            key: "[redacted]" if _is_sensitive(key) else _redact(item)
+            for key, item in value.items()
+        }
     if isinstance(value, list):
         return [_redact(item) for item in value]
     return copy.deepcopy(value)
@@ -90,6 +92,8 @@ def _redact(value: Any) -> Any:
 def _validate_json(value: Any, depth: int = 0) -> None:
     if depth > 40:
         raise ValidationError("settings_nested_too_deep")
+    if type(value) is str and any(0xD800 <= ord(char) <= 0xDFFF for char in value):
+        raise ValidationError("invalid_json_string")
     if value is None or type(value) in (str, bool, int):
         return
     if type(value) is float and math.isfinite(value):
@@ -106,6 +110,8 @@ def _validate_json(value: Any, depth: int = 0) -> None:
 
 
 def _validate(values: dict[str, Any]) -> None:
+    if type(values) is not dict:
+        raise ValidationError("settings_root_must_be_object")
     _validate_json(values)
     for key, value in values.items():
         expected = SETTINGS_TYPES.get(key)
@@ -127,10 +133,12 @@ def _decode(raw: bytes) -> dict[str, Any]:
     if len(raw) > MAX_SETTINGS_BYTES:
         raise ValidationError("settings_file_too_large")
     try:
-        values = json.loads(raw.decode("utf-8-sig"), object_pairs_hook=_object_pairs,
-                            parse_constant=lambda _: (_ for _ in ()).throw(
-                                ValidationError("invalid_json_number")))
-    except (ValueError, UnicodeError, RecursionError):
+        values = json.loads(
+            raw.decode("utf-8-sig"),
+            object_pairs_hook=_object_pairs,
+            parse_constant=lambda _: (_ for _ in ()).throw(ValidationError("invalid_json_number")),
+        )
+    except ValueError, UnicodeError, RecursionError:
         raise ValidationError("invalid_settings_json") from None
     if type(values) is not dict:
         raise ValidationError("settings_root_must_be_object")
@@ -141,7 +149,9 @@ def _decode(raw: bytes) -> dict[str, Any]:
 def atomic_write(path: Path, content: bytes) -> None:
     """Same-directory replace keeps the old file intact if a write fails."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    descriptor, temporary = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
+    descriptor, temporary = tempfile.mkstemp(
+        prefix=f".{path.name}.", suffix=".tmp", dir=path.parent
+    )
     temporary_path = Path(temporary)
     try:
         with os.fdopen(descriptor, "wb") as handle:
@@ -191,8 +201,9 @@ class SettingsStore:
     def defaults() -> SettingsDocument:
         """New application defaults; every unattended legacy action starts disabled."""
         values = {key: expected() for key, expected in SETTINGS_TYPES.items()}
-        values.update({"ACCOUNT_LOGIN_ATTEMPTS": 1, "GUI_SCALING": "100%",
-                       "CS_RESOLUTION": "640x480"})
+        values.update(
+            {"ACCOUNT_LOGIN_ATTEMPTS": 1, "GUI_SCALING": "100%", "CS_RESOLUTION": "640x480"}
+        )
         return SettingsDocument(values)
 
     @staticmethod
@@ -214,8 +225,9 @@ class SettingsStore:
         values = document.to_dict(include_secrets=True)
         _validate(values)
         try:
-            raw = (json.dumps(values, ensure_ascii=False, indent=2, allow_nan=False)
-                   + "\n").encode("utf-8")
+            raw = (json.dumps(values, ensure_ascii=False, indent=2, allow_nan=False) + "\n").encode(
+                "utf-8"
+            )
             if len(raw) > MAX_SETTINGS_BYTES:
                 raise ValidationError("settings_file_too_large")
             target = Path(path)

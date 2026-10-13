@@ -42,8 +42,14 @@ class WindowsWindowLookup:
                 try:
                     _, owner = win32process.GetWindowThreadProcessId(handle)
                     if owner == pid:
-                        result.append(WindowInfo(handle, owner, win32gui.GetWindowText(handle),
-                                                 bool(win32gui.IsWindowVisible(handle))))
+                        result.append(
+                            WindowInfo(
+                                handle,
+                                owner,
+                                win32gui.GetWindowText(handle),
+                                bool(win32gui.IsWindowVisible(handle)),
+                            )
+                        )
                 except Exception:
                     # Window may close between enumeration and lookup.
                     return

@@ -85,7 +85,9 @@ async def test_cancel_during_launch_cleans_and_does_not_retry(repo):
     result = await coordinator.cancel(account.id)
     assert result.state == AccountState.STOPPED
     assert result.error_code == "cancelled"
-    assert isinstance((await asyncio.gather(launch, return_exceptions=True))[0], asyncio.CancelledError)
+    assert isinstance(
+        (await asyncio.gather(launch, return_exceptions=True))[0], asyncio.CancelledError
+    )
     assert not game.running and game.launching == 0
     assert game.launch_attempts[account.id] == 1
     await coordinator.close()
@@ -95,8 +97,9 @@ async def test_retry_only_confirmed_transient_failure_and_cancel_backoff(repo):
     account = repo.add_account("synthetic")
     clock, game = FakeClock(), FakeGame(launch_delay=0)
     game.fail_next(account.id)
-    coordinator = Coordinator(repo, game=game, lease=FakeLease(), clock=clock,
-                              retry=RetryPolicy(delay=10))
+    coordinator = Coordinator(
+        repo, game=game, lease=FakeLease(), clock=clock, retry=RetryPolicy(delay=10)
+    )
     launch = asyncio.create_task(coordinator.start(account.id))
     await spin_until(lambda: clock.pending_sleeps == 1)
     assert game.launch_attempts[account.id] == 1
@@ -107,8 +110,9 @@ async def test_retry_only_confirmed_transient_failure_and_cancel_backoff(repo):
     await coordinator.stop(account.id)
     game.fail_next(account.id)
     launch = asyncio.create_task(coordinator.start(account.id))
-    await spin_until(lambda: any(event.kind == "launch_retry" and event.sequence > 7
-                               for event in repo.events()))
+    await spin_until(
+        lambda: any(event.kind == "launch_retry" and event.sequence > 7 for event in repo.events())
+    )
     await coordinator.cancel(account.id)
     await asyncio.gather(launch, return_exceptions=True)
     assert not game.running
@@ -186,8 +190,9 @@ async def test_expired_or_broken_lease_stops_running_sessions(repo):
 async def test_launch_timeout_has_no_retry_and_observer_cannot_break_cleanup(repo):
     account = repo.add_account("synthetic")
     game = FakeGame(launch_delay=1)
-    coordinator = Coordinator(repo, game=game, lease=FakeLease(),
-                              retry=RetryPolicy(launch_timeout=0.01))
+    coordinator = Coordinator(
+        repo, game=game, lease=FakeLease(), retry=RetryPolicy(launch_timeout=0.01)
+    )
     coordinator.subscribe(lambda event: (_ for _ in ()).throw(ValueError("observer")))
     assert (await coordinator.start(account.id)).state == AccountState.FAILED
     assert game.launch_attempts[account.id] == 1
@@ -202,8 +207,13 @@ def test_invalid_concurrency_is_rejected(repo, concurrency):
         Coordinator(repo, max_concurrency=concurrency)
 
 
-@given(st.lists(st.sampled_from(["start", "pause", "resume", "stop", "revoke", "grant"]),
-                min_size=1, max_size=35))
+@given(
+    st.lists(
+        st.sampled_from(["start", "pause", "resume", "stop", "revoke", "grant"]),
+        min_size=1,
+        max_size=35,
+    )
+)
 @settings(max_examples=35, deadline=None)
 def test_generated_command_sequences_preserve_session_invariants(commands):
     async def scenario():
@@ -225,4 +235,5 @@ def test_generated_command_sequences_preserve_session_invariants(commands):
                 assert repo.events(account_id=account.id)[-1].state == snapshot.state
             await coordinator.close()
             assert not game.running
+
     asyncio.run(scenario())

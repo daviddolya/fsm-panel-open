@@ -6,15 +6,24 @@ from hypothesis import strategies as st
 
 from fsm_panel.core import SETTINGS_TYPES, SettingsDocument, SettingsStore, ValidationError
 
-json_scalars = st.none() | st.booleans() | st.integers() | st.floats(
-    allow_nan=False, allow_infinity=False
-) | st.text(alphabet=st.characters(blacklist_categories=("Cs",)))
+json_scalars = (
+    st.none()
+    | st.booleans()
+    | st.integers()
+    | st.floats(allow_nan=False, allow_infinity=False)
+    | st.text(alphabet=st.characters(blacklist_categories=("Cs",)))
+)
 json_values = st.recursive(
     json_scalars,
-    lambda children: st.lists(children, max_size=5) | st.dictionaries(
-        st.text(alphabet=st.characters(blacklist_categories=("Cs",)), max_size=15),
-        children, max_size=5,
-    ), max_leaves=15,
+    lambda children: (
+        st.lists(children, max_size=5)
+        | st.dictionaries(
+            st.text(alphabet=st.characters(blacklist_categories=("Cs",)), max_size=15),
+            children,
+            max_size=5,
+        )
+    ),
+    max_leaves=15,
 )
 
 
@@ -46,11 +55,21 @@ def test_unknown_json_values_roundtrip_without_coercion(value):
     assert type(decoded) is type(value)
 
 
-@pytest.mark.parametrize("content", [
-    "{", "[]", '{"ANTI_AFK":1}', '{"ACCOUNT_LOGIN_ATTEMPTS":true}',
-    '{"STATS_SKIN_PRICE":1}', '{"future": NaN}', '{"x":1,"x":2}',
-    '{"x":{"same":1,"same":2}}', b"\xff", '{"STEAM_PATH":null}',
-])
+@pytest.mark.parametrize(
+    "content",
+    [
+        "{",
+        "[]",
+        '{"ANTI_AFK":1}',
+        '{"ACCOUNT_LOGIN_ATTEMPTS":true}',
+        '{"STATS_SKIN_PRICE":1}',
+        '{"future": NaN}',
+        '{"x":1,"x":2}',
+        '{"x":{"same":1,"same":2}}',
+        b"\xff",
+        '{"STEAM_PATH":null}',
+    ],
+)
 def test_corrupt_or_type_changed_json_rejected(content):
     with pytest.raises(ValidationError):
         SettingsStore.loads(content)
@@ -83,8 +102,12 @@ def test_failed_replace_preserves_original_and_removes_temporary(tmp_path, monke
 
 
 def test_redaction_is_recursive_and_get_returns_copy():
-    doc = SettingsDocument({"future": {"password": "synthetic", "items": [1]},
-                            "TG_BOT_CHAT_ID": "synthetic_private_id"})
+    doc = SettingsDocument(
+        {
+            "future": {"password": "synthetic", "items": [1]},
+            "TG_BOT_CHAT_ID": "synthetic_private_id",
+        }
+    )
     assert doc.redacted()["future"]["password"] == "[redacted]"
     doc.get("future")["items"].append(2)
     assert doc.get("future")["items"] == [1]
@@ -102,3 +125,19 @@ def test_missing_large_and_deep_settings_fail_safely(tmp_path):
         nested = {"x": nested}
     with pytest.raises(ValidationError):
         SettingsDocument(nested)
+
+
+@pytest.mark.parametrize("value", [{"future": "\ud800"}, {"future": object()}, []])
+def test_nonserializable_settings_fail_before_writing(value, tmp_path):
+    with pytest.raises(ValidationError):
+        SettingsDocument(value).save(tmp_path / "settings.json")
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_oversize_document_cannot_overwrite_valid_file(tmp_path):
+    path = tmp_path / "settings.json"
+    SettingsDocument({"ANTI_AFK": False}).save(path)
+    previous = path.read_bytes()
+    with pytest.raises(ValidationError, match="settings_file_too_large"):
+        SettingsDocument({"future": "a" * (2 * 1024 * 1024 + 1)}).save(path)
+    assert path.read_bytes() == previous

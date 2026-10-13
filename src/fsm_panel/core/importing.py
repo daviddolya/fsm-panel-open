@@ -38,15 +38,22 @@ def _parse(text: str, format: str) -> list[_Credential]:
     elif format == "csv":
         try:
             reader = csv.DictReader(io.StringIO(text), strict=True)
-            if reader.fieldnames is None or set(reader.fieldnames) not in (
-                {"login", "password"}, {"login", "password", "display_name"},
-            ) or len(set(reader.fieldnames)) != len(reader.fieldnames):
+            if (
+                reader.fieldnames is None
+                or set(reader.fieldnames)
+                not in (
+                    {"login", "password"},
+                    {"login", "password", "display_name"},
+                )
+                or len(set(reader.fieldnames)) != len(reader.fieldnames)
+            ):
                 raise ValidationError("invalid_account_csv_headers")
             for line_number, row in enumerate(reader, 2):
                 if None in row or any(value is None for value in row.values()):
                     raise ValidationError(f"invalid_account_line:{line_number}")
-                credentials.append(_Credential(row["login"], row["password"],
-                                               row.get("display_name", "")))
+                credentials.append(
+                    _Credential(row["login"], row["password"], row.get("display_name", ""))
+                )
         except csv.Error:
             raise ValidationError("invalid_account_csv") from None
     else:
@@ -56,7 +63,11 @@ def _parse(text: str, format: str) -> list[_Credential]:
     seen: set[str] = set()
     for index, credential in enumerate(credentials, 1):
         _validate_account(Account(str(index), credential.login, credential.display_name))
-        if not credential.password or len(credential.password) > 4096 or "\x00" in credential.password:
+        if (
+            not credential.password
+            or len(credential.password) > 4096
+            or "\x00" in credential.password
+        ):
             raise ValidationError(f"invalid_account_password:{index}")
         if credential.login.casefold() in seen:
             raise ValidationError(f"duplicate_account_line:{index}")
@@ -65,7 +76,11 @@ def _parse(text: str, format: str) -> list[_Credential]:
 
 
 def import_accounts(
-    text: str, repository: AccountRepository, secrets: SecretStore, *, format: str = "lines",
+    text: str,
+    repository: AccountRepository,
+    secrets: SecretStore,
+    *,
+    format: str = "lines",
 ) -> ImportResult:
     """Validate the complete import, protect passwords, then commit metadata atomically.
 
@@ -86,8 +101,9 @@ def import_accounts(
             # Register before put so rollback also handles a store that writes then raises.
             protected.append(reference)
             secrets.put(reference, credential.password.encode("utf-8"))
-            accounts.append(Account(account_id, credential.login, credential.display_name,
-                                    secret_ref=reference))
+            accounts.append(
+                Account(account_id, credential.login, credential.display_name, secret_ref=reference)
+            )
         repository.add_accounts(accounts)
     except Exception:
         cleanup_failed = False
