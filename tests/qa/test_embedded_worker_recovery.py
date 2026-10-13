@@ -4,6 +4,7 @@ import json
 import shutil
 import sqlite3
 import time
+from contextlib import closing
 from pathlib import Path
 
 import pytest
@@ -50,7 +51,7 @@ async def _wait_activity_state(path, operation_id, expected):
     async with asyncio.timeout(3):
         while True:
             if path.exists():
-                with sqlite3.connect(path) as connection:
+                with closing(sqlite3.connect(path)) as connection:
                     table = connection.execute(
                         "SELECT name FROM sqlite_master WHERE type='table' AND name='activities'"
                     ).fetchone()

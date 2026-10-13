@@ -8,7 +8,9 @@ belong to the coordinator or the Steam integration owner.
 The initial core/licensing review used `ec32638`; fixes were verified against
 `bf0456c`, `f79afc7`, and `750cf11`. The initial Steam worker review used `9c95140`;
 its fixes were verified against `0f5bf2a`, followed by the GUI scope fix `e972afa`.
-All ten reproduced findings below are resolved at this reviewed checkpoint.
+The follow-up review includes GSI `58b6b5d`, the embedded Steam extension `8dd666d`,
+packaging/smoke `e0d0e77`, and overlapping lease sweeps `286917c`. All fifteen
+reproduced findings below are resolved at these reviewed checkpoints.
 
 ## Reproduced defects
 
@@ -29,8 +31,28 @@ automation and the live Steam adapter remain unavailable or restricted to stand 
 | QA-09 | P2 | An invalid trade destination reserved a core effect before worker validation. Rejection left UNKNOWN without a worker operation or offer ID available for reconciliation. `src/fsm_panel/trading/service.py:142`, `TradeService.send`. | `test_invalid_destination_is_rejected_before_reserving_external_effect` | Fixed in `0f5bf2a`; independently passed. |
 | QA-10 | P2 | After sending for account A, reading B's inventory overwrote the account used for A's last-trade reconciliation. The GUI received `operation_conflict`. `src/fsm_panel/ui/trades.py:126`, `TradePanel._submit`. | `test_reconcile_last_trade_keeps_its_account_after_other_inventory_lookup` | Fixed in `e972afa`; independently passed through actual Qt and Node IPC in simulator mode. |
 
-Source line numbers identify the final reviewed checkpoint, not the original faulty
-version.
+The source line numbers above identify the baseline checkpoint, not the original
+faulty version.
+
+## Extension review
+
+| ID | Priority | Failure and affected boundary | Regression | Verification |
+| --- | --- | --- | --- | --- |
+| QA-11 | P2 | Cancelling GSI shutdown discarded ownership before closing active requests. An old incomplete HTTP request could still update telemetry after a second `close()` returned. `src/fsm_panel/gsi/http.py:160`, `GsiServer._close`. | `test_cancelled_close_cannot_orphan_a_connection_that_still_updates_telemetry` | Fixed in `58b6b5d`; independently passed over actual localhost HTTP. |
+| QA-12 | P2 | After activity cancellation and restart, terminal worker status left the matching core effect UNKNOWN, permanently blocking a fresh activity. `src/fsm_panel/trading/service.py:458`, `TradeService.activity_status`. | `test_authoritative_cancelled_activity_can_release_core_unknown_after_restart` | Fixed in `8dd666d`; independently passed through actual Node IPC and disk reopen, including status without a lease. |
+| QA-13 | P1 | Reusing a batch operation ID with a different asset group after restart dispatched another offer. Only child IDs were reserved; the complete batch identity was not durable. `src/fsm_panel/trading/service.py:273`, `TradeService.send_grouped`. | `test_batch_id_cannot_be_reused_to_dispatch_a_different_group_after_restart` | Fixed in `8dd666d`; independently passed through actual Node IPC and disk reopen. |
+| QA-14 | P2 | Desktop smoke recorded success before asynchronous cleanup; a real worker cleanup exception still produced a successful report and exit decision. `src/fsm_panel/ui/smoke.py:25`, `DesktopSmoke.finish`. | `test_smoke_cannot_report_success_when_owned_worker_shutdown_fails` | Fixed in `e0d0e77`; independently passed with a controlled cleanup failure after the actual Qt/Node roundtrip. |
+| QA-15 | P2 | A second lease sweep returned while the first was still cleaning a revoked live session in STOPPING. `src/fsm_panel/core/coordinator.py:357`, `Coordinator.check_leases`. | `test_concurrent_lease_sweep_waits_for_an_existing_revocation_cleanup` | Found by the coordinator's load run, reproduced independently with an event-controlled stop, and fixed in `286917c`; independently passed. |
+
+The follow-up also verifies that UNKNOWN activity status survives restart and cannot
+authorize another dispatch. Authoritative terminal activity status may settle only
+the matching account/operation effect. Existing-offer completion policy is unchanged.
+
+Packaging source review checked the frozen worker path against the staging layout,
+the bundled Node runtime and production dependency installation, the research label,
+file hashes, and smoke cleanup validation. The initial worker path mismatch was
+already scheduled for replacement and is corrected in `e0d0e77`. This source review
+does not establish that a final packaged executable has passed on a clean machine.
 
 ## Independent passing boundaries
 
@@ -80,11 +102,26 @@ For core branch coverage:
 python -m pytest tests/core tests/adapters tests/qa/test_persistence_contracts.py tests/qa/test_lifecycle_failures.py --cov=fsm_panel.core --cov-branch --cov-report=term-missing
 ```
 
-The final core coverage run against `f79afc7` and `750cf11` passed 137 tests without
-exclusions. It measured 217/240 core branches, or 90.42%, meeting the 90% target.
-The final independent QA run passed all 27 cases in 4.10 seconds, with PostgreSQL
-enabled and no skips. This includes the worker fixes and simulator trade-account
-regression. Ruff lint and format checks passed for all seven QA Python files.
+The baseline independent QA run passed all 27 cases in 4.10 seconds, with PostgreSQL
+enabled and no skips. The final extension run used:
+
+```powershell
+python -m pytest tests/qa tests/gsi -m 'not postgres' -q
+```
+
+It passed 80 cases in 12.40 seconds: 31 QA cases and 49 GSI cases. The two PostgreSQL
+QA cases were deliberately deselected to avoid running beside the coordinator's
+database suite; their previous passing result remains baseline evidence. The QA suite
+now contains 33 cases. Ruff lint and format checks passed for all ten QA Python files.
+The three embedded QA cases were rerun successfully with resource and unraisable
+exception warnings treated as errors after explicitly closing their SQLite polling
+connections. This was test-helper cleanup, not a production database defect.
+
+The final independent core coverage run after `286917c` passed 140 tests in 4.49 seconds.
+It measured 217/240 core branches, or 90.42%, meeting the 90% target. No custom coverage
+exclusions were introduced; the tool's default exclusions include protocol stubs.
+Coordinator-owned full-suite and packaging results are recorded separately in
+`docs/VERIFICATION.md` and must retain their own checkpoint and execution scope.
 
 ## Limits of this review
 
@@ -97,7 +134,8 @@ Simulator and SDK-double tests cannot prove live Steam behavior. Real CS2 proces
 control, 50 real clients, a 24-hour soak, and validation on a clean Windows machine
 remain stand gates. No claim of legacy parity or release readiness follows from this report.
 
-The later GSI receiver and additional embedded Steam features are outside this
-reviewed checkpoint. Their integration and regression validation require a subsequent
-review. Parent-owned Windows process start/stop tests are separate evidence; they
-do not replace live CS2 validation.
+The follow-up covers the standalone GSI receiver and embedded Steam source/API
+extensions at the named checkpoints. It does not claim that these features are wired
+to production GUI game actions. The Windows process tests use disposable Python
+children; they do not replace live CS2 validation. Frozen build execution and release
+gates retain the separately documented validation scope.
