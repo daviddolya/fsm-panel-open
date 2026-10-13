@@ -43,7 +43,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
       - run: uv sync --frozen --group dev
-      - run: uv run pytest tests/licensing/test_postgres.py tests/qa/test_license_failure_boundaries.py -m postgres
+      # Server tests need no Qt; prevent pytest-qt from importing desktop EGL on Linux.
+      - run: uv run pytest -p no:pytest-qt tests/licensing/test_postgres.py tests/qa/test_license_failure_boundaries.py -m postgres
         env:
           FSM_TEST_POSTGRES_URL: postgresql+psycopg://postgres:ci-only-password@localhost:5432/fsm_test
   worker:
