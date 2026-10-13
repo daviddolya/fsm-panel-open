@@ -90,6 +90,23 @@ async def test_unknown_offer_without_id_cannot_be_confirmed_or_inferred_absent(t
             ).state == TradeState.UNKNOWN_OUTCOME
 
 
+async def test_invalid_destination_is_rejected_before_reserving_external_effect(tmp_path):
+    async def admission(account_id):
+        return int(time.time() * 1000) + 30_000
+
+    with AccountRepository() as repository:
+        account = repository.add_account("synthetic_invalid_destination")
+        async with worker(tmp_path) as client:
+            service = TradeService(repository, client, admission)
+            with pytest.raises(TradeError):
+                await service.send(
+                    account.id, "invalid-intent", "https://example.invalid/", CREDENTIALS
+                )
+            # No effect was possible: local input validation must not strand the
+            # account in UNKNOWN with no worker operation available to reconcile.
+            assert not repository.list_effects()
+
+
 @pytest.mark.parametrize("kind", ["foreign", "missing_primary_key"])
 async def test_worker_rejects_unrecognized_or_constraint_damaged_journal(tmp_path, kind):
     with closing(sqlite3.connect(tmp_path / "worker.sqlite")) as connection:
