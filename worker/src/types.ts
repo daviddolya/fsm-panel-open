@@ -41,6 +41,7 @@ const codes = new Set([
   "partial_inventory", "auth_failed", "interactive_auth_required", "cookies_failed",
   "transport_lost", "rate_limited", "send_unknown", "confirmation_unknown", "status_unavailable",
   "live_stand_required", "internal_error", "journal_error", "recovered_after_restart",
+  "unresolved_operation",
 ]);
 export function safeCode(error: unknown, fallback = "internal_error"): string {
   return error instanceof WorkerError && codes.has(error.code) ? error.code : fallback;

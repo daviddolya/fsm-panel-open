@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "license": "GPL-3.0-only",
+  "files": ["dist", "audit", "pnpm-lock.yaml", "pnpm-workspace.yaml"],
   "engines": {"node": ">=24.19.0 <25"},
   "packageManager": "pnpm@11.25.0",
   "scripts": {

@@ -4,6 +4,7 @@ import asyncio
 import time
 from collections.abc import Awaitable, Callable, Sequence
 from typing import Any
+from urllib.parse import parse_qs, urlsplit
 
 from fsm_panel.core import AccountRepository, EffectState, ExternalEffectsLedger
 
@@ -15,6 +16,9 @@ from .models import (
     TradeError,
     TradeResult,
     TradeState,
+    WorkerRejected,
+    valid_decimal,
+    valid_id,
 )
 
 # Returns a wall-clock deadline in milliseconds, derived from verified online admission.
@@ -23,11 +27,61 @@ AdmissionProvider = Callable[[str], Awaitable[int]]
 
 
 class TradeService:
-    def __init__(self, repository: AccountRepository, worker: WorkerClient,
-                 admission: AdmissionProvider | None = None) -> None:
+    def __init__(
+        self,
+        repository: AccountRepository,
+        worker: WorkerClient,
+        admission: AdmissionProvider | None = None,
+    ) -> None:
         self.repository, self.worker, self.admission = repository, worker, admission
         self.ledger = ExternalEffectsLedger(repository)
         self._lock = asyncio.Lock()
+
+    @staticmethod
+    def _validate(
+        account_id: str,
+        credentials: SteamCredentials,
+        inventories: Sequence[InventorySpec],
+        timeout_ms: int,
+        operation_id: str | None = None,
+        trade_url: str | None = None,
+        allow_partial: bool = True,
+    ) -> None:
+        if (
+            not valid_id(account_id)
+            or not isinstance(credentials, SteamCredentials)
+            or type(timeout_ms) is not int
+            or not 10 <= timeout_ms <= 300_000
+            or not isinstance(inventories, Sequence)
+            or not 1 <= len(inventories) <= 20
+            or any(not isinstance(spec, InventorySpec) for spec in inventories)
+            or type(allow_partial) is not bool
+        ):
+            raise TradeError("invalid_request")
+        if operation_id is None:
+            return
+        if not valid_id(operation_id) or not isinstance(trade_url, str) or len(trade_url) > 2048:
+            raise TradeError("invalid_request")
+        try:
+            url = urlsplit(trade_url)
+            query = parse_qs(url.query, keep_blank_values=True)
+            if (
+                any(ord(char) < 32 for char in trade_url)
+                or url.scheme != "https"
+                or url.hostname != "steamcommunity.com"
+                or url.port not in {None, 443}
+                or url.username
+                or url.password
+                or url.fragment
+                or url.path != "/tradeoffer/new/"
+                or set(query) - {"partner", "token"}
+                or len(query.get("partner", [])) != 1
+                or not valid_decimal(query["partner"][0])
+                or len(query.get("token", [])) > 1
+            ):
+                raise ValueError
+        except ValueError:
+            raise TradeError("invalid_request") from None
 
     async def _admit(self, account_id: str) -> int:
         self.repository.get(account_id)
@@ -42,10 +96,12 @@ class TradeService:
             raise TradeError("admission_expired")
         return deadline
 
-    async def _new_work(self, method: str, params: dict[str, Any], timeout_ms: int,
-                        deadline: int) -> dict[str, Any]:
-        task = asyncio.create_task(self.worker.request(
-            method, params, timeout_ms=timeout_ms, admitted_until_ms=deadline))
+    async def _new_work(
+        self, method: str, params: dict[str, Any], timeout_ms: int, deadline: int
+    ) -> dict[str, Any]:
+        task = asyncio.create_task(
+            self.worker.request(method, params, timeout_ms=timeout_ms, admitted_until_ms=deadline)
+        )
         try:
             while not task.done():
                 done, _ = await asyncio.wait({task}, timeout=0.25)
@@ -57,37 +113,97 @@ class TradeService:
                 task.cancel()
                 try:
                     await task
-                except (asyncio.CancelledError, TradeError):
+                except asyncio.CancelledError, TradeError:
                     pass
 
-    async def inventory(self, account_id: str, credentials: SteamCredentials,
-                        inventories: Sequence[InventorySpec] = (InventorySpec(),), *,
-                        timeout_ms: int = 30_000) -> InventoryResult:
+    async def inventory(
+        self,
+        account_id: str,
+        credentials: SteamCredentials,
+        inventories: Sequence[InventorySpec] = (InventorySpec(),),
+        *,
+        timeout_ms: int = 30_000,
+    ) -> InventoryResult:
         async with self._lock:
+            self._validate(account_id, credentials, inventories, timeout_ms)
             deadline = await self._admit(account_id)
-            result = await self._new_work("inventory", {
-                "account_id": account_id, "credentials": credentials.payload(),
-                "inventories": [spec.payload() for spec in inventories],
-            }, timeout_ms, deadline)
+            result = await self._new_work(
+                "inventory",
+                {
+                    "account_id": account_id,
+                    "credentials": credentials.payload(),
+                    "inventories": [spec.payload() for spec in inventories],
+                },
+                timeout_ms,
+                deadline,
+            )
             return InventoryResult.from_payload(result)
 
-    async def send(self, account_id: str, operation_id: str, trade_url: str,
-                   credentials: SteamCredentials,
-                   inventories: Sequence[InventorySpec] = (InventorySpec(),), *,
-                   allow_partial: bool = True, timeout_ms: int = 30_000) -> TradeResult:
+    async def send(
+        self,
+        account_id: str,
+        operation_id: str,
+        trade_url: str,
+        credentials: SteamCredentials,
+        inventories: Sequence[InventorySpec] = (InventorySpec(),),
+        *,
+        allow_partial: bool = True,
+        timeout_ms: int = 30_000,
+    ) -> TradeResult:
         async with self._lock:
+            self._validate(
+                account_id,
+                credentials,
+                inventories,
+                timeout_ms,
+                operation_id,
+                trade_url,
+                allow_partial,
+            )
             deadline = await self._admit(account_id)
+            for prior in self.repository.list_effects():
+                if (
+                    prior.account_id == account_id
+                    and prior.kind == "steam_trade"
+                    and prior.idempotency_key != "steam:" + operation_id
+                    and prior.state
+                    in {EffectState.UNKNOWN, EffectState.PREPARED, EffectState.IN_FLIGHT}
+                ):
+                    raise TradeError("unresolved_operation")
             # DuplicateEffect is deliberate: calling send again is never a retry path.
             effect = self.ledger.reserve(account_id, "steam_trade", "steam:" + operation_id)
             self.ledger.begin(effect.id)
             try:
-                response = await self._new_work("send", {
-                    "account_id": account_id, "operation_id": operation_id,
-                    "trade_url": trade_url, "credentials": credentials.payload(),
-                    "inventories": [spec.payload() for spec in inventories],
-                    "allow_partial": allow_partial,
-                }, timeout_ms, deadline)
+                response = await self._new_work(
+                    "send",
+                    {
+                        "account_id": account_id,
+                        "operation_id": operation_id,
+                        "trade_url": trade_url,
+                        "credentials": credentials.payload(),
+                        "inventories": [spec.payload() for spec in inventories],
+                        "allow_partial": allow_partial,
+                    },
+                    timeout_ms,
+                    deadline,
+                )
                 result = self._result(response, account_id, operation_id)
+            except TradeError as error:
+                if isinstance(error, WorkerRejected) and error.code in {
+                    "unresolved_operation",
+                    "invalid_request",
+                    "frame_too_large",
+                    "worker_busy",
+                    "admission_required",
+                    "admission_expired",
+                    "request_limit",
+                    "protocol_version",
+                }:
+                    # The worker's account-level unique guard ran before creation/dispatch.
+                    self.ledger.fail_confirmed(effect.id)
+                else:
+                    self.ledger.mark_unknown(effect.id)
+                raise
             except BaseException:
                 self.ledger.mark_unknown(effect.id)
                 raise
@@ -109,30 +225,70 @@ class TradeService:
     async def status(self, account_id: str, operation_id: str) -> TradeResult:
         async with self._lock:
             self.repository.get(account_id)
-            return self._result(await self.worker.request("status", {
-                "account_id": account_id, "operation_id": operation_id,
-            }), account_id, operation_id)
+            return self._result(
+                await self.worker.request(
+                    "status",
+                    {
+                        "account_id": account_id,
+                        "operation_id": operation_id,
+                    },
+                ),
+                account_id,
+                operation_id,
+            )
 
-    async def confirm(self, account_id: str, operation_id: str, credentials: SteamCredentials,
-                      *, timeout_ms: int = 30_000) -> TradeResult:
+    async def confirm(
+        self,
+        account_id: str,
+        operation_id: str,
+        credentials: SteamCredentials,
+        *,
+        timeout_ms: int = 30_000,
+    ) -> TradeResult:
         return await self._recovery("confirm", account_id, operation_id, credentials, timeout_ms)
 
-    async def reconcile(self, account_id: str, operation_id: str, credentials: SteamCredentials,
-                        *, timeout_ms: int = 30_000) -> TradeResult:
+    async def reconcile(
+        self,
+        account_id: str,
+        operation_id: str,
+        credentials: SteamCredentials,
+        *,
+        timeout_ms: int = 30_000,
+    ) -> TradeResult:
         return await self._recovery("reconcile", account_id, operation_id, credentials, timeout_ms)
 
-    async def _recovery(self, method: str, account_id: str, operation_id: str,
-                        credentials: SteamCredentials, timeout_ms: int) -> TradeResult:
+    async def _recovery(
+        self,
+        method: str,
+        account_id: str,
+        operation_id: str,
+        credentials: SteamCredentials,
+        timeout_ms: int,
+    ) -> TradeResult:
         async with self._lock:
             self.repository.get(account_id)
-            result = self._result(await self.worker.request(method, {
-                "account_id": account_id, "operation_id": operation_id,
-                "credentials": credentials.payload(),
-            }, timeout_ms=timeout_ms), account_id, operation_id)
+            result = self._result(
+                await self.worker.request(
+                    method,
+                    {
+                        "account_id": account_id,
+                        "operation_id": operation_id,
+                        "credentials": credentials.payload(),
+                    },
+                    timeout_ms=timeout_ms,
+                ),
+                account_id,
+                operation_id,
+            )
             if method == "reconcile" and result.state != TradeState.UNKNOWN_OUTCOME:
                 for effect in self.repository.list_effects():
-                    if (effect.idempotency_key == "steam:" + operation_id
-                            and effect.account_id == account_id and effect.state == EffectState.UNKNOWN
-                            and result.state != TradeState.NOT_SENT):
-                        self.ledger.reconcile(effect.id, succeeded=result.state != TradeState.FAILED)
+                    if (
+                        effect.idempotency_key == "steam:" + operation_id
+                        and effect.account_id == account_id
+                        and effect.state == EffectState.UNKNOWN
+                        and result.state != TradeState.NOT_SENT
+                    ):
+                        self.ledger.reconcile(
+                            effect.id, succeeded=result.state != TradeState.FAILED
+                        )
             return result

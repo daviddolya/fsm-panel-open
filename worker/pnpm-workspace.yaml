@@ -1,0 +1,5 @@
+# Reviewed scripts are informational only. Keep all other dependency hooks blocked.
+# protobufjs6 creates an unused CLI node_modules directory; both versions warn about
+# dependent semver ranges. Neither generates runtime code used by this worker.
+allowBuilds:
+  protobufjs: false

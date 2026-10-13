@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:fsm-panel:worker-request:v1",
+  "title": "Private Steam worker JSON Lines request",
+  "description": "Only stdin to an owned process. Admission is a deadline derived by the trusted Python caller from a verified lease. Runtime additionally validates Steam trade URL origin/query and checks deadline immediately before sending.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "request_id",
+    "method",
+    "timeout_ms",
+    "params"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_.:-]{1,128}$"
+    },
+    "method": {
+      "enum": [
+        "inventory",
+        "send",
+        "confirm",
+        "reconcile",
+        "status",
+        "cancel"
+      ]
+    },
+    "timeout_ms": {
+      "type": "integer",
+      "minimum": 10,
+      "maximum": 300000
+    },
+    "admission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expires_at_ms"
+      ],
+      "properties": {
+        "expires_at_ms": {
+          "type": "integer"
+        }
+      }
+    },
+    "params": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_.:-]{1,128}$"
+        },
+        "operation_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_.:-]{1,128}$"
+        },
+        "trade_url": {
+          "type": "string",
+          "maxLength": 2048,
+          "pattern": "^https://steamcommunity\\.com(?::443)?/tradeoffer/new/\\?"
+        },
+        "inventories": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "app_id",
+              "context_id"
+            ],
+            "properties": {
+              "app_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 2147483647
+              },
+              "context_id": {
+                "type": "string",
+                "pattern": "^[1-9][0-9]{0,19}$"
+              }
+            }
+          },
+          "default": [
+            {
+              "app_id": 730,
+              "context_id": "2"
+            }
+          ]
+        },
+        "credentials": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "account_name",
+            "password",
+            "shared_secret"
+          ],
+          "properties": {
+            "account_name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[^\\u0000-\\u001f]+$"
+            },
+            "password": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024,
+              "pattern": "^[^\\u0000-\\u001f]+$"
+            },
+            "shared_secret": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024,
+              "pattern": "^[^\\u0000-\\u001f]+$"
+            },
+            "identity_secret": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024,
+              "pattern": "^[^\\u0000-\\u001f]+$"
+            }
+          }
+        },
+        "allow_partial": {
+          "type": "boolean",
+          "default": true
+        },
+        "target_request_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_.:-]{1,128}$"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "method": {
+            "enum": [
+              "cancel"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "params": {
+            "required": [
+              "target_request_id"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "method": {
+            "enum": [
+              "inventory",
+              "send",
+              "confirm",
+              "reconcile",
+              "status"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "params": {
+            "required": [
+              "account_id"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "method": {
+            "enum": [
+              "send",
+              "confirm",
+              "reconcile",
+              "status"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "params": {
+            "required": [
+              "operation_id"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "method": {
+            "enum": [
+              "inventory",
+              "send",
+              "confirm",
+              "reconcile"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "params": {
+            "required": [
+              "credentials"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "method": {
+            "enum": [
+              "send"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "params": {
+            "required": [
+              "trade_url"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

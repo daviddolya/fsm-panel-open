@@ -68,6 +68,20 @@ describe("durable offer effects", () => {
       .toMatchObject({ state: "unknown_outcome", offer_id: null });
     expect(other.sendCount).toBe(0);
     expect(transport.sendCount).toBe(1);
+    expect((await restarted.handle(request("send", { operation_id: "new-intent" }))).error?.code)
+      .toBe("unresolved_operation");
+    expect(other.sendCount).toBe(0);
+  });
+  it("new operation IDs stay blocked while pending, and authoritative reconciliation releases the guard", async () => {
+    const { engine, transport } = fixture({ ...populated, send_status: "pending", reconcile_state: "sent" });
+    await engine.handle(request());
+    expect((await engine.handle(request("send", { operation_id: "new-intent" }))).error?.code)
+      .toBe("unresolved_operation");
+    expect(transport.sendCount).toBe(1);
+    expect((await engine.handle(request("reconcile"))).result).toMatchObject({ state: "sent" });
+    expect((await engine.handle(request("send", { operation_id: "new-intent" }))).result)
+      .toMatchObject({ state: "created_pending_confirmation" });
+    expect(transport.sendCount).toBe(2);
   });
   it("crash after journal send boundary recovers unknown without dispatch", async () => {
     const { journal, path } = fixture();

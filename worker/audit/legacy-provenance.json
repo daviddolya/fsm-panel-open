@@ -1,0 +1,118 @@
+{
+  "format_version": 1,
+  "observed_on": "2026-10-13",
+  "scope": "Static code audit only; original and SDK code were not executed.",
+  "legacy_source": "FSM_PANEL v.3.1.2/looter/looter_core.js",
+  "source_sha256": "b62c17b8ba98e16f60935105253fb97e4ad5c9ba8aa8269d15b19d7a3745cc0b",
+  "lock_sha256": "6d9bbb1b754c92e1f438f98d410132a5cbb45b42518daa694895b8e902dc50f0",
+  "packages": [
+    {
+      "name": "steam-user",
+      "installed_version": "4.29.2",
+      "locked_version": "4.29.2",
+      "license": "MIT",
+      "metadata_url": "https://registry.npmjs.org/steam-user/4.29.2",
+      "tarball": "https://registry.npmjs.org/steam-user/-/steam-user-4.29.2.tgz",
+      "integrity": "sha512-tclUmVzf44iOcnxs9CH/a9phyws1nhDGvhiFVYJuxC5JmIDD8ZGsYoaxKBapT23vHIlmvKSVYfDdCZeYlNH7JQ==",
+      "integrity_verified": true,
+      "compared_files": 459,
+      "different_files": [],
+      "missing_files": []
+    },
+    {
+      "name": "steamcommunity",
+      "installed_version": "3.46.1",
+      "locked_version": "3.48.8",
+      "license": "MIT",
+      "metadata_url": "https://registry.npmjs.org/steamcommunity/3.46.1",
+      "tarball": "https://registry.npmjs.org/steamcommunity/-/steamcommunity-3.46.1.tgz",
+      "integrity": "sha512-gze62L5K6TcIdrA0Rn7PNCnA9wRrQC9x79WzjiO09fvigl1fd1ZfFrT+Arje7YQsVDUVJISn4nh9FN5PjtX2iw==",
+      "integrity_verified": true,
+      "compared_files": 53,
+      "different_files": [
+        {
+          "file": "components/users.js",
+          "installed_sha256": "7a3cd6c75a3a9b97c48ccf41e4bf0c8c02a7450bc3257e476ab178be60c6b956",
+          "upstream_sha256": "3a5356623dc867929349d06343ce6159c992b9cdb81c80f2333ed81eac5af0ee"
+        }
+      ],
+      "missing_files": []
+    },
+    {
+      "name": "steam-tradeoffer-manager",
+      "installed_version": "2.10.6",
+      "locked_version": "2.12.0",
+      "license": "MIT",
+      "metadata_url": "https://registry.npmjs.org/steam-tradeoffer-manager/2.10.6",
+      "tarball": "https://registry.npmjs.org/steam-tradeoffer-manager/-/steam-tradeoffer-manager-2.10.6.tgz",
+      "integrity": "sha512-ltQz9xa2Vd47ChsWhlDVMe8fmfJX3xtYM/Li+HPx+LENzuLSErFwBGvkKLNy1nh25gidLQiWLyCq3L5tRWOP9A==",
+      "integrity_verified": true,
+      "compared_files": 35,
+      "different_files": [
+        {
+          "file": "lib/index.js",
+          "installed_sha256": "2509fda57ee362ac8d97e251e234c1560b1576f2ae973c57bbd1fd0a02316a42",
+          "upstream_sha256": "f92f52deae0069483558fd946ed2c018f5ae5e52462917f0bb710f8938b06f06"
+        }
+      ],
+      "missing_files": []
+    },
+    {
+      "name": "steam-session",
+      "installed_version": "1.7.2",
+      "locked_version": "1.9.3",
+      "license": "MIT",
+      "metadata_url": "https://registry.npmjs.org/steam-session/1.7.2",
+      "tarball": "https://registry.npmjs.org/steam-session/-/steam-session-1.7.2.tgz",
+      "integrity": "sha512-BfOhwKqrzuiX9xeZ0X9IUhd3cwsZYzfGSkk51Oah7FM7JqDCDlcMrdv/1Q+YT7pBWpPCnnrncVkxiZ5mrRToCg==",
+      "integrity_verified": true,
+      "compared_files": 103,
+      "different_files": [],
+      "missing_files": []
+    },
+    {
+      "name": "steam-totp",
+      "installed_version": "2.1.2",
+      "locked_version": "2.1.2",
+      "license": "MIT",
+      "metadata_url": "https://registry.npmjs.org/steam-totp/2.1.2",
+      "tarball": "https://registry.npmjs.org/steam-totp/-/steam-totp-2.1.2.tgz",
+      "integrity": "sha512-bTKlc/NoIUQId+my+O556s55DDsNNXfVIPWFDNVu68beql7AJhV0c+GTjFxfwCDYfdc4NkAme+0WrDdnY2D2VA==",
+      "integrity_verified": true,
+      "compared_files": 4,
+      "different_files": [],
+      "missing_files": []
+    }
+  ],
+  "observations": [
+    {
+      "lines": "7-27",
+      "behavior": "Credentials and trade URL in argv; default inventory 730/2."
+    },
+    {
+      "lines": "30-52",
+      "behavior": "SteamUser logOn with TOTP, login errors exit -1."
+    },
+    {
+      "lines": "54-96",
+      "behavior": "Every webSession starts inventory callbacks; per-inventory failures skipped."
+    },
+    {
+      "lines": "98-112",
+      "behavior": "One offer after all inventory callbacks; pending confirmation exits 1."
+    },
+    {
+      "lines": "100-117",
+      "behavior": "Sent status has no explicit shutdown; no repeated-session guard."
+    },
+    {
+      "lines": "120-125",
+      "behavior": "Raw error converted to stdout text before exit -1."
+    }
+  ],
+  "limitations": [
+    "Static findings do not establish live Steam behavior or legacy panel invocation.",
+    "Only files included in each npm archive are compared; extra installed files are not inventoried.",
+    "Registry integrity verifies download bytes against registry metadata, not publisher identity."
+  ]
+}

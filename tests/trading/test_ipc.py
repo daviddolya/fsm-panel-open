@@ -19,8 +19,12 @@ from fsm_panel.trading import (
 
 ROOT = Path(__file__).resolve().parents[2]
 NODE = shutil.which("node")
-CREDENTIALS = SteamCredentials("synthetic_account", "synthetic_password_secret",
-                               "synthetic_shared_secret", "synthetic_identity_secret")
+CREDENTIALS = SteamCredentials(
+    "synthetic_account",
+    "synthetic_password_secret",
+    "synthetic_shared_secret",
+    "synthetic_identity_secret",
+)
 URL = "https://steamcommunity.com/tradeoffer/new/?partner=123&token=synthetic"
 ASSET = {"app_id": 730, "context_id": "2", "asset_id": "1001", "amount": 1}
 
@@ -34,20 +38,31 @@ def worker(tmp_path, scenario=None, state=None):
         pytest.fail("Node 24 is required for the real Steam worker IPC test")
     fixture = tmp_path / "synthetic.json"
     fixture.write_text(json.dumps(scenario or {}), encoding="utf8")
-    return NodeWorkerClient([NODE, str(ROOT / "worker/src/main.ts"), "--state",
-                             str(state or tmp_path / "trade.sqlite"), "--scenario", str(fixture)])
+    return NodeWorkerClient(
+        [
+            NODE,
+            str(ROOT / "worker/src/main.ts"),
+            "--state",
+            str(state or tmp_path / "trade.sqlite"),
+            "--scenario",
+            str(fixture),
+        ]
+    )
 
 
 @pytest.mark.asyncio
 async def test_real_node_process_inventory_send_pending_confirm_status(tmp_path):
-    scenario = {"pages": {"730/2": [{"assets": [ASSET]}, {"assets": [ASSET]}],
-                          "440/2": [{"error": True}]}, "send_status": "pending"}
+    scenario = {
+        "pages": {"730/2": [{"assets": [ASSET]}, {"assets": [ASSET]}], "440/2": [{"error": True}]},
+        "send_status": "pending",
+    }
     with AccountRepository(tmp_path / "core.sqlite") as repo:
         account = repo.add_account("synthetic")
         async with worker(tmp_path, scenario) as client:
             service = TradeService(repo, client, admit)
-            inventory = await service.inventory(account.id, CREDENTIALS,
-                                                [InventorySpec(), InventorySpec(440)])
+            inventory = await service.inventory(
+                account.id, CREDENTIALS, [InventorySpec(), InventorySpec(440)]
+            )
             assert inventory.simulation is True
             assert len(inventory.assets) == 1
             assert inventory.failures[0].code == "inventory_failed"
@@ -73,20 +88,31 @@ async def test_lost_response_restart_never_resends_and_unknown_reconcile_stays_u
         scenario = {"pages": {"730/2": [{"assets": [ASSET]}]}, "send_error": True}
         async with worker(tmp_path, scenario, state) as client:
             service = TradeService(repo, client, admit)
-            assert (await service.send(account.id, "intent-a", URL, CREDENTIALS)).state \
-                == TradeState.UNKNOWN_OUTCOME
+            assert (
+                await service.send(account.id, "intent-a", URL, CREDENTIALS)
+            ).state == TradeState.UNKNOWN_OUTCOME
         assert repo.list_effects()[0].state == EffectState.UNKNOWN
         async with worker(tmp_path, {"pages": {"730/2": [{"assets": [ASSET]}]}}, state) as client:
             service = TradeService(repo, client, admit)
             with pytest.raises(DuplicateEffect):
                 await service.send(account.id, "intent-a", URL, CREDENTIALS)
-            assert (await service.reconcile(account.id, "intent-a", CREDENTIALS)).state \
-                == TradeState.UNKNOWN_OUTCOME
+            with pytest.raises(TradeError, match="unresolved_operation"):
+                await service.send(account.id, "brand-new-intent", URL, CREDENTIALS)
+            assert (
+                await service.reconcile(account.id, "intent-a", CREDENTIALS)
+            ).state == TradeState.UNKNOWN_OUTCOME
             # Even bypassing Python's ledger cannot resend the worker operation.
-            response = await client.request("send", {"account_id": account.id,
-                "operation_id": "intent-a", "trade_url": URL,
-                "credentials": CREDENTIALS.payload(), "inventories": [InventorySpec().payload()]},
-                admitted_until_ms=await admit(account.id))
+            response = await client.request(
+                "send",
+                {
+                    "account_id": account.id,
+                    "operation_id": "intent-a",
+                    "trade_url": URL,
+                    "credentials": CREDENTIALS.payload(),
+                    "inventories": [InventorySpec().payload()],
+                },
+                admitted_until_ms=await admit(account.id),
+            )
             assert response["state"] == "unknown_outcome"
 
 
@@ -105,6 +131,26 @@ async def test_default_admission_denies_before_worker_is_started(tmp_path):
 
 
 @pytest.mark.asyncio
+async def test_invalid_input_does_not_reserve_an_unrecoverable_effect(tmp_path):
+    with AccountRepository() as repo:
+        account = repo.add_account("synthetic")
+        async with worker(tmp_path, {"pages": {"730/2": [{"assets": [ASSET]}]}}) as client:
+            service = TradeService(repo, client, admit)
+            for url in [
+                "https://example.org/private",
+                "https://steamcommunity.com/tradeoffer/new/?partner=x",
+            ]:
+                with pytest.raises(TradeError, match="invalid_request"):
+                    await service.send(account.id, "intent-a", url, CREDENTIALS)
+            with pytest.raises(TradeError, match="invalid_request"):
+                await service.send(account.id, "intent-a", URL, CREDENTIALS, timeout_ms=True)
+            assert not repo.list_effects()
+            assert (
+                await service.send(account.id, "intent-a", URL, CREDENTIALS)
+            ).state == TradeState.SENT
+
+
+@pytest.mark.asyncio
 async def test_cancellation_after_dispatch_marks_ledger_unknown_and_is_not_repeatable(tmp_path):
     scenario = {"pages": {"730/2": [{"assets": [ASSET]}]}, "send_delay_ms": 10_000}
     with AccountRepository() as repo:
@@ -120,7 +166,9 @@ async def test_cancellation_after_dispatch_marks_ledger_unknown_and_is_not_repea
             with pytest.raises(asyncio.CancelledError):
                 await task
             assert repo.list_effects()[0].state == EffectState.UNKNOWN
-            assert (await service.status(account.id, "intent-a")).state == TradeState.UNKNOWN_OUTCOME
+            assert (
+                await service.status(account.id, "intent-a")
+            ).state == TradeState.UNKNOWN_OUTCOME
             with pytest.raises(DuplicateEffect):
                 await service.send(account.id, "intent-a", URL, CREDENTIALS)
 
@@ -145,14 +193,18 @@ async def test_lease_revocation_cancels_active_send_and_recovery_still_works(tmp
             with pytest.raises(TradeError, match="admission_required"):
                 await task
             assert repo.list_effects()[0].state == EffectState.UNKNOWN
-            assert (await service.status(account.id, "intent-a")).state == TradeState.UNKNOWN_OUTCOME
+            assert (
+                await service.status(account.id, "intent-a")
+            ).state == TradeState.UNKNOWN_OUTCOME
 
 
 @pytest.mark.asyncio
 async def test_malformed_worker_output_and_stderr_never_leak(tmp_path):
     script = tmp_path / "bad_worker.py"
-    script.write_text("import sys\nsys.stderr.write('synthetic_password_secret\\n')\n"
-                      "sys.stdin.readline()\nprint('synthetic_password_secret', flush=True)\n")
+    script.write_text(
+        "import sys\nsys.stderr.write('synthetic_password_secret\\n')\n"
+        "sys.stdin.readline()\nprint('synthetic_password_secret', flush=True)\n"
+    )
     async with NodeWorkerClient([sys.executable, str(script)]) as client:
         with pytest.raises(TradeError, match="invalid_worker_response") as caught:
             await client.request("status", {"account_id": "x", "operation_id": "x"})
@@ -166,7 +218,9 @@ async def test_hung_worker_cancel_has_bounded_cleanup_without_recursive_cancel(t
     client = NodeWorkerClient([sys.executable, str(script)])
     started = time.monotonic()
     try:
-        task = asyncio.create_task(client.request("status", {"account_id": "x", "operation_id": "x"}))
+        task = asyncio.create_task(
+            client.request("status", {"account_id": "x", "operation_id": "x"})
+        )
         await asyncio.sleep(0.1)
         task.cancel()
         for _ in range(3):

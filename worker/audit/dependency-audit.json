@@ -1,0 +1,667 @@
+{
+  "advisories": {
+    "1095141": {
+      "findings": [
+        {
+          "version": "1.0.2",
+          "paths": [
+            ".>steam-tradeoffer-manager>steamcommunity>cheerio>css-select>nth-check",
+            ".>steamcommunity>cheerio>css-select>nth-check"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1095141,
+      "title": "Inefficient Regular Expression Complexity in nth-check",
+      "module_name": "nth-check",
+      "vulnerable_versions": "<2.0.1",
+      "patched_versions": ">=2.0.1",
+      "severity": "high",
+      "cwe": "CWE-1333",
+      "github_advisory_id": "GHSA-rp65-9cf3-cjxr",
+      "url": "https://github.com/advisories/GHSA-rp65-9cf3-cjxr"
+    },
+    "1096727": {
+      "findings": [
+        {
+          "version": "2.88.2",
+          "paths": [
+            ".>steam-tradeoffer-manager>steamcommunity>request",
+            ".>steamcommunity>request"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1096727,
+      "title": "Server-Side Request Forgery in Request",
+      "module_name": "request",
+      "vulnerable_versions": "<=2.88.2",
+      "patched_versions": null,
+      "severity": "moderate",
+      "cwe": "CWE-918",
+      "github_advisory_id": "GHSA-p8p7-x288-28g6",
+      "url": "https://github.com/advisories/GHSA-p8p7-x288-28g6",
+      "patched_versions_unpublished": true
+    },
+    "1097682": {
+      "findings": [
+        {
+          "version": "2.5.0",
+          "paths": [
+            ".>steam-tradeoffer-manager>steamcommunity>request>tough-cookie",
+            ".>steamcommunity>request>tough-cookie"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1097682,
+      "title": "tough-cookie Prototype Pollution vulnerability",
+      "module_name": "tough-cookie",
+      "vulnerable_versions": "<4.1.3",
+      "patched_versions": ">=4.1.3",
+      "severity": "moderate",
+      "cwe": "CWE-1321",
+      "github_advisory_id": "GHSA-72xf-g2v4-qvf3",
+      "url": "https://github.com/advisories/GHSA-72xf-g2v4-qvf3"
+    },
+    "1106907": {
+      "findings": [
+        {
+          "version": "4.4.0",
+          "paths": [
+            ".>steam-tradeoffer-manager>steamcommunity>cheerio>lodash.pick",
+            ".>steamcommunity>cheerio>lodash.pick"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1106907,
+      "title": "Prototype Pollution in lodash",
+      "module_name": "lodash.pick",
+      "vulnerable_versions": ">=4.0.0 <=4.4.0",
+      "patched_versions": null,
+      "severity": "high",
+      "cwe": "CWE-770, CWE-1321",
+      "github_advisory_id": "GHSA-p6mc-m468-83gw",
+      "url": "https://github.com/advisories/GHSA-p6mc-m468-83gw",
+      "patched_versions_unpublished": true
+    },
+    "1109540": {
+      "findings": [
+        {
+          "version": "2.3.3",
+          "paths": [
+            ".>steam-tradeoffer-manager>steamcommunity>request>form-data",
+            ".>steamcommunity>request>form-data"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1109540,
+      "title": "form-data uses unsafe random function in form-data for choosing boundary",
+      "module_name": "form-data",
+      "vulnerable_versions": "<2.5.4",
+      "patched_versions": ">=2.5.5",
+      "severity": "critical",
+      "cwe": "CWE-330",
+      "github_advisory_id": "GHSA-fjxv-7rqg-78g4",
+      "url": "https://github.com/advisories/GHSA-fjxv-7rqg-78g4"
+    },
+    "1113719": {
+      "findings": [
+        {
+          "version": "6.5.5",
+          "paths": [
+            ".>steam-tradeoffer-manager>steamcommunity>request>qs",
+            ".>steamcommunity>request>qs"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1113719,
+      "title": "qs's arrayLimit bypass in its bracket notation allows DoS via memory exhaustion",
+      "module_name": "qs",
+      "vulnerable_versions": "<6.14.1",
+      "patched_versions": ">=6.14.1",
+      "severity": "moderate",
+      "cwe": "CWE-20",
+      "github_advisory_id": "GHSA-6rw7-vpxm-498p",
+      "url": "https://github.com/advisories/GHSA-6rw7-vpxm-498p"
+    },
+    "1117571": {
+      "findings": [
+        {
+          "version": "6.11.6",
+          "paths": [
+            ".>steam-user>steam-appticket>protobufjs"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1117571,
+      "title": "Arbitrary code execution in protobufjs",
+      "module_name": "protobufjs",
+      "vulnerable_versions": "<7.5.5",
+      "patched_versions": ">=7.5.5",
+      "severity": "critical",
+      "cwe": "CWE-94",
+      "github_advisory_id": "GHSA-xq3m-2v4x-88gg",
+      "url": "https://github.com/advisories/GHSA-xq3m-2v4x-88gg"
+    },
+    "1118641": {
+      "findings": [
+        {
+          "version": "6.11.6",
+          "paths": [
+            ".>steam-user>steam-appticket>protobufjs"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1118641,
+      "title": "protobuf.js: Code injection through bytes field defaults in generated toObject code",
+      "module_name": "protobufjs",
+      "vulnerable_versions": "<=7.5.5",
+      "patched_versions": ">=7.5.6",
+      "severity": "high",
+      "cwe": "CWE-94",
+      "github_advisory_id": "GHSA-66ff-xgx4-vchm",
+      "url": "https://github.com/advisories/GHSA-66ff-xgx4-vchm"
+    },
+    "1118924": {
+      "findings": [
+        {
+          "version": "6.11.6",
+          "paths": [
+            ".>steam-user>steam-appticket>protobufjs"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1118924,
+      "title": "protobuf.js: Denial of service from crafted field names in generated code",
+      "module_name": "protobufjs",
+      "vulnerable_versions": "<=7.5.5",
+      "patched_versions": ">=7.5.6",
+      "severity": "moderate",
+      "cwe": "CWE-20",
+      "github_advisory_id": "GHSA-2pr8-phx7-x9h3",
+      "url": "https://github.com/advisories/GHSA-2pr8-phx7-x9h3"
+    },
+    "1118926": {
+      "findings": [
+        {
+          "version": "6.11.6",
+          "paths": [
+            ".>steam-user>steam-appticket>protobufjs"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1118926,
+      "title": "protobuf.js: Prototype injection in generated message constructors",
+      "module_name": "protobufjs",
+      "vulnerable_versions": "<=7.5.5",
+      "patched_versions": ">=7.5.6",
+      "severity": "moderate",
+      "cwe": "CWE-1321",
+      "github_advisory_id": "GHSA-fx83-v9x8-x52w",
+      "url": "https://github.com/advisories/GHSA-fx83-v9x8-x52w"
+    },
+    "1118928": {
+      "findings": [
+        {
+          "version": "6.11.6",
+          "paths": [
+            ".>steam-user>steam-appticket>protobufjs"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1118928,
+      "title": "protobuf.js: Code generation gadget after prototype pollution",
+      "module_name": "protobufjs",
+      "vulnerable_versions": "<=7.5.5",
+      "patched_versions": ">=7.5.6",
+      "severity": "high",
+      "cwe": "CWE-94, CWE-1321",
+      "github_advisory_id": "GHSA-75px-5xx7-5xc7",
+      "url": "https://github.com/advisories/GHSA-75px-5xx7-5xc7"
+    },
+    "1118930": {
+      "findings": [
+        {
+          "version": "6.11.6",
+          "paths": [
+            ".>steam-user>steam-appticket>protobufjs"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1118930,
+      "title": "protobuf.js: Process-wide denial of service through unsafe option paths",
+      "module_name": "protobufjs",
+      "vulnerable_versions": "<=7.5.5",
+      "patched_versions": ">=7.5.6",
+      "severity": "high",
+      "cwe": "CWE-1321",
+      "github_advisory_id": "GHSA-jvwf-75h9-cwgg",
+      "url": "https://github.com/advisories/GHSA-jvwf-75h9-cwgg"
+    },
+    "1118932": {
+      "findings": [
+        {
+          "version": "6.11.6",
+          "paths": [
+            ".>steam-user>steam-appticket>protobufjs"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1118932,
+      "title": "protobuf.js: Denial of service through unbounded protobuf recursion",
+      "module_name": "protobufjs",
+      "vulnerable_versions": "<=7.5.5",
+      "patched_versions": ">=7.5.6",
+      "severity": "high",
+      "cwe": "CWE-674",
+      "github_advisory_id": "GHSA-685m-2w69-288q",
+      "url": "https://github.com/advisories/GHSA-685m-2w69-288q"
+    },
+    "1118935": {
+      "findings": [
+        {
+          "version": "6.11.6",
+          "paths": [
+            ".>steam-user>steam-appticket>protobufjs"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1118935,
+      "title": "protobufjs has overlong UTF-8 decoding",
+      "module_name": "protobufjs",
+      "vulnerable_versions": "<=7.5.5",
+      "patched_versions": ">=7.5.6",
+      "severity": "moderate",
+      "cwe": "CWE-176",
+      "github_advisory_id": "GHSA-q6x5-8v7m-xcrf",
+      "url": "https://github.com/advisories/GHSA-q6x5-8v7m-xcrf"
+    },
+    "1119378": {
+      "findings": [
+        {
+          "version": "6.11.6",
+          "paths": [
+            ".>steam-user>steam-appticket>protobufjs"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1119378,
+      "title": "protobufjs: Denial of Service via unbounded recursive JSON descriptor expansion",
+      "module_name": "protobufjs",
+      "vulnerable_versions": "<=7.5.7",
+      "patched_versions": ">=7.5.8",
+      "severity": "moderate",
+      "cwe": "CWE-674",
+      "github_advisory_id": "GHSA-jggg-4jg4-v7c6",
+      "url": "https://github.com/advisories/GHSA-jggg-4jg4-v7c6"
+    },
+    "1119441": {
+      "findings": [
+        {
+          "version": "3.4.0",
+          "paths": [
+            ".>steam-tradeoffer-manager>steamcommunity>request>uuid",
+            ".>steamcommunity>request>uuid"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1119441,
+      "title": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+      "module_name": "uuid",
+      "vulnerable_versions": "<11.1.1",
+      "patched_versions": ">=11.1.1",
+      "severity": "moderate",
+      "cwe": "CWE-787, CWE-1285",
+      "github_advisory_id": "GHSA-w5hq-g745-h8pq",
+      "url": "https://github.com/advisories/GHSA-w5hq-g745-h8pq"
+    },
+    "1120745": {
+      "findings": [
+        {
+          "version": "2.3.3",
+          "paths": [
+            ".>steam-tradeoffer-manager>steamcommunity>request>form-data",
+            ".>steamcommunity>request>form-data"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1120745,
+      "title": "form-data: CRLF injection in form-data via unescaped multipart field names and filenames",
+      "module_name": "form-data",
+      "vulnerable_versions": "<2.5.6",
+      "patched_versions": ">=2.5.6",
+      "severity": "high",
+      "cwe": "CWE-93",
+      "github_advisory_id": "GHSA-hmw2-7cc7-3qxx",
+      "url": "https://github.com/advisories/GHSA-hmw2-7cc7-3qxx"
+    },
+    "1123488": {
+      "findings": [
+        {
+          "version": "6.11.6",
+          "paths": [
+            ".>steam-user>steam-appticket>protobufjs"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1123488,
+      "title": "protobufjs: Denial of service through unbounded Any expansion during JSON conversion",
+      "module_name": "protobufjs",
+      "vulnerable_versions": "<=7.6.0",
+      "patched_versions": ">=7.6.1",
+      "severity": "high",
+      "cwe": "CWE-674",
+      "github_advisory_id": "GHSA-wcpc-wj8m-hjx6",
+      "url": "https://github.com/advisories/GHSA-wcpc-wj8m-hjx6"
+    },
+    "1123492": {
+      "findings": [
+        {
+          "version": "6.11.6",
+          "paths": [
+            ".>steam-user>steam-appticket>protobufjs"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1123492,
+      "title": "protobufjs : Schema-derived names can shadow runtime-significant properties",
+      "module_name": "protobufjs",
+      "vulnerable_versions": "<=7.6.2",
+      "patched_versions": ">=7.6.3",
+      "severity": "moderate",
+      "cwe": "CWE-674, CWE-754",
+      "github_advisory_id": "GHSA-f38q-mgvj-vph7",
+      "url": "https://github.com/advisories/GHSA-f38q-mgvj-vph7"
+    },
+    "1123686": {
+      "findings": [
+        {
+          "version": "0.5.18",
+          "paths": [
+            ".>steam-user>adm-zip"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1123686,
+      "title": "adm-zip: Crafted ZIP file triggers 4GB memory allocation",
+      "module_name": "adm-zip",
+      "vulnerable_versions": "<0.6.0",
+      "patched_versions": ">=0.6.0",
+      "severity": "high",
+      "cwe": "CWE-400, CWE-789",
+      "github_advisory_id": "GHSA-xcpc-8h2w-3j85",
+      "url": "https://github.com/advisories/GHSA-xcpc-8h2w-3j85"
+    },
+    "1158507": {
+      "findings": [
+        {
+          "version": "6.5.5",
+          "paths": [
+            ".>steam-tradeoffer-manager>steamcommunity>request>qs",
+            ".>steamcommunity>request>qs"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1158507,
+      "title": "qs: Denial of Service via Attacker Controlled isBuffer",
+      "module_name": "qs",
+      "vulnerable_versions": ">=2.2.5 <6.16.0",
+      "patched_versions": ">=6.16.0",
+      "severity": "moderate",
+      "cwe": "CWE-248, CWE-703",
+      "github_advisory_id": "GHSA-4mjr-xmp4-gh2g",
+      "url": "https://github.com/advisories/GHSA-4mjr-xmp4-gh2g"
+    },
+    "1193734": {
+      "findings": [
+        {
+          "version": "0.5.18",
+          "paths": [
+            ".>steam-user>adm-zip"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1193734,
+      "title": "adm-zip extraction follows destination symlinks, allowing arbitrary file overwrite",
+      "module_name": "adm-zip",
+      "vulnerable_versions": ">=0.5.9 <=0.6.0",
+      "patched_versions": ">=0.6.1",
+      "severity": "moderate",
+      "cwe": "CWE-59",
+      "github_advisory_id": "GHSA-vwc7-r8mq-g2x9",
+      "url": "https://github.com/advisories/GHSA-vwc7-r8mq-g2x9"
+    },
+    "1239030": {
+      "findings": [
+        {
+          "version": "0.5.18",
+          "paths": [
+            ".>steam-user>adm-zip"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1239030,
+      "title": "adm-zip: Uncontrolled memory allocation via the declared uncompressed size (DoS)",
+      "module_name": "adm-zip",
+      "vulnerable_versions": "<0.6.1",
+      "patched_versions": ">=0.6.1",
+      "severity": "high",
+      "cwe": "CWE-789",
+      "github_advisory_id": "GHSA-7q85-xj36-vmfc",
+      "url": "https://github.com/advisories/GHSA-7q85-xj36-vmfc"
+    },
+    "1239766": {
+      "findings": [
+        {
+          "version": "0.8.3",
+          "paths": [
+            ".>steam-tradeoffer-manager>steamcommunity>image-size",
+            ".>steamcommunity>image-size"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1239766,
+      "title": "image-size: ICNS parser allows denial of service through an infinite loop",
+      "module_name": "image-size",
+      "vulnerable_versions": ">=0.6.3 <=2.0.2",
+      "patched_versions": ">=2.0.3",
+      "severity": "high",
+      "cwe": "CWE-835",
+      "github_advisory_id": "GHSA-w3rx-r6r6-pgpr",
+      "url": "https://github.com/advisories/GHSA-w3rx-r6r6-pgpr"
+    },
+    "1240032": {
+      "findings": [
+        {
+          "version": "0.5.18",
+          "paths": [
+            ".>steam-user>adm-zip"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1240032,
+      "title": "adm-zip: Decompression-bomb protection (fix for CVE-2026-39244) can be bypassed by declaring uncompressed size as 0",
+      "module_name": "adm-zip",
+      "vulnerable_versions": "<=0.6.0",
+      "patched_versions": ">=0.6.1",
+      "severity": "high",
+      "cwe": "CWE-409",
+      "github_advisory_id": "GHSA-rcw4-f5rp-g42v",
+      "url": "https://github.com/advisories/GHSA-rcw4-f5rp-g42v"
+    },
+    "1240034": {
+      "findings": [
+        {
+          "version": "0.5.18",
+          "paths": [
+            ".>steam-user>adm-zip"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1240034,
+      "title": "adm-zip extraction preserves SUID/SGID bits from untrusted ZIPs -> local privilege escalation",
+      "module_name": "adm-zip",
+      "vulnerable_versions": "<=0.6.0",
+      "patched_versions": ">=0.6.1",
+      "severity": "high",
+      "cwe": "CWE-732",
+      "github_advisory_id": "GHSA-j5f4-cc29-5x44",
+      "url": "https://github.com/advisories/GHSA-j5f4-cc29-5x44"
+    },
+    "1240064": {
+      "findings": [
+        {
+          "version": "0.5.18",
+          "paths": [
+            ".>steam-user>adm-zip"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1240064,
+      "title": "adm-zip: Duplicate ZIP entry names: getEntry() and extractAllTo() resolve to different content",
+      "module_name": "adm-zip",
+      "vulnerable_versions": "<=0.6.0",
+      "patched_versions": ">=0.6.1",
+      "severity": "moderate",
+      "cwe": "CWE-436, CWE-696",
+      "github_advisory_id": "GHSA-p634-w6r4-rjp2",
+      "url": "https://github.com/advisories/GHSA-p634-w6r4-rjp2"
+    },
+    "1240065": {
+      "findings": [
+        {
+          "version": "0.5.18",
+          "paths": [
+            ".>steam-user>adm-zip"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1240065,
+      "title": "adm-zip: getDataAsync() bypasses the maxOutputLength size guard enforced by the synchronous getData() path",
+      "module_name": "adm-zip",
+      "vulnerable_versions": "<=0.6.0",
+      "patched_versions": ">=0.6.1",
+      "severity": "moderate",
+      "cwe": "CWE-400, CWE-770",
+      "github_advisory_id": "GHSA-c6fg-446q-cg94",
+      "url": "https://github.com/advisories/GHSA-c6fg-446q-cg94"
+    },
+    "1240066": {
+      "findings": [
+        {
+          "version": "0.5.18",
+          "paths": [
+            ".>steam-user>adm-zip"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1240066,
+      "title": "adm-zip: Unhandled error event in async DEFLATE decompression crashes Node.js process (DoS)",
+      "module_name": "adm-zip",
+      "vulnerable_versions": "<=0.6.0",
+      "patched_versions": ">=0.6.1",
+      "severity": "high",
+      "cwe": "CWE-248, CWE-400",
+      "github_advisory_id": "GHSA-8238-w5pm-2374",
+      "url": "https://github.com/advisories/GHSA-8238-w5pm-2374"
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 13,
+      "high": 14,
+      "critical": 2
+    },
+    "dependencies": 140,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 140
+  }
+}
