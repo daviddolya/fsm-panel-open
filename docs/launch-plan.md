@@ -12,6 +12,40 @@ ID and a timestamp. The recovered login-selection block runs for both values of
 
 ## Build a plan
 
+### Recovered settings derivation
+
+`adapters.launch_settings.derive_launch_settings(json_values)` implements the
+bounded loader slice at `0x1406b0d40` without changing the supplied dictionary.
+`CS_RESOLUTION` is split on lowercase ASCII `x`, requires exactly two parts and
+applies Python `int` to both. Signs, whitespace, Unicode digits, underscores,
+zero and negative sizes retain Python semantics. Parsing failures produce
+dimensions360/270 while preserving the malformed source value. A missing key
+instead supplies the source string `360x270` and reports a proposed config update.
+The host Python digit-conversion bound remains in effect.
+
+`STEAM_LAUNCH_ONLY_MODE` maps to Steam-only mode; `ENABLE_SHADERS_CACHING` maps to
+the shader flag. Both default toFalse when missing. Present JSON values are
+retained and their truthiness is derived separately, so a nonempty string
+`"false"` is truthy in the recovered behavior. `BES_REDUCTION_PERCENT` falls back
+to25 and otherwise retains the raw value. This pure slice rejects custom objects
+and non-finite JSON values at its new input boundary. It neither persists defaults
+nor reproduces the whole initializer. The typed execution adapters have stricter
+contracts, documented separately.
+
+Evidence anchors: resolution load `0x1406bb662`, fallback `0x1406bb78e`, exact split
+`0x1406bba60`, integer conversions `0x1406bbc8d`/`0x1406bbcfc`, fallback tuple
+`0x1406bc0b6`; Steam-only key `0x1406bd20b` and fallback `0x1406bd337`; shader
+key `0x1406c2e37` and fallback `0x1406c2f63`. The two extra JSON keys were absent
+from the shipped49-key sample but are proven consumers in the binary. They remain
+preserved unknown fields in the existing schema importer.
+
+The proposal CLI accepts optional `legacy_settings` beside `settings` in its JSON.
+When present, omit `cs_width`, `cs_height`, `steam_launch_only` and
+`enable_shaders_caching` from `settings`; the pure loader derives them. Supplying
+both sources is rejected as ambiguous. The result reports fallback use and missing
+key names without exporting the original resolution value. Input files remain
+unchanged. All other inputs and filesystem facts still must be supplied explicitly.
+
 All settings and facts are explicit. These synthetic values are an example,
 not defaults recovered from the original.
 

@@ -12,6 +12,7 @@ from fsm_panel.adapters.launch_plan import (
     LaunchSettings,
     build_launch_plan,
 )
+from fsm_panel.adapters.launch_settings import derive_launch_settings
 
 MAX_INPUT_BYTES = 2 * 1024 * 1024
 
@@ -23,8 +24,25 @@ def preview(input_path: Path, output_path: Path) -> dict[str, object]:
         raise LaunchPlanError("launch_input_too_large")
     try:
         document = json.loads(raw)
+        settings = document["settings"]
+        derivation = None
+        if "legacy_settings" in document:
+            derived = derive_launch_settings(document["legacy_settings"])
+            computed = {
+                "cs_width": derived.width,
+                "cs_height": derived.height,
+                "steam_launch_only": derived.steam_launch_only,
+                "enable_shaders_caching": derived.enable_shaders_caching,
+            }
+            if type(settings) is not dict or computed.keys() & settings.keys():
+                raise LaunchPlanError("launch_ambiguous_derived_settings")
+            settings = {**settings, **computed}
+            derivation = {
+                "resolution_fallback": derived.resolution_fallback,
+                "missing_keys_with_recovered_defaults": list(derived.config_updates),
+            }
         plan = build_launch_plan(
-            LaunchSettings(**document["settings"]),
+            LaunchSettings(**settings),
             login=document["login"],
             update_mode=document["update_mode"],
             environment=document["environment"],
@@ -41,6 +59,7 @@ def preview(input_path: Path, output_path: Path) -> dict[str, object]:
     output = {
         "kind": "offline_launch_proposal",
         "executable": False,
+        "settings_derivation": derivation,
         "argv": plan.argv,
         "status": plan.status,
         "used_port": plan.used_port,

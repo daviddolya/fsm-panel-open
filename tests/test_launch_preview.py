@@ -92,3 +92,28 @@ def test_normal_mode_does_not_export_inherited_environment(proposal):
     payload = json.loads(output.read_text())
     assert payload["environment_mode"] == "inherit"
     assert payload["environment_overrides"] is None
+
+
+def test_recovered_settings_derivation_connects_to_argv_without_mutating_input(proposal):
+    source, output, document = proposal
+    for key in ("cs_width", "cs_height", "steam_launch_only", "enable_shaders_caching"):
+        del document["settings"][key]
+    document["legacy_settings"] = {"CS_RESOLUTION": "invalid-private"}
+    source.write_text(json.dumps(document))
+    before = source.read_bytes()
+    assert main(command(source, output)) == 0
+    payload = json.loads(output.read_text())
+    assert payload["argv"][payload["argv"].index("-w") + 1] == "360"
+    assert payload["argv"][payload["argv"].index("-h") + 1] == "270"
+    assert payload["settings_derivation"]["resolution_fallback"] is True
+    assert "invalid-private" not in output.read_text()
+    assert source.read_bytes() == before
+
+
+def test_mixed_explicit_and_derived_dimensions_rejected(proposal, capsys):
+    source, output, document = proposal
+    document["legacy_settings"] = {}
+    source.write_text(json.dumps(document))
+    assert main(command(source, output)) == 2
+    assert json.loads(capsys.readouterr().out)["error"] == "launch_ambiguous_derived_settings"
+    assert not output.exists()
