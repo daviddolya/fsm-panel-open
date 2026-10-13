@@ -121,8 +121,11 @@ class Coordinator:
             )
             return not self.repository.owned_processes(account_id)
         except asyncio.CancelledError:
-            # An adapter may cancel its own cleanup. Persist an uncertain outcome;
-            # a shield loop must never repeatedly await an already-cancelled task.
+            current = asyncio.current_task()
+            if current is not None and current.cancelling():
+                # Let the lifecycle's outer cancellation handler finish shielded cleanup.
+                raise
+            # A child adapter cancelled itself; cleanup is uncertain, not successful.
             return False
         except Exception:
             return False
@@ -213,6 +216,9 @@ class Coordinator:
                     break
                 except asyncio.CancelledError:
                     # Multiple callers may cancel the same start; finish bounded cleanup.
+                    if cleanup.cancelled():
+                        cleaned = False
+                        break
                     continue
             self._state(
                 account_id,
@@ -267,6 +273,9 @@ class Coordinator:
                 except asyncio.CancelledError:
                     # A caller disappearing must not abandon an owned process in STOPPING.
                     cancelled = True
+                    if cleanup.cancelled():
+                        cleaned = False
+                        break
             if cleaned:
                 self._sessions.discard(account_id)
             result = self._state(

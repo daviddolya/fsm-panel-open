@@ -77,8 +77,10 @@ def collect(root: Path, destination: Path) -> None:
     )
     node = shutil.which("node")
     if node:
-        with (destination / "NODE-LICENSE.txt").open("w", encoding="utf-8") as output:
-            subprocess.run([node, "--license"], stdout=output, check=True, text=True)
+        version = subprocess.check_output([node, "--version"], text=True).strip()
+        if version != "v24.19.0":
+            raise RuntimeError("Update pinned Node license and audit before changing runtime")
+        shutil.copy2(root / "licenses/Node-24.19.0-LICENSE.txt", destination / "NODE-LICENSE.txt")
     print(f"Recorded {len(rows)} Python runtime dependency entries")
 
 
