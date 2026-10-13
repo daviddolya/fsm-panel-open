@@ -32,7 +32,9 @@ def preview(input_path: Path, output_path: Path) -> dict[str, object]:
             ipc_random=document.get("ipc_random"),
             steam_path=document.get("steam_path"),
         )
-    except KeyError, TypeError, UnicodeError, json.JSONDecodeError, RecursionError:
+    except LaunchPlanError:
+        raise
+    except KeyError, TypeError, ValueError, RecursionError:
         raise LaunchPlanError("launch_invalid_input") from None
     # Never infer environment or filesystem facts from the current host. Inherited
     # environment may contain secrets; only legacy overrides are exported.
@@ -49,6 +51,7 @@ def preview(input_path: Path, output_path: Path) -> dict[str, object]:
         if plan.environment is None
         else {key: plan.environment[key] for key in ("VPROJECT", "USERPROFILE", "LOCALAPPDATA")},
         "profile_directory": asdict(plan.profile_directory) if plan.profile_directory else None,
+        "profile_directory_on_exception": plan.profile_directory_on_exception,
         "shader_cache": None
         if plan.shader_cache is None
         else {
