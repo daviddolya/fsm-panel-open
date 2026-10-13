@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:fsm-panel:gsi-payload:v1",
+  "title": "Opt-in local GSI telemetry request",
+  "description": "New defensive contract. Runtime additionally enforces registered identity, unique account token, unsigned 64-bit Steam ID, byte/depth limits, unique JSON keys and finite numbers. Auth and token keys are removed recursively before state storage. Payloads never authorize actions.",
+  "type": "object",
+  "required": ["provider", "auth"],
+  "properties": {
+    "provider": {
+      "type": "object",
+      "required": ["steamid"],
+      "properties": {
+        "steamid": {"type": "string", "pattern": "^[1-9][0-9]{0,19}$"}
+      },
+      "additionalProperties": true
+    },
+    "auth": {
+      "type": "object",
+      "required": ["token"],
+      "properties": {
+        "token": {"type": "string", "minLength": 32, "maxLength": 256, "pattern": "^[!-~]+$", "writeOnly": true}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
