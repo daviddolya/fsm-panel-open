@@ -88,3 +88,16 @@ async def test_activity_real_ipc_and_lease_renewal_with_synthetic_clock_delays(t
             assert repository.list_effects()[0].state == EffectState.SUCCEEDED
             service.admission = None
             assert (await service.activity_status(account.id, "activity-a")).state == "completed"
+
+
+async def test_short_lease_renews_for_two_consecutive_activities(tmp_path):
+    async def short_licence(_account_id):
+        return int(time.time() * 1000) + 450
+
+    with AccountRepository() as repository:
+        account = repository.add_account("synthetic")
+        async with worker(tmp_path, {"activity_delay_ms": 400}) as client:
+            service = TradeService(repository, client, short_licence)
+            for operation_id in ("short-first", "short-second"):
+                result = await service.activity(account.id, operation_id, CREDENTIALS, [730], 1)
+                assert result.state == "completed"

@@ -45,7 +45,7 @@ class NodeWorkerClient:
         self._starts = asyncio.Lock()
         self._broken = False
         self.diagnostic_bytes = 0
-        self._admitted_requests: set[str] = set()
+        self._admitted_requests: dict[str, int] = {}
         self._last_renewal = 0.0
 
     async def __aenter__(self) -> NodeWorkerClient:
@@ -158,7 +158,7 @@ class NodeWorkerClient:
         future = asyncio.get_running_loop().create_future()
         self._pending[request_id] = future
         if admitted_until_ms is not None and method in {"send", "inventory", "activity"}:
-            self._admitted_requests.add(request_id)
+            self._admitted_requests[request_id] = admitted_until_ms
         assert self._process.stdin
         try:
             async with self._writes:
@@ -185,14 +185,17 @@ class NodeWorkerClient:
             raise TradeError("worker_disconnected") from None
         finally:
             self._pending.pop(request_id, None)
-            self._admitted_requests.discard(request_id)
+            self._admitted_requests.pop(request_id, None)
             if future.done() and not future.cancelled():
                 future.exception()  # consume an abandoned response exception
 
     async def renew_admission(self, deadline: int) -> None:
         # Local admission is checked every 250ms; a 5s IPC cadence bounds request-ID
-        # history during 24h activity while staying below the 60s worker lease bound.
-        if time.monotonic() - self._last_renewal < 5:
+        # history during 24h activity. Short leases bypass throttling near expiry.
+        expiring = any(
+            until <= time.time() * 1000 + 1000 for until in self._admitted_requests.values()
+        )
+        if not expiring and time.monotonic() - self._last_renewal < 5:
             return
         self._last_renewal = time.monotonic()
         for request_id in tuple(self._admitted_requests):
@@ -202,6 +205,8 @@ class NodeWorkerClient:
                 timeout_ms=1000,
                 admitted_until_ms=deadline,
             )
+            if request_id in self._admitted_requests:
+                self._admitted_requests[request_id] = deadline
 
     async def _cancel_and_drain(self, request_id: str, future: asyncio.Future) -> None:
         try:
