@@ -1,0 +1,11 @@
+**
+!Dockerfile.license
+!requirements-license.txt
+!src/
+!src/fsm_license/
+!src/fsm_license/*.py
+!alembic/
+!alembic/*.py
+!alembic/versions/
+!alembic/versions/*.py
+!alembic.ini

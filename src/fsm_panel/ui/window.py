@@ -47,6 +47,9 @@ class MainWindow(QMainWindow):
         self.secrets = secrets
         self.data_dir = data_dir
         self.simulate = simulate
+        self.ready = False
+        self._closing = False
+        self._closed = False
         self.license_runtime = None
         self.settings_path = data_dir / "settings.json"
         self.settings = (
@@ -56,9 +59,10 @@ class MainWindow(QMainWindow):
         )
         self.bridge = AsyncBridge()
         self.bridge.failed.connect(self._failed)
-        self.bridge.completed.connect(self._completed)
-        self.bridge.event.connect(self._event)
-        coordinator.subscribe(self.bridge.event.emit)
+        self.bridge.completed.connect(self._completed, Qt.ConnectionType.QueuedConnection)
+        self.bridge.domain_event.connect(self._event)
+        self.bridge.shutdown_finished.connect(self._finish_close)
+        coordinator.subscribe(self.bridge.domain_event.emit)
         self.setWindowTitle("FSM Panel Open — исследовательская версия")
         self.resize(1150, 720)
         central = QWidget()
@@ -86,7 +90,8 @@ class MainWindow(QMainWindow):
         self.tabs.addTab(self.log, "Журнал")
         self.setCentralWidget(central)
         self.refresh_accounts()
-        self.bridge.submit(self.coordinator.recover())
+        self.start_button.setEnabled(False)
+        self._startup = self.bridge.submit(self.coordinator.recover())
 
     def _build_accounts(self) -> None:
         page = QWidget()
@@ -225,11 +230,14 @@ class MainWindow(QMainWindow):
 
     def selected_ids(self) -> list[str]:
         return [
-            str(self.table.item(row, 0).data(Qt.ItemDataRole.UserRole))
+            str(item.data(Qt.ItemDataRole.UserRole))
             for row in sorted({index.row() for index in self.table.selectedIndexes()})
+            if (item := self.table.item(row, 0)) is not None
         ]
 
     def start_selected(self) -> None:
+        if not self.ready or self._closing:
+            return
         self.bridge.submit(self.coordinator.start_batch(self.selected_ids()))
 
     def stop_selected(self) -> None:
@@ -338,6 +346,9 @@ class MainWindow(QMainWindow):
 
     @Slot(object)
     def _completed(self, result: object) -> None:
+        if not self.ready and self._startup.done() and self._startup.exception() is None:
+            self.ready = True
+            self.start_button.setEnabled(True)
         self.refresh_accounts()
 
     @Slot(object)
@@ -348,10 +359,26 @@ class MainWindow(QMainWindow):
         )
 
     def closeEvent(self, event: QCloseEvent) -> None:
-        async def cleanup() -> None:
-            if self.license_runtime:
-                await self.license_runtime.close()
-            await self.coordinator.close()
+        if self._closed:
+            event.accept()
+            return
+        event.ignore()
+        if self._closing:
+            return
+        self._closing = True
+        self.tabs.setEnabled(False)
+        self.statusBar().showMessage("Остановка задач и сохранение состояния…")
 
-        self.bridge.shutdown(cleanup())
-        event.accept()
+        async def cleanup() -> None:
+            try:
+                if self.license_runtime:
+                    await self.license_runtime.close()
+            finally:
+                await self.coordinator.close()
+
+        self.bridge.request_shutdown(cleanup())
+
+    @Slot()
+    def _finish_close(self) -> None:
+        self._closed = True
+        self.close()

@@ -1,10 +1,12 @@
 FROM python:3.14-slim
 WORKDIR /app
-RUN pip install --no-cache-dir fastapi==0.143.0 uvicorn==0.54.0 sqlalchemy==2.1.4 \
-    "psycopg[binary]==3.3.6" alembic==1.20.0 cryptography==49.0.0 httpx==0.28.1 pydantic==2.14.1
+COPY requirements-license.txt /app/requirements-license.txt
+RUN pip install --no-cache-dir --require-hashes -r /app/requirements-license.txt
 COPY src/fsm_license /app/src/fsm_license
 COPY alembic /app/alembic
 COPY alembic.ini /app/alembic.ini
 ENV PYTHONPATH=/app/src
+RUN useradd --system --uid 10001 --no-create-home fsm
+USER fsm
 EXPOSE 8766
 CMD ["sh", "-c", "alembic upgrade head && uvicorn fsm_license.app:app_factory --factory --host 0.0.0.0 --port 8766"]

@@ -1,23 +1,28 @@
+import asyncio
 import time
 
 import pytest
-from fsm_panel.adapters.fakes import FakeGame, FakeLease, MemorySecretStore, RealClock
-from fsm_panel.core import AccountRepository, Coordinator, SettingsStore
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLineEdit
 
+from fsm_panel.adapters.fakes import FakeGame, FakeLease, MemorySecretStore, RealClock
+from fsm_panel.core import AccountRepository, Coordinator, SettingsStore
 from fsm_panel.ui.window import MainWindow
 
 
 @pytest.fixture
-def window(qtbot, tmp_path):
+def window(qtbot, qapp, tmp_path):
+    qapp.setQuitOnLastWindowClosed(False)
     repo = AccountRepository(tmp_path / "accounts.db")
     coordinator = Coordinator(repo, game=FakeGame(), lease=FakeLease(), clock=RealClock())
     widget = MainWindow(repo, coordinator, MemorySecretStore(), tmp_path, simulate=True)
-    qtbot.addWidget(widget)
+    # Own teardown here: qtbot.addWidget would deleteLater before async cleanup finishes.
     widget.show()
+    qtbot.waitUntil(lambda: widget.ready)
     yield widget
     widget.close()
+    qtbot.waitUntil(lambda: widget._closed)
+    widget.deleteLater()
     repo.close()
 
 
@@ -80,3 +85,49 @@ def test_fifty_rows_and_status_events_remain_usable(qtbot, window):
         lambda: all(a.state.value == "stopped" for a in window.repository.list_accounts()),
         timeout=10000,
     )
+
+
+def test_shutdown_waits_for_cleanup_without_freezing_qt(qtbot, window):
+    window.add_sample()
+    account = window.repository.list_accounts()[0]
+    window.table.selectRow(0)
+    window.start_selected()
+    qtbot.waitUntil(lambda: window.repository.get(account.id).state.value == "running")
+    original_stop = window.coordinator.game.stop
+    cleanup_finished = []
+
+    async def delayed_stop(account):
+        await asyncio.sleep(0.25)
+        await original_stop(account)
+        cleanup_finished.append(True)
+
+    window.coordinator.game.stop = delayed_stop
+    started = time.monotonic()
+    window.close()
+    assert time.monotonic() - started < 0.1
+    assert not window._closed
+    qtbot.waitUntil(lambda: window._closed)
+    assert cleanup_finished
+    assert not window.bridge._thread.is_alive()
+    assert window.repository.get(account.id).state.value == "stopped"
+
+
+def test_restart_recovers_before_enabling_launch(qtbot, qapp, tmp_path):
+    from fsm_panel.core import AccountState
+
+    qapp.setQuitOnLastWindowClosed(False)
+    repo = AccountRepository(tmp_path / "interrupted.db")
+    account = repo.add_account("synthetic_interrupted")
+    repo.update_state(account.id, AccountState.RUNNING)
+    game = FakeGame()
+    coordinator = Coordinator(repo, game=game, lease=FakeLease())
+    widget = MainWindow(repo, coordinator, MemorySecretStore(), tmp_path, simulate=True)
+    widget.show()
+    assert not widget.start_button.isEnabled()
+    qtbot.waitUntil(lambda: widget.ready)
+    assert repo.get(account.id).state == AccountState.INTERRUPTED
+    assert not game.running
+    widget.close()
+    qtbot.waitUntil(lambda: widget._closed)
+    repo.close()
+    widget.deleteLater()

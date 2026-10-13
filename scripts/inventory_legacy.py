@@ -17,11 +17,13 @@ def inventory(root: Path) -> dict:
         relative = file.relative_to(root).as_posix()
         if relative.startswith(("maFiles/", "sessions/")) or relative == "logpass.txt":
             continue
+        with file.open("rb") as stream:
+            digest = hashlib.file_digest(stream, "sha256").hexdigest()
         records.append(
             {
                 "path": relative,
                 "bytes": file.stat().st_size,
-                "sha256": hashlib.file_digest(file.open("rb"), "sha256").hexdigest(),
+                "sha256": digest,
             }
         )
     settings = json.loads((root / "settings/settings.json").read_text(encoding="utf-8-sig"))

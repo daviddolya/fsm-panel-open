@@ -6,20 +6,24 @@ import threading
 from collections.abc import Coroutine
 from typing import Any
 
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtCore import QObject, Qt, Signal, Slot
 
 
 class AsyncBridge(QObject):
-    event = Signal(object)
+    domain_event = Signal(object)
     completed = Signal(object)
     failed = Signal(str)
     license_state = Signal(str)
+    cleanup_finished = Signal()
+    shutdown_finished = Signal()
 
     def __init__(self) -> None:
         super().__init__()
         self.loop = asyncio.new_event_loop()
         self._ready = threading.Event()
         self._closed = False
+        self.shutdown_error: str | None = None
+        self.cleanup_finished.connect(self._finish_shutdown, Qt.ConnectionType.QueuedConnection)
         self._thread = threading.Thread(target=self._run, name="fsm-coordinator", daemon=True)
         self._thread.start()
         if not self._ready.wait(5):
@@ -59,18 +63,27 @@ class AsyncBridge(QObject):
         future.add_done_callback(done)
         return future
 
-    def shutdown(self, cleanup: Coroutine[Any, Any, Any]) -> None:
+    def request_shutdown(self, cleanup: Coroutine[Any, Any, Any]) -> None:
+        """Keep the Qt event loop responsive while bounded adapter cleanup runs."""
         if self._closed:
             cleanup.close()
             return
         self._closed = True
         future = asyncio.run_coroutine_threadsafe(cleanup, self.loop)
-        try:
-            future.result(timeout=5)
-        except TimeoutError, Exception:
-            future.cancel()
-        finally:
-            self.loop.call_soon_threadsafe(self.loop.stop)
-            self._thread.join(timeout=5)
+
+        def cleaned(result: concurrent.futures.Future) -> None:
+            try:
+                result.result()
+            except Exception as error:
+                self.shutdown_error = type(error).__name__
+            self.cleanup_finished.emit()
+
+        future.add_done_callback(cleaned)
+
+    @Slot()
+    def _finish_shutdown(self) -> None:
+        self.loop.call_soon_threadsafe(self.loop.stop)
+        self._thread.join(timeout=5)
         if self._thread.is_alive():
             raise RuntimeError("coordinator_shutdown_timeout")
+        self.shutdown_finished.emit()
