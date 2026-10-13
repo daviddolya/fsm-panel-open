@@ -55,6 +55,44 @@ async def test_completion_exemption_cannot_create_an_offer_without_admission(tmp
             assert not repository.list_effects()
 
 
+async def test_pending_completion_after_lease_loss_preserves_account_and_offer_scope(tmp_path):
+    scenario = {
+        "pages": {
+            "730/2": [
+                {"assets": [{"app_id": 730, "context_id": "2", "asset_id": "31", "amount": 1}]}
+            ]
+        },
+        "send_status": "pending",
+    }
+    credentials = SteamCredentials(
+        "synthetic_qa", "synthetic-password", "synthetic-shared", "synthetic-identity"
+    )
+
+    async def admission(account_id):
+        return int(time.time() * 1000) + 30_000
+
+    with AccountRepository() as repository:
+        owner = repository.add_account("synthetic_pending_owner")
+        another = repository.add_account("synthetic_other_account")
+        async with worker(tmp_path, scenario) as client:
+            service = TradeService(repository, client, admission)
+            pending = await service.send(
+                owner.id,
+                "pending-intent",
+                "https://steamcommunity.com/tradeoffer/new/?partner=123",
+                credentials,
+            )
+            assert pending.state == TradeState.CREATED_PENDING_CONFIRMATION
+            service.admission = None
+            with pytest.raises(TradeError, match="operation_conflict"):
+                await service.confirm(another.id, "pending-intent", credentials)
+            confirmed = await service.confirm(owner.id, "pending-intent", credentials)
+            repeated = await service.confirm(owner.id, "pending-intent", credentials)
+            assert confirmed.state == repeated.state == TradeState.CONFIRMED
+            assert confirmed.offer_id == repeated.offer_id == pending.offer_id
+            assert len(repository.list_effects()) == 1
+
+
 async def test_unknown_offer_without_id_cannot_be_confirmed_or_inferred_absent(tmp_path):
     scenario = {
         "pages": {
