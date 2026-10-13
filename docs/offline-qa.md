@@ -1,8 +1,8 @@
 # Independent offline reconstruction QA
 
 Date: 2026-10-13. Review started at `791cd8a`; fixes were independently checked
-through the BES integration `a9451cd` and config integration `2448aae` in a
-separate QA worktree. The reviewer owns the tests and this report, not the implementation.
+through CLI integration `44c79da` and BES planner `3caf37c` in a separate QA
+worktree. The reviewer owns the tests and this report, not the implementation.
 
 The video, BES and launch checks found five issues: lost recovery metadata, a
 delayed admission race, an unguarded original-distribution path, missing exported
@@ -12,6 +12,8 @@ source-derived BES worker-start ownership race and a child-identity loss during
 handle cleanup. Both have integrated fixes and the bounded checks described below.
 Config review found two further directory-transaction cleanup issues before the
 first feature commit; independent regressions cover their integrated fixes.
+CLI review then covered auxiliary-source ownership, text conversion, fingerprint
+coverage, argument privacy and edits made during staging; their fixes pass too.
 
 The original panel, BES and Steam were not executed. Fixtures contain synthetic
 configuration text in temporary directories. Qt checks run the reconstructed UI
@@ -90,7 +92,7 @@ four removal paths in `f4542bf`. All 25 independent video cases pass after that 
 
 ## BES, CPU admission and Windows bindings
 
-[The independent BES tests](../tests/qa/test_offline_bes.py) add 22 cases. The
+[The independent BES tests](../tests/qa/test_offline_bes.py) add 25 cases. The
 adapter review used [its documented source contract](bes.md), the supplied BES
 source, `src/fsm_panel/cpu.py` and the desktop composition. No C++ source or binary
 is copied into these tests.
@@ -180,6 +182,23 @@ Failure to read a newly created child's identity, or a crash before journalling,
 can still leave an idle child. This documented boundary does not authorize a
 limit command or generic termination of that child.
 
+### Legacy BES command and percent control
+
+The later planner review at `3caf37c` compared `bes_plan.py` against the complete
+sanitized consumer report for `0x1409572d0` and its daemon-thread wrapper. The
+actual command targets `game/bin/win64/cs2.exe` and the Steam CEF web helper.
+The shorter game path, overlay target and literal 50 values belong to debug
+output. The planner keeps those two outputs distinct, preserves the unquoted
+executable path and literal backslash operations, and does not clamp or invert
+integer percentages. It has no executor.
+
+Two independent cases preserve trailing separators, embedded quotes, relative
+components and forward-slash Steam input exactly. A Qt check confirms fallback
+25, literal accepted settings, rejection of invalid settings without changing
+the current form value, and disabled import while busy. Reading a percentage
+submits no process operation. No material discrepancy was found. The live owned-PID
+adapter remains a deliberate change from the original's executable-path targets.
+
 ## Pure launch planning and proposal export
 
 [The independent launch tests](../tests/qa/test_offline_launch.py) add 18 cases.
@@ -259,7 +278,52 @@ Both findings were accepted and fixed before `2448aae`. The two renames still
 leave a brief missing-target interval and are not a crash-safe transaction.
 Hostile concurrent namespace changes, NTFS metadata beyond the documented copy
 policy and live Steam integration remain outside these offline tests. These tests
-cover the source API; command-line integration is reviewed separately when available.
+cover the source API; command-line integration is reviewed below.
+
+## Config CLI inputs, fingerprints and failures
+
+[The independent CLI tests](../tests/qa/test_offline_config_cli.py) add 27 cases.
+The review started at `e814fe0`, with fixes checked at `64582b4` and `44c79da`.
+The [operator guide](config-tools.md) documents the isolated workspace, required
+inputs, review fingerprint and backup recovery fields.
+
+Finding C3, P2: settings and localconfig-copy inputs bypassed the adapter's source
+guard. Placing either input at a generated cfg output path let apply overwrite its
+own input. The fix reads both through the shared guarded loader. Two independent
+cases now reject overlap without changing the workspace.
+
+Finding C4, P2: the localconfig copy used raw decoding, retaining CRLF, before
+Windows newline translation at output. The result contained CRCRLF. The shared
+loader now applies universal newline decoding; the regression preserves the
+expected CRLF output and leaves the input bytes unchanged.
+
+Finding C5: the first fingerprint omitted auxiliary file snapshots. Changing
+unused settings or file metadata could leave the same token. The stronger review
+contract now includes their complete raw hash and file identity, while displaying
+only the digest. Regressions check stable unchanged previews, changed unused
+settings, and same-text files with changed timestamps or replaced identities.
+The token remains a correlation value, not authorization or a signature.
+
+Finding C6, P2: argparse printed malformed numeric arguments verbatim on stderr.
+A synthetic private sentinel supplied as `--timestamp` reproduced the disclosure.
+The parser now returns a stable JSON error with exit 2. Module-entry tests confirm
+that the value is absent, stderr is empty, and ordinary `--help` still exits 0.
+Malformed settings and malformed marker JSON also produce content-free errors.
+The nested marker fixture was already rejected by the baseline on this Python
+build; it does not claim a reproduced recursion failure.
+
+Finding C7, P2: auxiliary inputs were checked before apply but not during its
+directory staging. Editing settings or the localconfig copy after the top-level
+copytree completed still committed the old proposal. The fix retains immutable
+auxiliary snapshots in `AccountConfigPreview`, so every repeated validation,
+including the final check before directory movement, rereads their identity and
+raw hash. Both staging-edit regressions now reject without changing the target.
+
+Additional cases check changed effective settings/login/force and destination
+contents; stale no-op fingerprints; exact no-op file identities and timestamps;
+successful backups; and rollback success/failure responses. Failed apply returns
+no success fields and reports the usable retained backup when rollback fails.
+All commands operate only on synthetic files, and no proposed command is executed.
 
 ## Reproduction environment and results
 
@@ -274,10 +338,14 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_bes.py tests/adapters/test_bes.py tests/test_cpu.py tests/ui/test_cpu_panel.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_launch.py tests/adapters/test_launch_plan.py tests/test_launch_preview.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_configs.py tests/adapters/test_account_config.py tests/adapters/test_autoexec.py -q
+.venv/Scripts/python.exe -m pytest tests/qa/test_offline_config_cli.py tests/test_config_cli.py -q
+.venv/Scripts/python.exe -m pytest tests/qa/test_offline_bes.py tests/adapters/test_bes.py tests/adapters/test_bes_plan.py tests/test_cpu.py tests/ui/test_cpu_panel.py -q
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_configs.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_configs.py
+.venv/Scripts/python.exe -m ruff check tests/qa/test_offline_config_cli.py
+.venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_config_cli.py
 ```
 
 - Existing video suite: **81 passed, 4 skipped**. The skipped cases require
@@ -290,6 +358,9 @@ $env:QT_QPA_PLATFORM = 'offscreen'
   Windows host. Eleven Windows ABI/inheritance cases are skipped on other systems.
 - BES QA, BES adapter, CPU runtime and CPU UI together: **96 passed** through
   `a9451cd`, including the real Windows inheritance test.
+- With the later BES planner and percent-control additions: **25 independent
+  cases passed**, and **112 passed** across BES QA, adapter, planner, CPU runtime
+  and CPU UI at `3caf37c`.
 - Video QA, BES QA, BES adapter, CPU runtime and CPU UI together: **100 passed**
   through `91a3bdf`.
 - The same checks plus the existing video adapter, UI and CLI suite:
@@ -300,6 +371,10 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 - Independent config/autoexec cases: **30 passed** at `2448aae`. Combined with
   the 91 implementation-owner cases: **121 passed**. The junction check used
   a real synthetic Windows junction; it is skipped on other operating systems.
+- Initial CLI review: **15 passed, 5 failed** at `e814fe0`. All original 20 cases
+  passed after `64582b4`; two added staging-edit cases then exposed C7.
+  After `44c79da` and five further identity/help cases: **27 passed**.
+  Config API and CLI suites together: **153 passed**.
 - Ruff checks and formatting: **pass**.
 - Pytest emitted an existing Starlette/httpx deprecation warning through the
   shared QA fixture imports; it did not affect the file or UI results.

@@ -538,3 +538,82 @@ output.write_text(json.dumps({
                 process.wait(timeout=5)
         if unrelated_handle:
             assert kernel.CloseHandle(unrelated_handle)
+
+
+@pytest.mark.parametrize(
+    ("cwd", "game", "steam", "percent", "expected"),
+    [
+        (
+            "C:\\panel\\",
+            'D:\\Game "odd"',
+            "E:\\Steam\\",
+            -7,
+            r'C:\panel\\BES\BES.exe -J "D:\Game "odd"\game\bin\win64\cs2.exe" -7 '
+            r'"E:\Steam\bin\cef\cef.win64\steamwebhelper.exe" -7',
+        ),
+        (
+            r"C:\Panel &\..\Copy",
+            r".\Game",
+            "E:/Steam/steam.exe",
+            101,
+            r'C:\Panel &\..\Copy\BES\BES.exe -J ".\Game\game\bin\win64\cs2.exe" 101 '
+            r'"\bin\cef\cef.win64\steamwebhelper.exe" 101',
+        ),
+    ],
+)
+def test_legacy_bes_proposal_preserves_literal_broken_paths(cwd, game, steam, percent, expected):
+    from fsm_panel.adapters.bes_plan import build_legacy_bes_plan
+
+    plan = build_legacy_bes_plan(
+        cwd=cwd, csgo_path=game, steam_path=steam, reduction_percent=percent
+    )
+    assert plan.command == expected
+    assert plan.reduction_percent == percent
+    assert plan.debug_arguments[2] == plan.debug_arguments[4] == "50"
+    assert "GameOverlayUI.exe" in plan.debug_arguments[3]
+    assert "GameOverlayUI.exe" not in plan.command
+    assert plan.daemon_thread and plan.subprocess_method == "call"
+    assert not plan.shell and not plan.exit_code_used
+    assert cwd not in repr(plan)
+
+
+def test_percent_setting_changes_only_form_and_preserves_invalid_previous_value(qtbot):
+    from PySide6.QtCore import QObject, Signal
+
+    from fsm_panel.ui.cpu import CpuPanel
+
+    class Bridge(QObject):
+        completed = Signal(object)
+        failed = Signal(str)
+
+        def submit(self, operation):
+            operation.close()
+            pytest.fail("reading the setting must not submit any process operation")
+
+    owner = SimpleNamespace(
+        settings={},
+        repository=SimpleNamespace(owned_processes=lambda: []),
+        bridge=Bridge(),
+        ready=True,
+        simulate=False,
+    )
+    panel = CpuPanel(owner)
+    qtbot.addWidget(panel)
+    assert panel.percent.value() == 25
+    panel.percent.setValue(77)
+    for value in (None, True, False, -1, 0, 100, 150, 37.0, "37"):
+        owner.settings = {"BES_REDUCTION_PERCENT": value}
+        panel.settings_button.click()
+        assert panel.percent.value() == 77
+    for value in (1, 99, 37):
+        owner.settings = {"BES_REDUCTION_PERCENT": value}
+        panel.settings_button.click()
+        assert panel.percent.value() == value
+    panel._busy(True)
+    owner.settings = {"BES_REDUCTION_PERCENT": 52}
+    panel.settings_button.click()
+    assert panel.percent.value() == 37
+    panel._busy(False)
+    panel.settings_button.click()
+    assert panel.percent.value() == 52
+    assert panel._future is None
