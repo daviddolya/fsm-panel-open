@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: fsm_license
+      POSTGRES_USER: fsm_license
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Generate a fresh database password}
+    volumes:
+      - license_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U fsm_license -d fsm_license"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  license:
+    build:
+      context: .
+      dockerfile: Dockerfile.license
+    environment:
+      FSM_LICENSE_DATABASE_URL: postgresql+psycopg://fsm_license:${POSTGRES_PASSWORD:?Generate a fresh database password}@postgres/fsm_license
+      FSM_LICENSE_INTERNAL_TOKEN: ${FSM_LICENSE_INTERNAL_TOKEN:?Generate a fresh service token}
+      FSM_LICENSE_SIGNING_KEY: ${FSM_LICENSE_SIGNING_KEY:?Generate a fresh signing key}
+      FSM_LICENSE_ISSUER: ${FSM_LICENSE_ISSUER:?Set the issuer}
+      FSM_LICENSE_AUDIENCE: ${FSM_LICENSE_AUDIENCE:?Set the audience}
+      FSM_LICENSE_KEY_ID: ${FSM_LICENSE_KEY_ID:?Set the signing key ID}
+    ports:
+      - "127.0.0.1:8766:8766"
+    depends_on:
+      postgres:
+        condition: service_healthy
+volumes:
+  license_data:
