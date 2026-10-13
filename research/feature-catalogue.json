@@ -1,0 +1,3927 @@
+{
+  "target_sha256": "3731a48590e3169071b81aab9338a36b38a788133adfd43fada99ad3add1f308",
+  "authority": "Static constants and Capstone-validated native metadata. Roles are candidates, not runtime observations. Not REA native Evidence.",
+  "modules": [
+    {
+      "name": ".bytecode",
+      "constant_count": 388,
+      "bytes": 6668273,
+      "sha256": "046faeeb4a7c52046597e45177c51a2a1fb03d86b8cffdd6517afbd3165a60f7"
+    },
+    {
+      "name": "",
+      "constant_count": 94,
+      "bytes": 804,
+      "sha256": "40f5bf6dea3011d9ac898fad1b1b82f7257547b1d7ca1632e5dfe85e191c03ec"
+    },
+    {
+      "name": "Crypto.Cipher.AES",
+      "constant_count": 90,
+      "bytes": 1913,
+      "sha256": "63cc245dfd6be7634678e965e8c321ebe48b7ab7e0f58bfa578767b568d0edb8"
+    },
+    {
+      "name": "Crypto.Cipher.ARC2",
+      "constant_count": 63,
+      "bytes": 1898,
+      "sha256": "6864f0613afc219646e7b7ae93b956adf460d26022ca67a7e64f4599bd72bed2"
+    },
+    {
+      "name": "Crypto.Cipher.DES",
+      "constant_count": 58,
+      "bytes": 1555,
+      "sha256": "cb4fb8c0126534c4a5c3526aa0ed0eb34c2f3bdc5f3a9601016fd17ee52f1ba6"
+    },
+    {
+      "name": "Crypto.Cipher.DES3",
+      "constant_count": 76,
+      "bytes": 1891,
+      "sha256": "82895c152601969e0677dae93d45db6fbab01dc7a4ef994a8deb2749da7c10fb"
+    },
+    {
+      "name": "Crypto.Cipher.PKCS1_OAEP",
+      "constant_count": 83,
+      "bytes": 1414,
+      "sha256": "5d5ac6b0b49ba41925510356bbf86629fdb9c58e33f358c41ae3d352faf6b3c4"
+    },
+    {
+      "name": "Crypto.Cipher._EKSBlowfish",
+      "constant_count": 51,
+      "bytes": 1830,
+      "sha256": "200aca71d1af0253e16f49903d36f9b7c8025157c509658c75c3df6e055766bd"
+    },
+    {
+      "name": "Crypto.Cipher._mode_cbc",
+      "constant_count": 85,
+      "bytes": 2446,
+      "sha256": "f563d0ddd6b01f19b2d0f4b50b59bb0d7348fef591d431be02c89dad3bcfd65d"
+    },
+    {
+      "name": "Crypto.Cipher._mode_ccm",
+      "constant_count": 172,
+      "bytes": 3087,
+      "sha256": "03967b0e55c866e9f5088cb7f8a03a5a6cf7cf0fc9e88a46669493fd7602ba12"
+    },
+    {
+      "name": "Crypto.Cipher._mode_cfb",
+      "constant_count": 87,
+      "bytes": 2663,
+      "sha256": "99dba1cda071ce1f0664db9e24bff51c5a4078d29683e67fe28bfdefaca24a9b"
+    },
+    {
+      "name": "Crypto.Cipher._mode_ctr",
+      "constant_count": 114,
+      "bytes": 3395,
+      "sha256": "422baab20775a62ca39474c86302943f1ec93884c8516bb40f92faf57a2f0651"
+    },
+    {
+      "name": "Crypto.Cipher._mode_eax",
+      "constant_count": 125,
+      "bytes": 2243,
+      "sha256": "bb1ac4483f6f5a04bf9859ff5defd4f70e3ed31f67e3b2b3562d381dc633fd88"
+    },
+    {
+      "name": "Crypto.Cipher._mode_ecb",
+      "constant_count": 68,
+      "bytes": 2044,
+      "sha256": "45054c5e821770e7f0f521eac7f8aa6ef196efa32c6c40258dbe230a1cdfc3a5"
+    },
+    {
+      "name": "Crypto.Cipher._mode_gcm",
+      "constant_count": 202,
+      "bytes": 4185,
+      "sha256": "5ba342fb5363007b33da3779dc34f2e9de4bbc23b9b8de1ec771bc1ee889f260"
+    },
+    {
+      "name": "Crypto.Cipher._mode_ocb",
+      "constant_count": 168,
+      "bytes": 4577,
+      "sha256": "5ed50bda4ae6cc3760c380dc4b9a13064fb867e4c88949a2efaffaebddd96b8e"
+    },
+    {
+      "name": "Crypto.Cipher._mode_ofb",
+      "constant_count": 83,
+      "bytes": 2500,
+      "sha256": "c8ca741af743be51c3e7ec247e00180958542153091cb7746e46251206da1409"
+    },
+    {
+      "name": "Crypto.Cipher._mode_openpgp",
+      "constant_count": 62,
+      "bytes": 977,
+      "sha256": "39cdb598f5dd0b7bd889f922d40f2f4a755f5091d9a07b7d03a3a5b71d18612a"
+    },
+    {
+      "name": "Crypto.Cipher._mode_siv",
+      "constant_count": 122,
+      "bytes": 2371,
+      "sha256": "a38329114497e782f64afb52078c30baa9235b841a40e456369b940d2ddf10af"
+    },
+    {
+      "name": "Crypto.Cipher",
+      "constant_count": 80,
+      "bytes": 1369,
+      "sha256": "92a0dfb997c1f327af9e736a09131b82e45ebfec73b6bc2502d37526a25181fb"
+    },
+    {
+      "name": "Crypto.Hash.BLAKE2s",
+      "constant_count": 108,
+      "bytes": 2699,
+      "sha256": "1b816bb511a41d764956e0a56382ecf141c8225c78033a9f3bcdd56fa0464cff"
+    },
+    {
+      "name": "Crypto.Hash.CMAC",
+      "constant_count": 123,
+      "bytes": 1885,
+      "sha256": "9f3b53f82ea5cd316757325d129dc7b6359eabaa2e4d58f7a6ca69bf3ed6bfff"
+    },
+    {
+      "name": "Crypto.Hash.HMAC",
+      "constant_count": 85,
+      "bytes": 1194,
+      "sha256": "14cea41cbb3c868a4fb42fda8e803ca810d9b363f95cc8835a814bf2078a70e6"
+    },
+    {
+      "name": "Crypto.Hash.MD5",
+      "constant_count": 79,
+      "bytes": 2196,
+      "sha256": "a41bf6f6f6bf94fe8b38000672f6b347c75163f95f918bf5d38440d91feeb9e7"
+    },
+    {
+      "name": "Crypto.Hash.SHA1",
+      "constant_count": 79,
+      "bytes": 2222,
+      "sha256": "27df386b7295e41f622184f891948f84506e48495b77a7cc1d7ada3c1cd53c73"
+    },
+    {
+      "name": "Crypto.Hash.SHA224",
+      "constant_count": 79,
+      "bytes": 2375,
+      "sha256": "e2e4d7737eea0f99798eca3a030a3b00e11dbee0805237332c5d2cbfea1c5b84"
+    },
+    {
+      "name": "Crypto.Hash.SHA256",
+      "constant_count": 79,
+      "bytes": 2375,
+      "sha256": "84a948c2c5bc151a7ad5819837ec915c68b04e52294bc280cd9ac1b1e92d4288"
+    },
+    {
+      "name": "Crypto.Hash.SHA384",
+      "constant_count": 79,
+      "bytes": 2375,
+      "sha256": "63f5120dba757c5b7fed12771dd375deaeff952f88ddb46322de55087c37c9e5"
+    },
+    {
+      "name": "Crypto.Hash.SHA512",
+      "constant_count": 88,
+      "bytes": 2596,
+      "sha256": "561fc77eb8951afdcecd6109e39c5a05b05d648dea26033d5cdb41aea04554aa"
+    },
+    {
+      "name": "Crypto.Hash",
+      "constant_count": 21,
+      "bytes": 460,
+      "sha256": "f1b32ae757fc281e8057dba9be002ba02c19e279e2fce2dd4f546a6a231699cb"
+    },
+    {
+      "name": "Crypto.IO.PEM",
+      "constant_count": 108,
+      "bytes": 1521,
+      "sha256": "f873c91b459cece1d182c48e07cfdf3cb8dc0fa5ab7a52faa6be81c46e6beb22"
+    },
+    {
+      "name": "Crypto.IO.PKCS8",
+      "constant_count": 57,
+      "bytes": 1045,
+      "sha256": "1e323eed7b29f8812e24ddb13ed1fa5ac3f655d9b8e5c2b46c32f7d66d48553e"
+    },
+    {
+      "name": "Crypto.IO._PBES",
+      "constant_count": 147,
+      "bytes": 3166,
+      "sha256": "78e360f238ac2685bed647f4e2881e9d639147896e31feaccefe9c3a715ccbf6"
+    },
+    {
+      "name": "Crypto.IO",
+      "constant_count": 22,
+      "bytes": 292,
+      "sha256": "630bf542915bce130ff564fa8e30483bd9d5ac32e801e94d1344094a72d01031"
+    },
+    {
+      "name": "Crypto.Math.Numbers",
+      "constant_count": 26,
+      "bytes": 431,
+      "sha256": "5aaa73fe877e48cd9ac1887fca16764f4acacb7760ba0a612776309b6197ae7d"
+    },
+    {
+      "name": "Crypto.Math.Primality",
+      "constant_count": 96,
+      "bytes": 1593,
+      "sha256": "72e13d654c082956c8c981398e623bb33977653a31a05abedade05499c98c875"
+    },
+    {
+      "name": "Crypto.Math._IntegerBase",
+      "constant_count": 195,
+      "bytes": 3215,
+      "sha256": "fce70d5e604b2085c8cd65237f8ea69c5a0df78faf942b69219499760b1a52cc"
+    },
+    {
+      "name": "Crypto.Math._IntegerCustom",
+      "constant_count": 71,
+      "bytes": 1466,
+      "sha256": "08bf23d145902c70f3d1b51882865321a6d7a90d915379edb224e660151e0c30"
+    },
+    {
+      "name": "Crypto.Math._IntegerGMP",
+      "constant_count": 33,
+      "bytes": 3717,
+      "sha256": "5ccbda985b59604003be7fab713ba8d70f6ed587cba4b59e2413f964099d0239"
+    },
+    {
+      "name": "Crypto.Math._IntegerNative",
+      "constant_count": 196,
+      "bytes": 3420,
+      "sha256": "2735eb97e6087d00d0d53ee52af1e8a2bde7c50fe64c26a33940bf139503acf3"
+    },
+    {
+      "name": "Crypto.Math",
+      "constant_count": 19,
+      "bytes": 279,
+      "sha256": "ee9124c3333e1be0fac974fbe2769019a10d1c632d810b3d025bdd84b4b5308f"
+    },
+    {
+      "name": "Crypto.Protocol.KDF",
+      "constant_count": 240,
+      "bytes": 4605,
+      "sha256": "64e2118f7847fdb0ac8c208a8c4ac59b4141e269eebdc0aff23b7191c83d8284"
+    },
+    {
+      "name": "Crypto.Protocol",
+      "constant_count": 22,
+      "bytes": 324,
+      "sha256": "a1ae6358b37e6b84b03819d4b1b2d33e5afeee241ad98583820614d966148b94"
+    },
+    {
+      "name": "Crypto.PublicKey.RSA",
+      "constant_count": 311,
+      "bytes": 5881,
+      "sha256": "424fd206530df0b07b5ec9d5dd6316b14fa1b6fef23ce19aa38672615202b4ee"
+    },
+    {
+      "name": "Crypto.PublicKey._openssh",
+      "constant_count": 85,
+      "bytes": 1370,
+      "sha256": "0c77415b19f77e7c6e210acfda70c879f3c8bd66a7881a8fe3f907a3399e4e4b"
+    },
+    {
+      "name": "Crypto.PublicKey",
+      "constant_count": 47,
+      "bytes": 916,
+      "sha256": "14a3121744b08e95a60452bd0e9504e47ae933ddd8270a8e9b472e54a797ef66"
+    },
+    {
+      "name": "Crypto.Random",
+      "constant_count": 48,
+      "bytes": 669,
+      "sha256": "9311b27c0dd59cd246ad2d9a420b02ffc2c95c225cbd1f3ae6eae5f93263e3bd"
+    },
+    {
+      "name": "Crypto.Random.random",
+      "constant_count": 86,
+      "bytes": 1537,
+      "sha256": "9ec1cd71f9402746be2320570ee2aa1af9b57fa5d151c634a4d33a9635059ead"
+    },
+    {
+      "name": "Crypto.Signature",
+      "constant_count": 21,
+      "bytes": 360,
+      "sha256": "8c66ef46933fdd8d9cca9ebf3d0058a12374e86b43c379a491e162b9ee31a6a0"
+    },
+    {
+      "name": "Crypto.Signature.pss",
+      "constant_count": 98,
+      "bytes": 1631,
+      "sha256": "76c2582c41883838751d3743bcaa1434cbbd693ff6ed26a238bf236ecd3f821e"
+    },
+    {
+      "name": "Crypto.Util.Padding",
+      "constant_count": 40,
+      "bytes": 635,
+      "sha256": "479b6522182c1bc302386dee6b0ecb866c265c71620891267c62eb9bebef690d"
+    },
+    {
+      "name": "Crypto.Util._cpu_features",
+      "constant_count": 17,
+      "bytes": 459,
+      "sha256": "0a6a461f314a98e8f73ef78bc299a22bf30bcace4e593806163417c6571e3426"
+    },
+    {
+      "name": "Crypto.Util._file_system",
+      "constant_count": 20,
+      "bytes": 325,
+      "sha256": "2f2e7fd5a05a66b9f05b239bd65c192711c9749d988aed7a4464b2291542b989"
+    },
+    {
+      "name": "Crypto.Util._raw_api",
+      "constant_count": 188,
+      "bytes": 2679,
+      "sha256": "e61c4675468bdecab6846fe81bcccdbfda163ee194100cffef28afe8e9a31f4a"
+    },
+    {
+      "name": "Crypto.Util.asn1",
+      "constant_count": 253,
+      "bytes": 4590,
+      "sha256": "4d7a37feb59c166600f3ebc1d03341b1d004e1fed0929773507ea7945586a680"
+    },
+    {
+      "name": "Crypto.Util",
+      "constant_count": 21,
+      "bytes": 339,
+      "sha256": "35b72838b03b8c8db561f2cab0c29ddf217dadb0f3e0f773cb40a9c59ca1ed9f"
+    },
+    {
+      "name": "Crypto.Util.number",
+      "constant_count": 131,
+      "bytes": 51845,
+      "sha256": "5a098f21e58f2e7c0b0b186846cec59eecb831a0287f1556362d97d85b44562d"
+    },
+    {
+      "name": "Crypto.Util.py3compat",
+      "constant_count": 40,
+      "bytes": 401,
+      "sha256": "fbde56a2fbbaea9a9a66fcface526f481968d26dc42379d57f567741945cdfd1"
+    },
+    {
+      "name": "Crypto.Util.strxor",
+      "constant_count": 34,
+      "bytes": 1106,
+      "sha256": "3aa0fc1eb59a12d202d32e34125c1056e03453dedb992c36bee6ca69e3750bce"
+    },
+    {
+      "name": "Crypto",
+      "constant_count": 22,
+      "bytes": 328,
+      "sha256": "4734ff2820b37b23ee60e2b1f09898a7676dc91b2fcb5434042233368628b078"
+    },
+    {
+      "name": "PIL.BlpImagePlugin",
+      "constant_count": 256,
+      "bytes": 3660,
+      "sha256": "30c8d24176c189788fcf8f98048f6deaf4ea7fbe729a3cea6322bd01e09bc584"
+    },
+    {
+      "name": "PIL.BmpImagePlugin",
+      "constant_count": 234,
+      "bytes": 3687,
+      "sha256": "753d7c8ff156986acf9c4b3d62f3e57e2c7c10d1f072a7bbfc3f4a40099a9b2a"
+    },
+    {
+      "name": "PIL.BufrStubImagePlugin",
+      "constant_count": 62,
+      "bytes": 805,
+      "sha256": "80d12da494b57ae1591ac8076f77689aaecc17c8a6dda1384c7c96ad5d2e4bba"
+    },
+    {
+      "name": "PIL.CurImagePlugin",
+      "constant_count": 66,
+      "bytes": 784,
+      "sha256": "cf02073b97b1735a4c819953a4aed2bb17d53d905535b93d46e22a8199d0f251"
+    },
+    {
+      "name": "PIL.DcxImagePlugin",
+      "constant_count": 66,
+      "bytes": 815,
+      "sha256": "ebcb707d56aee9c908883a27f297b5db50972ca4fa56a16846b115e19d08dcd4"
+    },
+    {
+      "name": "PIL.DdsImagePlugin",
+      "constant_count": 234,
+      "bytes": 3137,
+      "sha256": "b4c98ebc32ab00df57d704aaa1c9ee66735f3b15cc6fab6544010f99ff49e0ca"
+    },
+    {
+      "name": "PIL.EpsImagePlugin",
+      "constant_count": 227,
+      "bytes": 3621,
+      "sha256": "4e1cade3ab163f1b69ad4e9e37ab7c86dd21c1c6fecc68edbaf3c4c54bae3fa8"
+    },
+    {
+      "name": "PIL.ExifTags",
+      "constant_count": 660,
+      "bytes": 7117,
+      "sha256": "e414f15a601524118f9bb25a903be109389c6a3d07343a3b4aa0b3244c18e64e"
+    },
+    {
+      "name": "PIL.FitsImagePlugin",
+      "constant_count": 81,
+      "bytes": 877,
+      "sha256": "6969f13fd9140b53b070a33c0fe54cbda3cc2d090f8880eae071b5a006d60954"
+    },
+    {
+      "name": "PIL.FitsStubImagePlugin",
+      "constant_count": 60,
+      "bytes": 921,
+      "sha256": "9dd93c17824f523e3d0f5c399fb1c5149c459eea4bee3695d826d5aac99c4c9e"
+    },
+    {
+      "name": "PIL.FliImagePlugin",
+      "constant_count": 123,
+      "bytes": 1449,
+      "sha256": "03a824c61c1e244bad6bf9cfb141b590ea26c7652ddbaeb873ea62db030b6c10"
+    },
+    {
+      "name": "PIL.FpxImagePlugin",
+      "constant_count": 132,
+      "bytes": 1923,
+      "sha256": "50f3b33ded9b27e619681e01014955bdaa4ac7f93252e1dd736c5c9fd7de4b0b"
+    },
+    {
+      "name": "PIL.FtexImagePlugin",
+      "constant_count": 88,
+      "bytes": 1169,
+      "sha256": "fef26a128d5d48be2175caa06cb25283ce08d3de67e2bf210fdbc3ced3387a1e"
+    },
+    {
+      "name": "PIL.GbrImagePlugin",
+      "constant_count": 72,
+      "bytes": 968,
+      "sha256": "f58ffb54f87e24689e078d411ddfe62764d4e6f6a8335279614c78001d90e3b8"
+    },
+    {
+      "name": "PIL.GifImagePlugin",
+      "constant_count": 354,
+      "bytes": 5430,
+      "sha256": "34707b74484a4596419b4b050cb2099c044df3eea1dbebd310cc60876551193e"
+    },
+    {
+      "name": "PIL.GimpGradientFile",
+      "constant_count": 91,
+      "bytes": 1190,
+      "sha256": "0a7f4aa27d66d6ad4d8e6b56b95e05dea74497adb289f66506d8f6b0368e42ef"
+    },
+    {
+      "name": "PIL.GimpPaletteFile",
+      "constant_count": 45,
+      "bytes": 513,
+      "sha256": "1a212b555030dcc8f3df7e70ab2d6e7425f96c5c09ea6c1e36beb4d4aff585a7"
+    },
+    {
+      "name": "PIL.GribStubImagePlugin",
+      "constant_count": 62,
+      "bytes": 804,
+      "sha256": "ff2a2e6a6e8b0ebaccd2cbdd6e049bba70a8ee1b594f9ce43569008e9e563d68"
+    },
+    {
+      "name": "PIL.Hdf5StubImagePlugin",
+      "constant_count": 62,
+      "bytes": 808,
+      "sha256": "ecd8170d3d48173903d8a94232f558bdde08f0fcb2ccbd93bfde5eec610654f8"
+    },
+    {
+      "name": "PIL.IcnsImagePlugin",
+      "constant_count": 222,
+      "bytes": 3153,
+      "sha256": "112848cb6b2b7e471ca56f36a167b340a3b9a945438240c19d5d8aca545aa73c"
+    },
+    {
+      "name": "PIL.IcoImagePlugin",
+      "constant_count": 193,
+      "bytes": 2480,
+      "sha256": "f0baae49db1ca033cecfc61448f2eb5e639e1ae502c4bd2aea29b6af0a84a134"
+    },
+    {
+      "name": "PIL.ImImagePlugin",
+      "constant_count": 200,
+      "bytes": 2978,
+      "sha256": "601cfae084662342cd36fe1e66ffc2c5e3e94cb22722fc58d1e8f2c905f363fe"
+    },
+    {
+      "name": "PIL.Image",
+      "constant_count": 1048,
+      "bytes": 18651,
+      "sha256": "e37053c6a6e6054f3d3691a098ab8bfbe4ac9a2766d07c67f94ee95b64a7a0b9"
+    },
+    {
+      "name": "PIL.ImageChops",
+      "constant_count": 67,
+      "bytes": 796,
+      "sha256": "99d1951dbf91e92a4bb1e317487ca336e93d7db407f0cced3e6b66916cbc2516"
+    },
+    {
+      "name": "PIL.ImageCms",
+      "constant_count": 229,
+      "bytes": 6034,
+      "sha256": "bb98fccd17d4d34a48ac88e8856604247462ff94e0e7871276a8d25e46d10c4e"
+    },
+    {
+      "name": "PIL.ImageColor",
+      "constant_count": 68,
+      "bytes": 3949,
+      "sha256": "671f8e8537e1c3cd1e64bf08d8469b5ab85281a2338b086b2a16f9fd526220a6"
+    },
+    {
+      "name": "PIL.ImageDraw",
+      "constant_count": 344,
+      "bytes": 7354,
+      "sha256": "9549127b941965783c34e7e8481fa7ba604149ee3fecd9179940ca540c1bbe99"
+    },
+    {
+      "name": "PIL.ImageDraw2",
+      "constant_count": 105,
+      "bytes": 1386,
+      "sha256": "658f0b15751186810495d9b924f91d3a2dd3bf88fb9f4642f2623d8a3b21b998"
+    },
+    {
+      "name": "PIL.ImageFile",
+      "constant_count": 258,
+      "bytes": 3949,
+      "sha256": "7559b3b2182c0965c0214bb5fbf720838bc62d363e55689ad80b8b3f0bebbbe2"
+    },
+    {
+      "name": "PIL.ImageFilter",
+      "constant_count": 194,
+      "bytes": 3503,
+      "sha256": "cd71bd04af2bb21fe9a9d36ba65e6ab5be02e48bfc8c857aa23d4250be4025d5"
+    },
+    {
+      "name": "PIL.ImageFont",
+      "constant_count": 283,
+      "bytes": 14100,
+      "sha256": "228c1f04a4554bf7c1dc5ed6d322c9466011a631d33b13927741b63f6a258e53"
+    },
+    {
+      "name": "PIL.ImageGrab",
+      "constant_count": 63,
+      "bytes": 973,
+      "sha256": "44bff93dbea0aeed4bb828552416dd0b43c988c943416ed50fb08343fd2940b1"
+    },
+    {
+      "name": "PIL.ImageMode",
+      "constant_count": 36,
+      "bytes": 1168,
+      "sha256": "511c2732b6fb32063807200786a93773c43f823853574eccec513900588349e8"
+    },
+    {
+      "name": "PIL.ImageOps",
+      "constant_count": 174,
+      "bytes": 3783,
+      "sha256": "996b7d81f1f83ea5fa213a52aa778bc09f9df9fdc9bff75ffd2e71d0ddf36b38"
+    },
+    {
+      "name": "PIL.ImagePalette",
+      "constant_count": 135,
+      "bytes": 1803,
+      "sha256": "0bd79aae4b2696e339c64aebbda8367a7b27f9eeb9287f9dce078fcb3933647b"
+    },
+    {
+      "name": "PIL.ImagePath",
+      "constant_count": 16,
+      "bytes": 154,
+      "sha256": "6bec07de46661c7e0d21a63e6d5f27deb5fe2b5d554b51c0d6bf24ec3f6c38f9"
+    },
+    {
+      "name": "PIL.ImageSequence",
+      "constant_count": 40,
+      "bytes": 490,
+      "sha256": "4405f8a4a39ce08ee72ddbf4555fb320d48f1d33e5303f615691c29f8716490e"
+    },
+    {
+      "name": "PIL.ImageShow",
+      "constant_count": 144,
+      "bytes": 2180,
+      "sha256": "6dedc8a6b9a9d8ad5fbfff884e7fdb496a2cf0efcd4cefcc560e3251d1ebc204"
+    },
+    {
+      "name": "PIL.ImageStat",
+      "constant_count": 85,
+      "bytes": 937,
+      "sha256": "8b5e8fcceee53f2e83da51092602fcd216f989d98c5fa2bc19f40ac1f7f91213"
+    },
+    {
+      "name": "PIL.ImageTk",
+      "constant_count": 135,
+      "bytes": 1746,
+      "sha256": "383d50c869971c81a78b9faeb8621b90af80c6a6de538996d8e33cb65f7cc580"
+    },
+    {
+      "name": "PIL.ImageWin",
+      "constant_count": 107,
+      "bytes": 1539,
+      "sha256": "9b5d29b64601c746178c202a6372aabb07fb7374807ad21bc64cc50183003953"
+    },
+    {
+      "name": "PIL.ImtImagePlugin",
+      "constant_count": 71,
+      "bytes": 787,
+      "sha256": "d61e3eca57e8d95842c67a83b7ed805534a014ea6599130099644b25a57593a6"
+    },
+    {
+      "name": "PIL.IptcImagePlugin",
+      "constant_count": 140,
+      "bytes": 1779,
+      "sha256": "6fe81bc72ae0d8043df89a8637c546555ab5d2c1652e3c0410d7a081d81d8f3c"
+    },
+    {
+      "name": "PIL.Jpeg2KImagePlugin",
+      "constant_count": 215,
+      "bytes": 3276,
+      "sha256": "5b10e03d31b7bf069d69e7bd789644d2f0bcc81f3c70b67b1559c72c73c47e0e"
+    },
+    {
+      "name": "PIL.JpegImagePlugin",
+      "constant_count": 523,
+      "bytes": 7849,
+      "sha256": "19c311dde0015d0c44a57bb1192c464f9e6b480c05f91c47e09b6cbf3a00c242"
+    },
+    {
+      "name": "PIL.JpegPresets",
+      "constant_count": 11,
+      "bytes": 4032,
+      "sha256": "28fe2038471f47abe4d8a748bbe14444974b99b6a878a4b10db2977fdc3c2a43"
+    },
+    {
+      "name": "PIL.McIdasImagePlugin",
+      "constant_count": 65,
+      "bytes": 769,
+      "sha256": "4ce402e5ea823293d22d9a0e0e35b2503ddaf492d8e336da05602880a4e67546"
+    },
+    {
+      "name": "PIL.MicImagePlugin",
+      "constant_count": 76,
+      "bytes": 1055,
+      "sha256": "bedba9e0dec6b6d3dc3e052337de9957ee7d8b437d1c6396ed54b8298035b90c"
+    },
+    {
+      "name": "PIL.MpegImagePlugin",
+      "constant_count": 70,
+      "bytes": 821,
+      "sha256": "74c27201e25152b35f47f88f7292d99f9af684c1f2b1398f410f31447759dafb"
+    },
+    {
+      "name": "PIL.MpoImagePlugin",
+      "constant_count": 150,
+      "bytes": 2012,
+      "sha256": "82694e13bbebea3ff07cac5ba344ce15d00704885907cca4dd3593ce5e1035e4"
+    },
+    {
+      "name": "PIL.MspImagePlugin",
+      "constant_count": 116,
+      "bytes": 1368,
+      "sha256": "0106a1c3faffddf93aa35cbd4b30acd382eafe3c7a175673f364bb20bc4384c9"
+    },
+    {
+      "name": "PIL.PaletteFile",
+      "constant_count": 41,
+      "bytes": 489,
+      "sha256": "11faa961b3b812452371ba53c67127178133fcb6b01990638ef812644000cc4c"
+    },
+    {
+      "name": "PIL.PalmImagePlugin",
+      "constant_count": 89,
+      "bytes": 4912,
+      "sha256": "f9656ef9a4e3a1ea4450678529a9ff2b3cc8ed9dfccff554e6c3e632a9f625d9"
+    },
+    {
+      "name": "PIL.PcdImagePlugin",
+      "constant_count": 61,
+      "bytes": 702,
+      "sha256": "087c9cf087a2e9f685a84fff1d5a02c9b437bf843200ee55e72c15121b163f68"
+    },
+    {
+      "name": "PIL.PcxImagePlugin",
+      "constant_count": 125,
+      "bytes": 1676,
+      "sha256": "2b8a9d75a304d49ca1d8e989bbc004df1d56cdd64f4d75ce0796a162c7be3056"
+    },
+    {
+      "name": "PIL.PdfImagePlugin",
+      "constant_count": 156,
+      "bytes": 2211,
+      "sha256": "00cb57b36fcc53caa0a069e2f0d1814884a01a8d5f4059e08db7b69b5b07f4fc"
+    },
+    {
+      "name": "PIL.PdfParser",
+      "constant_count": 516,
+      "bytes": 9612,
+      "sha256": "62a87e3cf8e8aa9fd5ce4891aa10a9c3be32ed2bfe8eb680d59fbd75390d3bf9"
+    },
+    {
+      "name": "PIL.PixarImagePlugin",
+      "constant_count": 61,
+      "bytes": 693,
+      "sha256": "a619986789ee94d2315ad0865faffc164420a55c4b34519f8f6631aed58ef291"
+    },
+    {
+      "name": "PIL.PngImagePlugin",
+      "constant_count": 566,
+      "bytes": 9113,
+      "sha256": "9ac3cf5e7a1fedac10a8fcb43a81b64e84624c3d5021158295506477e980eb7b"
+    },
+    {
+      "name": "PIL.PpmImagePlugin",
+      "constant_count": 193,
+      "bytes": 2888,
+      "sha256": "861507e0835c171afbeb44bca2459c41c8057b2f899b7e5faa2d3d1679aceb9d"
+    },
+    {
+      "name": "PIL.PsdImagePlugin",
+      "constant_count": 143,
+      "bytes": 2096,
+      "sha256": "47aa22baacdf9884f1e2e7ff1005e9f6086aac4e3b444dc22e746835ac413a3a"
+    },
+    {
+      "name": "PIL.PyAccess",
+      "constant_count": 182,
+      "bytes": 2624,
+      "sha256": "d6fac79a15c940b6584976b89af9dc1bd62de0d8ff362571b8eb550696c96327"
+    },
+    {
+      "name": "PIL.SgiImagePlugin",
+      "constant_count": 133,
+      "bytes": 1931,
+      "sha256": "4fa724703ec39699d2fb721bd0ce6d403b3a30ac1c15091ce9ff072efe2a9370"
+    },
+    {
+      "name": "PIL.SpiderImagePlugin",
+      "constant_count": 160,
+      "bytes": 2193,
+      "sha256": "a70f66087325cf44556ec945f54d30d207208d26ef940c61cbed129cd513ab9b"
+    },
+    {
+      "name": "PIL.SunImagePlugin",
+      "constant_count": 84,
+      "bytes": 1086,
+      "sha256": "68c61a32ddff38d9e3dcd9de4c4902bda5ddf7f26bec4127624547411b4b626a"
+    },
+    {
+      "name": "PIL.TgaImagePlugin",
+      "constant_count": 134,
+      "bytes": 2030,
+      "sha256": "f962a22f87fb8a8f82e0c76c5119fe70a68f9c8ad797e3a34ab17291d1f8571a"
+    },
+    {
+      "name": "PIL.TiffImagePlugin",
+      "constant_count": 1012,
+      "bytes": 16117,
+      "sha256": "e5dda882b86048230c544ed00003d77017e27ba6cebee0f973ab8fa1d62f66c0"
+    },
+    {
+      "name": "PIL.TiffTags",
+      "constant_count": 361,
+      "bytes": 7378,
+      "sha256": "dd273d403f3bd16badf4b58db053b38224cfd1bc0c0b932d527846644541034d"
+    },
+    {
+      "name": "PIL.WebPImagePlugin",
+      "constant_count": 199,
+      "bytes": 3221,
+      "sha256": "861738c178784f34485d4127ad57df4272bcbb33dd44365763055cf1486dc28e"
+    },
+    {
+      "name": "PIL.WmfImagePlugin",
+      "constant_count": 119,
+      "bytes": 1358,
+      "sha256": "09f42092a739570a2092296c7a3c6f2a9a39d2563062fcd4b9f627ba1928a462"
+    },
+    {
+      "name": "PIL.XVThumbImagePlugin",
+      "constant_count": 72,
+      "bytes": 822,
+      "sha256": "fc9e0411e620f1378423db2e63f2d4ee2273e98186ada07913d88a686892ba92"
+    },
+    {
+      "name": "PIL.XbmImagePlugin",
+      "constant_count": 83,
+      "bytes": 1214,
+      "sha256": "33680171316f37e9c9477777de88e24528b850f4898456886dc1d490a207ca08"
+    },
+    {
+      "name": "PIL.XpmImagePlugin",
+      "constant_count": 102,
+      "bytes": 1158,
+      "sha256": "ce5dbb3b1b3aa0e416e14548bababafbf15a3f38b7bc98e136151816e9638875"
+    },
+    {
+      "name": "PIL._binary",
+      "constant_count": 39,
+      "bytes": 301,
+      "sha256": "524ec864be9c14ad9f1dfbc79caff1551811481e305ea9f3bfea53b388db7282"
+    },
+    {
+      "name": "PIL._deprecate",
+      "constant_count": 43,
+      "bytes": 731,
+      "sha256": "ec5c77810e18a60e18dd1e41240844ddf4e5962654197a391eec844cbc60072f"
+    },
+    {
+      "name": "PIL._tkinter_finder",
+      "constant_count": 27,
+      "bytes": 363,
+      "sha256": "b1bac4ad117d66f277fd47af4f21317264d1170837be2cdfe0997354106b7a2d"
+    },
+    {
+      "name": "PIL._util",
+      "constant_count": 29,
+      "bytes": 318,
+      "sha256": "989e21971901a70af4044db224b6ae5a15d670d18dbd140ce0d8845349715c5d"
+    },
+    {
+      "name": "PIL._version",
+      "constant_count": 11,
+      "bytes": 128,
+      "sha256": "2ea607435911f23941514b53b00c7fdcdce51929b77d1e7ab1a2b2cad8bdf51b"
+    },
+    {
+      "name": "PIL",
+      "constant_count": 34,
+      "bytes": 1234,
+      "sha256": "b60883a7ec42afcbf2f952d15eecd2bc3e471450dc53acd584cde1ee0a2b8d0b"
+    },
+    {
+      "name": "PIL.features",
+      "constant_count": 120,
+      "bytes": 2851,
+      "sha256": "a0605f73e1a9549b247425f574d914fb5e699c36896f1d4304b75c5c7f814a06"
+    },
+    {
+      "name": "__main__",
+      "constant_count": 9310,
+      "bytes": 1431002,
+      "sha256": "3c5a4137176aac09ce365094eaa6202fc1eaf36653986cad22912f94925f0113"
+    },
+    {
+      "name": "__parents_main__",
+      "constant_count": 9304,
+      "bytes": 1430857,
+      "sha256": "7e2f32b7b70aa9da57281dcc5c91b281d549a940f9fd88f3fea51073b9b00633"
+    },
+    {
+      "name": "_inter_font_data",
+      "constant_count": 15,
+      "bytes": 625940,
+      "sha256": "9df830d53a865b251d29fd40ceda5b06c51c0dcdccdc3921c205cd82cfc73904"
+    },
+    {
+      "name": "autoit.autoit",
+      "constant_count": 345,
+      "bytes": 5570,
+      "sha256": "2937454d83c974dbdbe9dca46b0c932eb7e7627a708bc63710cd534135262b80"
+    },
+    {
+      "name": "autoit",
+      "constant_count": 262,
+      "bytes": 4886,
+      "sha256": "4ae8efc2521923916eaeac122cdd90683fd1f548b01105d3bf7d99d9e2a586e2"
+    },
+    {
+      "name": "autoit.control",
+      "constant_count": 148,
+      "bytes": 3238,
+      "sha256": "fc72d07d8a62105835da24bfd8ce7a9fc57395dc8f5764c79559f27d92c67be4"
+    },
+    {
+      "name": "autoit.process",
+      "constant_count": 62,
+      "bytes": 1017,
+      "sha256": "8cfdf83f2b63945a4489a180d16709975eed89cbc8a5792a005d1f409a1c7cc0"
+    },
+    {
+      "name": "autoit.win",
+      "constant_count": 196,
+      "bytes": 4044,
+      "sha256": "4369b3aad3f20678c53767fe9d07bf289940d0f676814a77b737dbece8de53bc"
+    },
+    {
+      "name": "bs4.builder._html5lib",
+      "constant_count": 266,
+      "bytes": 5290,
+      "sha256": "62331ba24e4fd486c94ffe5e7b05cc2b7cd257352314220f1cd954fd0d8d4c80"
+    },
+    {
+      "name": "bs4.builder._htmlparser",
+      "constant_count": 155,
+      "bytes": 3130,
+      "sha256": "b91528b1fea224d73c529d35bc4abac77b762d644b20495957181133360afab1"
+    },
+    {
+      "name": "bs4.builder._lxml",
+      "constant_count": 185,
+      "bytes": 3648,
+      "sha256": "81720a6ffc23f6e89be893e163df65e1935634cafcaf48b7c0f2c72fb39fa5ad"
+    },
+    {
+      "name": "bs4.builder",
+      "constant_count": 254,
+      "bytes": 6019,
+      "sha256": "1dcd5cf4d498415eb00b5b3c300fe8dc2e0352469356af19b4d257b55b5dfe0f"
+    },
+    {
+      "name": "bs4",
+      "constant_count": 301,
+      "bytes": 7823,
+      "sha256": "3175ecd28aa2cb1a5fe931347f13a8ea462a2faf8c8353e07c0d17d15bcd79ba"
+    },
+    {
+      "name": "bs4.css",
+      "constant_count": 66,
+      "bytes": 1024,
+      "sha256": "a2e5d0ffd90fd167bbb90a2caf38f5abe8ca0decb51da087b647bb995bfef819"
+    },
+    {
+      "name": "bs4.dammit",
+      "constant_count": 255,
+      "bytes": 6923,
+      "sha256": "51e72f897645b82b7cfdb12eecabe17a83b9afde8ccaa7a192fb9abc2a4c8c10"
+    },
+    {
+      "name": "bs4.element",
+      "constant_count": 609,
+      "bytes": 12605,
+      "sha256": "498b9fcf94ff12086e5509d32ec43b7439c7f6c0469199687773d79c0fc24b20"
+    },
+    {
+      "name": "bs4.formatter",
+      "constant_count": 89,
+      "bytes": 1512,
+      "sha256": "985decc85878470e5d67ba7bf70539fa582917c13018722a48e1d31d11c90459"
+    },
+    {
+      "name": "certifi",
+      "constant_count": 25,
+      "bytes": 301,
+      "sha256": "5d160de07c21b4db9899dbf80e59db9aa4f722ddb67daaa4d4e39355185356ce"
+    },
+    {
+      "name": "certifi.core",
+      "constant_count": 38,
+      "bytes": 433,
+      "sha256": "3a518b7a2256c43395417a8e1bf9fc518318de357c7d8f25279b6cc6c34f20b5"
+    },
+    {
+      "name": "charset_normalizer.api",
+      "constant_count": 165,
+      "bytes": 5196,
+      "sha256": "0b1e6d1896f958b6f8911e3d9bf568f478b2231ec6e0da9af672847401ce2e66"
+    },
+    {
+      "name": "charset_normalizer.assets",
+      "constant_count": 25,
+      "bytes": 5634,
+      "sha256": "d78c231b9ad60bce406c490003a1ea72e62d1cf4a211c55cba45dfa97ef62b61"
+    },
+    {
+      "name": "charset_normalizer.cd",
+      "constant_count": 156,
+      "bytes": 3658,
+      "sha256": "6c274545826df33a28db8d0f2a9289d472d7b4bf629c0841d983439522254246"
+    },
+    {
+      "name": "charset_normalizer",
+      "constant_count": 44,
+      "bytes": 722,
+      "sha256": "3cef2f139ba691768c6693703408e36321fd8962992b522f3c32876884c4798a"
+    },
+    {
+      "name": "charset_normalizer.constant",
+      "constant_count": 78,
+      "bytes": 13122,
+      "sha256": "4e00cd3997e800f7b14ac5e051ebf02a61453fc66ad034bf178c312af8e3e35f"
+    },
+    {
+      "name": "charset_normalizer.legacy",
+      "constant_count": 47,
+      "bytes": 666,
+      "sha256": "d4c9223660a6d32cc15a8876e02602a11948155ca3f2e8649fcc9187b40e5af1"
+    },
+    {
+      "name": "charset_normalizer.models",
+      "constant_count": 189,
+      "bytes": 3406,
+      "sha256": "a1c1dc1a1978ee5ebf051302783aa20178d8e6abc672eb4bf40193cb661d809e"
+    },
+    {
+      "name": "charset_normalizer.utils",
+      "constant_count": 197,
+      "bytes": 3681,
+      "sha256": "1051e6dd211a857de862f764fa322108e0e6ad7dcce81bd1017c2eb70d04b745"
+    },
+    {
+      "name": "charset_normalizer.version",
+      "constant_count": 13,
+      "bytes": 167,
+      "sha256": "46a809ec5b3ba4f6144c700e90568c3301873239bfd15a72487dddd5e5ef23a7"
+    },
+    {
+      "name": "commctrl",
+      "constant_count": 1699,
+      "bytes": 25375,
+      "sha256": "85f91def2a75921d877d144b037cd15828d165259d04c018df787cd535176ec0"
+    },
+    {
+      "name": "comtypes.GUID",
+      "constant_count": 106,
+      "bytes": 1268,
+      "sha256": "a1cd119c8b3a0f52d47a52a08ed18fbbbb06cc03d0e50c25c10c7a7668cc2f8c"
+    },
+    {
+      "name": "comtypes._comobject",
+      "constant_count": 377,
+      "bytes": 7676,
+      "sha256": "ce1a71a13c8ef08db149b2d97a49b67190cf54f9d742ea3ada702b38c0dcbaff"
+    },
+    {
+      "name": "comtypes._memberspec",
+      "constant_count": 290,
+      "bytes": 5956,
+      "sha256": "15d29626d187047cf0d7fab1b2d3d7d0e89f02fd0dd616a7a493ca043a519f53"
+    },
+    {
+      "name": "comtypes._meta",
+      "constant_count": 45,
+      "bytes": 711,
+      "sha256": "d8ea8ef1ac1d819509b1aad6343766832091af430f024348280dcc62e5e0eb59"
+    },
+    {
+      "name": "comtypes._npsupport",
+      "constant_count": 83,
+      "bytes": 1630,
+      "sha256": "c63c8bb5e8f2c2b7e1d849929299b3cca3405c641fc6246c0a0b411ff63f43af"
+    },
+    {
+      "name": "comtypes._safearray",
+      "constant_count": 79,
+      "bytes": 1122,
+      "sha256": "bb994d73b86325579ed6e76121e755322223f7da49fae68c95371b336701700e"
+    },
+    {
+      "name": "comtypes.automation",
+      "constant_count": 523,
+      "bytes": 7922,
+      "sha256": "28cd70e1de70d1859778de141a050b0d11d24147e1349c05b453719a76672694"
+    },
+    {
+      "name": "comtypes.client._code_cache",
+      "constant_count": 94,
+      "bytes": 1521,
+      "sha256": "ba11f73b21c57f1b8a1bb9c62321bf6e29953da316c03d618e6b640c462c1d02"
+    },
+    {
+      "name": "comtypes.client._constants",
+      "constant_count": 116,
+      "bytes": 1832,
+      "sha256": "e09bf63c12ef61413a3045a72770f71ad67f31c1cd9a424908865fa078c3f4b2"
+    },
+    {
+      "name": "comtypes.client._events",
+      "constant_count": 190,
+      "bytes": 3411,
+      "sha256": "a8c0f1bff0fb23b00139d9c27d2fc840bb33f32acc5a98c01df8a33d1ff88dfb"
+    },
+    {
+      "name": "comtypes.client._generate",
+      "constant_count": 148,
+      "bytes": 2263,
+      "sha256": "f9273557b21a830610c058dc156afb1524d2f678dbe2c80b959c6ed525d6195d"
+    },
+    {
+      "name": "comtypes.client",
+      "constant_count": 155,
+      "bytes": 3096,
+      "sha256": "b34c788c521d3e6bb4479043d0d6ec0cf20549c03c9b9e413080a69b04c72cb9"
+    },
+    {
+      "name": "comtypes.client.dynamic",
+      "constant_count": 131,
+      "bytes": 1986,
+      "sha256": "2da0e1ed1495b8b0a80215d2e27f6e77ea08323fd32ec00178a8305d37f787e4"
+    },
+    {
+      "name": "comtypes.client.lazybind",
+      "constant_count": 129,
+      "bytes": 2123,
+      "sha256": "1201c4ecd8edace5fe1003e08e532091bcc22632d86141e19c07b79b7ca51b8e"
+    },
+    {
+      "name": "comtypes.connectionpoints",
+      "constant_count": 82,
+      "bytes": 1278,
+      "sha256": "e900fd2e096901146c871e1b714167dffac95a90e1a6dcf6d47461425098ade3"
+    },
+    {
+      "name": "comtypes",
+      "constant_count": 514,
+      "bytes": 10222,
+      "sha256": "dac4f785626817be983d33a6a71df76e4c3f6c354bbc8ad9fb348101ffdba869"
+    },
+    {
+      "name": "comtypes.errorinfo",
+      "constant_count": 103,
+      "bytes": 1658,
+      "sha256": "c3ca185231820fcaef1e1fd8ba000ec5a9c387976299e2ed8a2a6259f4a50527"
+    },
+    {
+      "name": "comtypes.hresult",
+      "constant_count": 101,
+      "bytes": 1361,
+      "sha256": "7e76a42e3eba5c34b0551e53354bb29f531030cc1cbd8a5e4835290f00b0f1ea"
+    },
+    {
+      "name": "comtypes.messageloop",
+      "constant_count": 64,
+      "bytes": 912,
+      "sha256": "b182148e8d89c8cfc12dfa9e2a41f2376d3d71f0050236e16c3d6dd0d5ddfce9"
+    },
+    {
+      "name": "comtypes.patcher",
+      "constant_count": 36,
+      "bytes": 530,
+      "sha256": "f85d4aa972c7becf2b86c67c10cbbe12586295da7cf3911e2ab9135319ef9cd0"
+    },
+    {
+      "name": "comtypes.persist",
+      "constant_count": 166,
+      "bytes": 2892,
+      "sha256": "5fc6ed5b4589840a25366d47e9440cd69a69bb07df67b14ba8235e10811c52c3"
+    },
+    {
+      "name": "comtypes.safearray",
+      "constant_count": 216,
+      "bytes": 4184,
+      "sha256": "39c6adcce7952f74e1b98bb48afa7a788d38a7597c153ec33129abfea233493a"
+    },
+    {
+      "name": "comtypes.server",
+      "constant_count": 73,
+      "bytes": 1138,
+      "sha256": "df1e140b881e35070f716554bc354bcf1edd3da3cc55c76c89259859a5f6313d"
+    },
+    {
+      "name": "comtypes.tools.codegenerator",
+      "constant_count": 560,
+      "bytes": 11311,
+      "sha256": "5b54d3c0afc6e6685ea7c25847097b08af621231b7847ca396e4c3e8456a4de7"
+    },
+    {
+      "name": "comtypes.tools",
+      "constant_count": 19,
+      "bytes": 291,
+      "sha256": "f454b18e5cb620d9d80a21ff7d39094444aa695656e7de6061a1ad03f76f141e"
+    },
+    {
+      "name": "comtypes.tools.tlbparser",
+      "constant_count": 437,
+      "bytes": 7333,
+      "sha256": "3dbc401cec01780448cf2994dc37be38215238354481fc9eee30b5daf9f6e177"
+    },
+    {
+      "name": "comtypes.tools.typedesc",
+      "constant_count": 126,
+      "bytes": 1998,
+      "sha256": "780595778684adc15b2d0be1bddd7b5c916e998a5fda4843df963ab7c2ccc4d7"
+    },
+    {
+      "name": "comtypes.tools.typedesc_base",
+      "constant_count": 151,
+      "bytes": 2310,
+      "sha256": "941909ba912e96cbdb2b62785b23f2cbf969b587b07529be591bc951b5e2b835"
+    },
+    {
+      "name": "comtypes.typeinfo",
+      "constant_count": 593,
+      "bytes": 11926,
+      "sha256": "1bb4b7dd4298e948bca20c61495a07dc7391b11d8981c979b4fed8ae2735658d"
+    },
+    {
+      "name": "coop_client",
+      "constant_count": 872,
+      "bytes": 14906,
+      "sha256": "fa0764d7fb6636bb92b86779df1bb522840de70204a218f2f274116a95854600"
+    },
+    {
+      "name": "customtkinter",
+      "constant_count": 119,
+      "bytes": 1764,
+      "sha256": "c31556f32b38b7b6b3b0d427ac9d137f32a904bfd5ae58799136b5a87a088d29"
+    },
+    {
+      "name": "customtkinter.windows",
+      "constant_count": 30,
+      "bytes": 443,
+      "sha256": "79d32317abf426dfc890a30faee36d788aefab21e34d36960c370b6b757a6be7"
+    },
+    {
+      "name": "customtkinter.windows.ctk_input_dialog",
+      "constant_count": 129,
+      "bytes": 2219,
+      "sha256": "348265a3ddaa46ff3b149d1edfb037bbfb8e3c068a9cd31ddb50455bf743115d"
+    },
+    {
+      "name": "customtkinter.windows.ctk_tk",
+      "constant_count": 216,
+      "bytes": 3988,
+      "sha256": "c4c56865413a6d5d0ea86afc4625c4014f2b62902bbd2b458ffe02490f2474c6"
+    },
+    {
+      "name": "customtkinter.windows.ctk_toplevel",
+      "constant_count": 214,
+      "bytes": 4360,
+      "sha256": "f5fe6b5ed8c7a535187782c28089201462e0ea16d3e506dfe72891891c0c74b9"
+    },
+    {
+      "name": "customtkinter.windows.widgets.appearance_mode.appearance_mode_base_class",
+      "constant_count": 61,
+      "bytes": 1400,
+      "sha256": "46ea32aa05f248db339a91048ffcc634b4591790767ac39a38e9d5f125d63179"
+    },
+    {
+      "name": "customtkinter.windows.widgets.appearance_mode.appearance_mode_tracker",
+      "constant_count": 83,
+      "bytes": 1609,
+      "sha256": "c41d166b71e868b95e164adf680c0a8fcb5e94c266d958b39b049be67d75245c"
+    },
+    {
+      "name": "customtkinter.windows.widgets.appearance_mode",
+      "constant_count": 32,
+      "bytes": 766,
+      "sha256": "08add36663257feb6532c326754c9bee148550f49a6dfe4d735d87d44002567c"
+    },
+    {
+      "name": "customtkinter.windows.widgets",
+      "constant_count": 71,
+      "bytes": 1117,
+      "sha256": "6261af8ebd0250eaecfd0bd8c91303d55684e1665be204e2595fef354dffeb56"
+    },
+    {
+      "name": "customtkinter.windows.widgets.core_rendering",
+      "constant_count": 35,
+      "bytes": 727,
+      "sha256": "f26d0da16d1a43332b6141b09d0c6e055f4d8787ff7fae4b3061af2a45acf0c0"
+    },
+    {
+      "name": "customtkinter.windows.widgets.core_rendering.ctk_canvas",
+      "constant_count": 85,
+      "bytes": 1816,
+      "sha256": "da4bf2fc8c5679b7c0861060345179d1674ad8474de5f1d80d9dee3e4d06df49"
+    },
+    {
+      "name": "customtkinter.windows.widgets.core_rendering.draw_engine",
+      "constant_count": 454,
+      "bytes": 18999,
+      "sha256": "7c6abc083f4879020c463ddd73935c9ce6b6620e35170d46b030cbebc5b605f5"
+    },
+    {
+      "name": "customtkinter.windows.widgets.core_widget_classes",
+      "constant_count": 31,
+      "bytes": 700,
+      "sha256": "85d2cf96d5dab22ed20a7357a89cabe38fbeb0e5b0847fc2f4c478ba986da1ff"
+    },
+    {
+      "name": "customtkinter.windows.widgets.core_widget_classes.ctk_base_class",
+      "constant_count": 218,
+      "bytes": 4438,
+      "sha256": "8bfd8c2f93b1892557092af22c967e6eda8998e49277f29f77b42f6097087a2b"
+    },
+    {
+      "name": "customtkinter.windows.widgets.core_widget_classes.dropdown_menu",
+      "constant_count": 145,
+      "bytes": 2805,
+      "sha256": "e0c9a6f97dfb70896761457043abd2c05a8edde34b23d66c81338bddd88b50fa"
+    },
+    {
+      "name": "customtkinter.windows.widgets.ctk_button",
+      "constant_count": 296,
+      "bytes": 5232,
+      "sha256": "2dbb3256aaaab130b4ad87112120c62f1b929cddd83d341ae764af545435db92"
+    },
+    {
+      "name": "customtkinter.windows.widgets.ctk_checkbox",
+      "constant_count": 260,
+      "bytes": 4306,
+      "sha256": "7f3a4644fc97cf62d40fa576056fc9ca53fef6e5cfce0727a1d8563c3835bb7b"
+    },
+    {
+      "name": "customtkinter.windows.widgets.ctk_combobox",
+      "constant_count": 260,
+      "bytes": 4622,
+      "sha256": "6c45c48bc8a8b0c77136c4d52600ce1ebde05eb145d13953ed8a97f84787a172"
+    },
+    {
+      "name": "customtkinter.windows.widgets.ctk_entry",
+      "constant_count": 258,
+      "bytes": 4741,
+      "sha256": "a740ceccddc2cb4b07f25741fc0bf8434909972acc8e31cd0b68a4ba35f58671"
+    },
+    {
+      "name": "customtkinter.windows.widgets.ctk_frame",
+      "constant_count": 142,
+      "bytes": 2713,
+      "sha256": "42a4cf14546c0beff8b4b2a069c186e23aab98f2a4050d08c3bec050884a27f1"
+    },
+    {
+      "name": "customtkinter.windows.widgets.ctk_label",
+      "constant_count": 198,
+      "bytes": 3600,
+      "sha256": "ad0b135ef8cd00c1e8028b430c901075875e687bc5c30abff4f17034846a5de7"
+    },
+    {
+      "name": "customtkinter.windows.widgets.ctk_optionmenu",
+      "constant_count": 258,
+      "bytes": 4538,
+      "sha256": "a1ec1c3aff792ae6737156132df326bf3b792e384279f129bab300d552dedb20"
+    },
+    {
+      "name": "customtkinter.windows.widgets.ctk_progressbar",
+      "constant_count": 213,
+      "bytes": 3695,
+      "sha256": "c70ca73f25e36e4d0f857d156c209dacd98a2667d18523df4044b56a87af994a"
+    },
+    {
+      "name": "customtkinter.windows.widgets.ctk_radiobutton",
+      "constant_count": 252,
+      "bytes": 4347,
+      "sha256": "30335556835f1b6af9023b7d1de84fbf84381a2af9fa7c186f3335fefc226dca"
+    },
+    {
+      "name": "customtkinter.windows.widgets.ctk_scrollable_frame",
+      "constant_count": 240,
+      "bytes": 4602,
+      "sha256": "454e9b14234179184e11d78047b6e99da972360ca5e9f348040e98b1ea103953"
+    },
+    {
+      "name": "customtkinter.windows.widgets.ctk_scrollbar",
+      "constant_count": 200,
+      "bytes": 3611,
+      "sha256": "5e6246497e94b739ba6ac43f703f6775e74ebd35e5790bea178e5f14c79912e6"
+    },
+    {
+      "name": "customtkinter.windows.widgets.ctk_segmented_button",
+      "constant_count": 237,
+      "bytes": 4974,
+      "sha256": "7a15ae00792e10a942de7bc40ed1e889a220b851ac7937922128338836b1c24e"
+    },
+    {
+      "name": "customtkinter.windows.widgets.ctk_slider",
+      "constant_count": 236,
+      "bytes": 3996,
+      "sha256": "65adcf38f1155a00249d3c9b8cb07e98738b55c3670bff8156e4591b6a006225"
+    },
+    {
+      "name": "customtkinter.windows.widgets.ctk_switch",
+      "constant_count": 266,
+      "bytes": 4390,
+      "sha256": "64f95880b64b82f35fb41334bbc2b99288820b9b320b0e4456ab95a8774e69c7"
+    },
+    {
+      "name": "customtkinter.windows.widgets.ctk_tabview",
+      "constant_count": 238,
+      "bytes": 4795,
+      "sha256": "840d1a4846247d6e28eb96c37ac231682cfeb8145afd0bbdb9ad0a8e3de2fa8c"
+    },
+    {
+      "name": "customtkinter.windows.widgets.ctk_textbox",
+      "constant_count": 360,
+      "bytes": 7241,
+      "sha256": "c1fe009f4f356031bc014f6aefcdf1fc17ffbeca8501db12388452189d099011"
+    },
+    {
+      "name": "customtkinter.windows.widgets.font",
+      "constant_count": 51,
+      "bytes": 1068,
+      "sha256": "81d56aa8383efa38d48ffaab931397181c078a3d6ac04e5206a93ee63ff86283"
+    },
+    {
+      "name": "customtkinter.windows.widgets.font.ctk_font",
+      "constant_count": 98,
+      "bytes": 1586,
+      "sha256": "a5f895b2b514aa490e89c13f53d9913443d2233efd72a8cb629ddf95c4fc724c"
+    },
+    {
+      "name": "customtkinter.windows.widgets.font.font_manager",
+      "constant_count": 51,
+      "bytes": 972,
+      "sha256": "b115b9943f19f6757b7ba687e3c7ee91fe7abe410f58efcd96c6139960b7cb72"
+    },
+    {
+      "name": "customtkinter.windows.widgets.image",
+      "constant_count": 28,
+      "bytes": 558,
+      "sha256": "0ac1859fff377763ff2ae994dceac48117e5132bb067457ecb7c26921910adcc"
+    },
+    {
+      "name": "customtkinter.windows.widgets.image.ctk_image",
+      "constant_count": 96,
+      "bytes": 1941,
+      "sha256": "62ee5350d1e0389e06245909824ffc65a4a0eed38a945a5444c7beea4eb03315"
+    },
+    {
+      "name": "customtkinter.windows.widgets.scaling",
+      "constant_count": 36,
+      "bytes": 724,
+      "sha256": "58067314f0eeefc08136d64d625434d39288d07f3ea6d998e65d2512d6b82363"
+    },
+    {
+      "name": "customtkinter.windows.widgets.scaling.scaling_base_class",
+      "constant_count": 116,
+      "bytes": 2502,
+      "sha256": "0bcd7a50c632843a4d236508eef420e6cc74a357dcafa0c82674c8ad0c458857"
+    },
+    {
+      "name": "customtkinter.windows.widgets.scaling.scaling_tracker",
+      "constant_count": 112,
+      "bytes": 2395,
+      "sha256": "7414503b963db084c960eec74dd9730c8bad18ad834ed1888bf424af04e33983"
+    },
+    {
+      "name": "customtkinter.windows.widgets.theme",
+      "constant_count": 34,
+      "bytes": 822,
+      "sha256": "eec8fc3cda817a55935cdce9cbe2a5f5a9abda44362c9303410a9b097e2c1173"
+    },
+    {
+      "name": "customtkinter.windows.widgets.theme.theme_manager",
+      "constant_count": 67,
+      "bytes": 961,
+      "sha256": "e88c21060f60ea0d9d5973fd0d5bb66dff5e4a14ef52c0014c8167512364ad12"
+    },
+    {
+      "name": "customtkinter.windows.widgets.utility",
+      "constant_count": 29,
+      "bytes": 642,
+      "sha256": "b128d4786dac51fdc4422a252daf1f2fb99a5f97d74e8b23fd0a006c702afb58"
+    },
+    {
+      "name": "customtkinter.windows.widgets.utility.utility_functions",
+      "constant_count": 21,
+      "bytes": 502,
+      "sha256": "3a4bd51c54029e9ada33ea690348ef653d1a602360aed6db96d7ed163fa15e66"
+    },
+    {
+      "name": "darkdetect._dummy",
+      "constant_count": 19,
+      "bytes": 210,
+      "sha256": "ce10e2b8f22625d736965b69810e32321222eeb5fb23d3791d5065300b2b59b1"
+    },
+    {
+      "name": "darkdetect._windows_detect",
+      "constant_count": 64,
+      "bytes": 880,
+      "sha256": "3486fae72e9d5085adad17aaffd9fd7839b460e1e79fdad708cec128429fae5c"
+    },
+    {
+      "name": "darkdetect",
+      "constant_count": 40,
+      "bytes": 432,
+      "sha256": "c4aed4ec26369af339d66970de7fd9f2e6597257a879c3bb2a0ba4198f26def0"
+    },
+    {
+      "name": "idna",
+      "constant_count": 46,
+      "bytes": 1139,
+      "sha256": "7e8f189dc462ebd2145ad82c3d45445ede0e715feeab4b586d77a84528bb927a"
+    },
+    {
+      "name": "idna.core",
+      "constant_count": 207,
+      "bytes": 3622,
+      "sha256": "b880f4663071ec9f9f7cdb556166db6c739c3c50826f434897de6cf4123df9c0"
+    },
+    {
+      "name": "idna.idnadata",
+      "constant_count": 17,
+      "bytes": 17592,
+      "sha256": "9e61c52b863ddfe1e64bd50261d4dd6b2bb3390ac6a04a91ec9e6706924cd445"
+    },
+    {
+      "name": "idna.intranges",
+      "constant_count": 39,
+      "bytes": 516,
+      "sha256": "3e28b00c1e89477dbb31c8939b0fa72e2932fb91d37c05b1eafd30bbe3ac0378"
+    },
+    {
+      "name": "idna.package_data",
+      "constant_count": 11,
+      "bytes": 136,
+      "sha256": "27c354b93485f9d6f75144045639731442198906e03f2985556e116737a06c71"
+    },
+    {
+      "name": "idna.uts46data",
+      "constant_count": 183,
+      "bytes": 102666,
+      "sha256": "aede68ee73543ff6d72a2776a2a808d780de773a1495f2a6ad44cc69c75b1962"
+    },
+    {
+      "name": "inventory_manager",
+      "constant_count": 5207,
+      "bytes": 207383,
+      "sha256": "b35330a63f67934ea797035c8256e1f5de1bfeb591b3fd53a2e998f7a5eb9047"
+    },
+    {
+      "name": "keyboard._canonical_names",
+      "constant_count": 38,
+      "bytes": 18531,
+      "sha256": "29f78487b807bca5c84026f95030892bbcf4e8b65c0b6f6fce5bb4ff3a3d991f"
+    },
+    {
+      "name": "keyboard._darwinkeyboard",
+      "constant_count": 228,
+      "bytes": 5078,
+      "sha256": "3b5937ae3ba57a028abbd59e581b3f5ff151005692a08640c4ad56c8fe9941af"
+    },
+    {
+      "name": "keyboard._generic",
+      "constant_count": 71,
+      "bytes": 1039,
+      "sha256": "889916133f724bc47734248a5f8c0026b6e41af920ea8b69e60fbf3e5528c588"
+    },
+    {
+      "name": "keyboard._keyboard_event",
+      "constant_count": 67,
+      "bytes": 1026,
+      "sha256": "5836efe5f184d6b3ed0811f3718a1876ea7862c0b92c7f30396eb04a8342ee60"
+    },
+    {
+      "name": "keyboard._nixcommon",
+      "constant_count": 164,
+      "bytes": 2869,
+      "sha256": "e09fc25cd3afcf4d08809a8991e5571076265d887fd2809a23df0c2966f21fec"
+    },
+    {
+      "name": "keyboard._nixkeyboard",
+      "constant_count": 125,
+      "bytes": 2095,
+      "sha256": "97d234010d3954199da06bd8e661abfc44844f7a200b962a8ff05dadca9456ae"
+    },
+    {
+      "name": "keyboard._winkeyboard",
+      "constant_count": 277,
+      "bytes": 7200,
+      "sha256": "00b3cf24a4ec874cc60ed382a2739107e708a26c2a649453596e95af7870c055"
+    },
+    {
+      "name": "keyboard",
+      "constant_count": 468,
+      "bytes": 9116,
+      "sha256": "e05f0afb60de984c7f5b093f251b4d33d9446cde4ec04368c08fa1dab2158c95"
+    },
+    {
+      "name": "mouseinfo",
+      "constant_count": 389,
+      "bytes": 5762,
+      "sha256": "7e329ca1a34d1f66945712a2a241a21b43420a900917d3ef325c63c6c523bdc2"
+    },
+    {
+      "name": "multiprocessing-postLoad",
+      "constant_count": 29,
+      "bytes": 372,
+      "sha256": "b12504108ca717195b4855eff508238be2d2e1a0cb7c227cff54d4bd00cd76d1"
+    },
+    {
+      "name": "multiprocessing-preLoad",
+      "constant_count": 22,
+      "bytes": 245,
+      "sha256": "abcf402d2b664e3e2e32960766cd47478b51a2f25a5b0b28aad606afac8e20aa"
+    },
+    {
+      "name": "psutil._common",
+      "constant_count": 446,
+      "bytes": 7846,
+      "sha256": "dec7f0301ccf116b65e206a322ca76d0afaad616b9ef6c7499ebfdff27d5f8c1"
+    },
+    {
+      "name": "psutil._compat",
+      "constant_count": 190,
+      "bytes": 3657,
+      "sha256": "8555cd00be8b3f4d86d25f603e22e3a5f3da9c3b5758a464d52e3e398e50951d"
+    },
+    {
+      "name": "psutil._psaix",
+      "constant_count": 360,
+      "bytes": 5598,
+      "sha256": "c42def8271d72197b12b6c6ca9f62a53f63dfc6e66b28d4e51fbdc17c55321c6"
+    },
+    {
+      "name": "psutil._psbsd",
+      "constant_count": 445,
+      "bytes": 7624,
+      "sha256": "807a573373b32706e72e797e4937804f5f94f57d3e508234651bf1a388d79c8c"
+    },
+    {
+      "name": "psutil._pslinux",
+      "constant_count": 917,
+      "bytes": 16511,
+      "sha256": "7ee49103c755538b21ff850bf939011b733adccadbadf376965257c93a4a600b"
+    },
+    {
+      "name": "psutil._psosx",
+      "constant_count": 326,
+      "bytes": 5229,
+      "sha256": "5797ccb0f136837f5d050a0c8780f6dda838a1567de09ab72848021359f3aa06"
+    },
+    {
+      "name": "psutil._psposix",
+      "constant_count": 110,
+      "bytes": 1644,
+      "sha256": "f4203d21a947084a03d594a670e8e2596765ddeeb3e475a29df2543dc8eb7b18"
+    },
+    {
+      "name": "psutil._pssunos",
+      "constant_count": 413,
+      "bytes": 6441,
+      "sha256": "17f4c3b92052d574ec129737b81805f934bf7c4df4ee0cd623313c29d7597f10"
+    },
+    {
+      "name": "psutil._pswindows",
+      "constant_count": 541,
+      "bytes": 10046,
+      "sha256": "7fd198fa7f6d0ededa4c4240de0e2f6fa50aec8995f222661c0f3e4748f8c7a2"
+    },
+    {
+      "name": "psutil",
+      "constant_count": 708,
+      "bytes": 12714,
+      "sha256": "d8b80a6ac2547c4e8b4c2168f7f9026762f80b9a3c88527c927112837f317251"
+    },
+    {
+      "name": "pyasn1.codec.ber",
+      "constant_count": 21,
+      "bytes": 350,
+      "sha256": "5ea86387bc64616ea677aac98e858f691fcdff4e806abb15c0dc7efcf17438d0"
+    },
+    {
+      "name": "pyasn1.codec.ber.decoder",
+      "constant_count": 472,
+      "bytes": 11878,
+      "sha256": "d374037b76439d642ada21d1930d88b806221b39584f8095ebf16e294d9bd52e"
+    },
+    {
+      "name": "pyasn1.codec.ber.encoder",
+      "constant_count": 316,
+      "bytes": 5985,
+      "sha256": "2c1bee353351a8fa0574e7380c20bff59c6b2d73c79b2f3694f822c78ffa8422"
+    },
+    {
+      "name": "pyasn1.codec.ber.eoo",
+      "constant_count": 39,
+      "bytes": 530,
+      "sha256": "6be6a587d76991e19c1b7a6ce4603c4422cf731951171013b10ca43a7ec6b98e"
+    },
+    {
+      "name": "pyasn1.codec.cer",
+      "constant_count": 21,
+      "bytes": 350,
+      "sha256": "b90b6122b4736ea2ee196cede1c034e4efd5e2ce04aa4aace4e7dd66df1d3f6d"
+    },
+    {
+      "name": "pyasn1.codec.cer.decoder",
+      "constant_count": 80,
+      "bytes": 1228,
+      "sha256": "92872667fcf3e5768a9dd5813639753c29890e2f6b54513924e989eb288d0643"
+    },
+    {
+      "name": "pyasn1.codec.cer.encoder",
+      "constant_count": 176,
+      "bytes": 2645,
+      "sha256": "80eb793b915afa3f2015bf9e93432f66587e39982e9d5982bb61197fb54d937d"
+    },
+    {
+      "name": "pyasn1.codec",
+      "constant_count": 19,
+      "bytes": 283,
+      "sha256": "576e6ae88947aecdb06f63065125c5d18cb2340cbf123a111f362f6dc623b4c5"
+    },
+    {
+      "name": "pyasn1.codec.der",
+      "constant_count": 21,
+      "bytes": 350,
+      "sha256": "be9e920bed5f35a367571e3a36f6e8fe3bef393308fb5f520cc1698426aa569d"
+    },
+    {
+      "name": "pyasn1.codec.der.decoder",
+      "constant_count": 52,
+      "bytes": 732,
+      "sha256": "c5b1944b68f74beb0911196bf7c267073c3d53b9f0f5fbcf8876941dfcb0d3d7"
+    },
+    {
+      "name": "pyasn1.codec.der.encoder",
+      "constant_count": 61,
+      "bytes": 878,
+      "sha256": "bf9dab718865d0cee3c23b11350201d7bd29f684792fb75a62121db78b19c39a"
+    },
+    {
+      "name": "pyasn1.codec.streaming",
+      "constant_count": 90,
+      "bytes": 1353,
+      "sha256": "a985ba37137cfe182aabd0360cba3960b1cdfc1629de4d8af414250b09ad1764"
+    },
+    {
+      "name": "pyasn1.compat",
+      "constant_count": 20,
+      "bytes": 297,
+      "sha256": "90c3888a4a1ec4aefc9dd4277c22736f567460b8ac8b9b9c7d1c0f56190294e8"
+    },
+    {
+      "name": "pyasn1.compat.integer",
+      "constant_count": 34,
+      "bytes": 414,
+      "sha256": "f211424f728ec042aa3316b4220c81ed1556fcb2ab9a1646c2541fb29852c836"
+    },
+    {
+      "name": "pyasn1.compat.octets",
+      "constant_count": 32,
+      "bytes": 325,
+      "sha256": "904290cda511889fee0c033c586e446cecc4a1d94e5624711b9012a4adc6f378"
+    },
+    {
+      "name": "pyasn1",
+      "constant_count": 18,
+      "bytes": 232,
+      "sha256": "a60a979ca64288405157a0dacbaec6ce392d3c1bbc999ee91806809c153e8849"
+    },
+    {
+      "name": "pyasn1.debug",
+      "constant_count": 123,
+      "bytes": 1557,
+      "sha256": "a0e5e867929032d68c2b957d15810994610e04c61649b4bb8a355ac88798731b"
+    },
+    {
+      "name": "pyasn1.error",
+      "constant_count": 43,
+      "bytes": 661,
+      "sha256": "be8cd5bc71d75d10bd4456441bd512278f4bd0c1a97917a40849b4ab8c16858c"
+    },
+    {
+      "name": "pyasn1.type.base",
+      "constant_count": 238,
+      "bytes": 4612,
+      "sha256": "3ed8e345f7bb63170e07b2b40df2663ab60092d4a10dc0aab41ec62e22f7aeb7"
+    },
+    {
+      "name": "pyasn1.type.char",
+      "constant_count": 109,
+      "bytes": 1702,
+      "sha256": "a438c1cc883d087e068c92174fb7d4ed1bcd5431c6da652bee63a4f9009824a3"
+    },
+    {
+      "name": "pyasn1.type",
+      "constant_count": 19,
+      "bytes": 279,
+      "sha256": "3a53c092bb9489027e92ad5d8248ef0f692240f1f1776756b05e6b7f723253a4"
+    },
+    {
+      "name": "pyasn1.type.constraint",
+      "constant_count": 163,
+      "bytes": 3602,
+      "sha256": "1f01eebf8892f791dcd92df2073194e9f2500455956aed875f5c3358c557a40b"
+    },
+    {
+      "name": "pyasn1.type.error",
+      "constant_count": 23,
+      "bytes": 345,
+      "sha256": "0388b2705bd21e186c2e34027689e563a173dda1f3b225437db68560565b4dc5"
+    },
+    {
+      "name": "pyasn1.type.namedtype",
+      "constant_count": 219,
+      "bytes": 4168,
+      "sha256": "4bb26dd5d9c0409761554a3bbeb88586afaa8fa35bcf549b52d10f1a97c025f8"
+    },
+    {
+      "name": "pyasn1.type.namedval",
+      "constant_count": 100,
+      "bytes": 1552,
+      "sha256": "1dc8c73764008d049f3a3cd990d199358c8be76f4e2b45698e208244da33771b"
+    },
+    {
+      "name": "pyasn1.type.tag",
+      "constant_count": 141,
+      "bytes": 2120,
+      "sha256": "3597587156728447a5aeb00feefcb239bb8c16cb1cd1710db63e51d824f4f101"
+    },
+    {
+      "name": "pyasn1.type.tagmap",
+      "constant_count": 63,
+      "bytes": 928,
+      "sha256": "986a3ee4e14e35a2f103840f68bb9537926a8cba9764efee8d9616c4dd92778f"
+    },
+    {
+      "name": "pyasn1.type.univ",
+      "constant_count": 705,
+      "bytes": 13220,
+      "sha256": "5fa0aa049736867549128219b48f2b7ab8987f776a16ef0e0487448e7f96b426"
+    },
+    {
+      "name": "pyasn1.type.useful",
+      "constant_count": 129,
+      "bytes": 1619,
+      "sha256": "23e4cc53dd9d1ce21f416f9aed356bb1361abb62898171c4e52abdaf764935aa"
+    },
+    {
+      "name": "pyautogui._pyautogui_win",
+      "constant_count": 142,
+      "bytes": 3310,
+      "sha256": "a57bdba20a1ac4638b81d49b80b47fc4eb1368724bf470c7c1587034d217b7b3"
+    },
+    {
+      "name": "pyautogui",
+      "constant_count": 454,
+      "bytes": 10595,
+      "sha256": "f4ae0e360038933f134ad9212dfb10f504addf96295133cd15f4468ce8f588b5"
+    },
+    {
+      "name": "pydirectinput",
+      "constant_count": 369,
+      "bytes": 4083,
+      "sha256": "14b9a11acf2eabb4812c43d7c620325ae03b3efa9abbd03995fd4ef399d8c8ed"
+    },
+    {
+      "name": "pygetwindow._pygetwindow_win",
+      "constant_count": 198,
+      "bytes": 3122,
+      "sha256": "b8fd4d05e35fd5549d57e792ac769ce066e43ed01bfd24eb67efa4d3921b6b48"
+    },
+    {
+      "name": "pygetwindow",
+      "constant_count": 157,
+      "bytes": 2558,
+      "sha256": "288f82ca44830e0d0a417cf6b9b616af837ec1c75631b083975f7d85a3b15196"
+    },
+    {
+      "name": "pymsgbox._native_win",
+      "constant_count": 86,
+      "bytes": 1088,
+      "sha256": "51d6abc2b3beb54470d6d2619fa8a1acffe06107e50db2c6d86460a20ea8724f"
+    },
+    {
+      "name": "pymsgbox",
+      "constant_count": 193,
+      "bytes": 2785,
+      "sha256": "84104482d296a274a433862e38de7348a633fade94b400a7039ae16bd64d77f2"
+    },
+    {
+      "name": "pyperclip",
+      "constant_count": 381,
+      "bytes": 8002,
+      "sha256": "f15c6958cc9549f84c575115ebede57d53c362fce961c369494e39924fcf7819"
+    },
+    {
+      "name": "pyrect",
+      "constant_count": 226,
+      "bytes": 4362,
+      "sha256": "419ca35761189a9a7751a73e189839d8bbfa4f6f8f07d4b2cc346481806b6b4d"
+    },
+    {
+      "name": "pyscreeze",
+      "constant_count": 264,
+      "bytes": 5354,
+      "sha256": "ecb1a277322f4697887e0700c331cb9b451dcc627ccf84ef4da406d3fbb8693a"
+    },
+    {
+      "name": "pythoncom",
+      "constant_count": 13,
+      "bytes": 164,
+      "sha256": "92908bfb019e3f3d8b90874393dc69e497a978e6f831d75727bfd1851a091555"
+    },
+    {
+      "name": "pytweening",
+      "constant_count": 120,
+      "bytes": 1497,
+      "sha256": "edc4aaf4265d4f2522d965defe5d3ae9a889a732c7fd7f6f0a8c4e7d56212d27"
+    },
+    {
+      "name": "pywin",
+      "constant_count": 22,
+      "bytes": 303,
+      "sha256": "d481feec675bcde75f50045ced2a0dc6c080c55232ddd2e4a92ec06c9b909fc5"
+    },
+    {
+      "name": "pywin.dialogs",
+      "constant_count": 19,
+      "bytes": 287,
+      "sha256": "fec96f45eb80fec6534290cd69b1032509d8a0af664fe883061c52e3998d3b65"
+    },
+    {
+      "name": "pywin.dialogs.list",
+      "constant_count": 134,
+      "bytes": 2071,
+      "sha256": "b6a4d73bc101e5314fc085ae815084a6310138070e87d7fb89d9640e8b04c7c5"
+    },
+    {
+      "name": "pywin.dialogs.status",
+      "constant_count": 178,
+      "bytes": 2848,
+      "sha256": "8170a4240d3a86fe855d928e9040b4e1deb91f38446eff8a2bf79898a5c3b1b4"
+    },
+    {
+      "name": "pywin.mfc",
+      "constant_count": 19,
+      "bytes": 271,
+      "sha256": "c6fbe016e4d720004002c30b64bf84c20d9e38bb4274a60ee6e231ad2db8224c"
+    },
+    {
+      "name": "pywin.mfc.dialog",
+      "constant_count": 190,
+      "bytes": 2949,
+      "sha256": "2a87bc5f80de0a7bbd8f22cf1f1792bd3657bb1ed5b90c5537dee9847f332905"
+    },
+    {
+      "name": "pywin.mfc.object",
+      "constant_count": 62,
+      "bytes": 907,
+      "sha256": "5b93b42fa9c18caa041d91c6d0349aedf79da84eb75b47f175ca961033550ee3"
+    },
+    {
+      "name": "pywin.mfc.thread",
+      "constant_count": 40,
+      "bytes": 543,
+      "sha256": "6a1b1e199280f6a6b0e958952aac80a56f05e9fc248c35a184fa298f6bf01b4b"
+    },
+    {
+      "name": "pywin.mfc.window",
+      "constant_count": 52,
+      "bytes": 704,
+      "sha256": "807a69a97cdede0bb0f34ae75b82d7ece4ff27fc3b7e045c86b7bf1fc2353d5b"
+    },
+    {
+      "name": "pywin32_system32",
+      "constant_count": 11,
+      "bytes": 165,
+      "sha256": "fc28b2f73ad20d0892e774c83b6f06e8e3c92dbdb3719abd9c157b176d71c3ed"
+    },
+    {
+      "name": "pywinauto.actionlogger",
+      "constant_count": 81,
+      "bytes": 1285,
+      "sha256": "aa1b08951f9b421f4ab06ee425d4ec31fa8c676c6999f4085fbed8135adc845c"
+    },
+    {
+      "name": "pywinauto.application",
+      "constant_count": 497,
+      "bytes": 12089,
+      "sha256": "d786838f98f4d149ee8055a4bbb2a87d12d394dcb50f9dca591d60bac0687456"
+    },
+    {
+      "name": "pywinauto.backend",
+      "constant_count": 55,
+      "bytes": 1009,
+      "sha256": "fad6f2597d0ef21191828b70a4825ef0039c75d4b7ee4808e09237c734b51d8d"
+    },
+    {
+      "name": "pywinauto.base_wrapper",
+      "constant_count": 360,
+      "bytes": 6920,
+      "sha256": "2a72a68d5347579867d4d8910b05ccafbe555529149d04bb0b796a4717b48e70"
+    },
+    {
+      "name": "pywinauto",
+      "constant_count": 121,
+      "bytes": 2083,
+      "sha256": "b64a68001bb6a50650600c81b4795854de01d03ab5584bd0496e3fd2020c1adf"
+    },
+    {
+      "name": "pywinauto.controlproperties",
+      "constant_count": 98,
+      "bytes": 1547,
+      "sha256": "cb57f3ee34ae31db67800571eb363f52d7a60f9eedeb616f76f86cc6dd748198"
+    },
+    {
+      "name": "pywinauto.controls.common_controls",
+      "constant_count": 1218,
+      "bytes": 24516,
+      "sha256": "da4f9c283ee148d3561420d62c4586494a4829b299529210291ad4d9791b1387"
+    },
+    {
+      "name": "pywinauto.controls",
+      "constant_count": 41,
+      "bytes": 652,
+      "sha256": "61d6a150109959fe9b56365f4ef7ea5bd512cff98992f54088cd43ac7394b8d4"
+    },
+    {
+      "name": "pywinauto.controls.hwndwrapper",
+      "constant_count": 741,
+      "bytes": 13072,
+      "sha256": "4e7bf9dac36c0a56102272d079a37a4ec09bdc9f0d8ce7617aff772dba28d90d"
+    },
+    {
+      "name": "pywinauto.controls.menuwrapper",
+      "constant_count": 244,
+      "bytes": 3615,
+      "sha256": "7b5d867be498a854e995c2c74510a095ee76ac6ae38b61f743d4daf3237b8ed8"
+    },
+    {
+      "name": "pywinauto.controls.uia_controls",
+      "constant_count": 518,
+      "bytes": 10391,
+      "sha256": "e3e5f33e03ed528b7799b0d7587d9d456dd25feafd22edeeaa0be0b8b05869ec"
+    },
+    {
+      "name": "pywinauto.controls.uiawrapper",
+      "constant_count": 382,
+      "bytes": 7620,
+      "sha256": "a8be3cf49fe581b8c3521274d96fd9e492a9d184a461ea911d6da4c251b268a8"
+    },
+    {
+      "name": "pywinauto.controls.win32_controls",
+      "constant_count": 367,
+      "bytes": 6762,
+      "sha256": "4bc44c8e55944491a4995e0c2f1fd3fef0017db730279ae9019e3f9c06f3436f"
+    },
+    {
+      "name": "pywinauto.element_info",
+      "constant_count": 86,
+      "bytes": 1381,
+      "sha256": "f433921041893885fac3490d08054ec4100a0e0ea754f0876d37729de3767a98"
+    },
+    {
+      "name": "pywinauto.findbestmatch",
+      "constant_count": 133,
+      "bytes": 2534,
+      "sha256": "a7008507165d03cea2cac9de84e35d4eafbae9055d462fdeb57c95dc86afb2d8"
+    },
+    {
+      "name": "pywinauto.findwindows",
+      "constant_count": 115,
+      "bytes": 2279,
+      "sha256": "e1512c5b849e9cc7208b1897172779e92b2bf746f510a3242934cafd32ba4c64"
+    },
+    {
+      "name": "pywinauto.handleprops",
+      "constant_count": 157,
+      "bytes": 2443,
+      "sha256": "bc7e5ae932fdc94792d113ea4365eec23d5beda5516346e33e004787654f3d6a"
+    },
+    {
+      "name": "pywinauto.keyboard",
+      "constant_count": 213,
+      "bytes": 5189,
+      "sha256": "641403ac03b18dcc5f4cfa0d1f2da441615738df775b600834aacef259c8e3e8"
+    },
+    {
+      "name": "pywinauto.mouse",
+      "constant_count": 100,
+      "bytes": 1668,
+      "sha256": "4b2ac76a7bcdb7c4fa595a97143ee9a8aaaac87cd6c3ebdfdb3b50efa5b7f496"
+    },
+    {
+      "name": "pywinauto.remote_memory_block",
+      "constant_count": 136,
+      "bytes": 2683,
+      "sha256": "a279a57d0888484cd0e066cfbff50d7152d2a8d8230b5f34b9eb78a17fd82a32"
+    },
+    {
+      "name": "pywinauto.sysinfo",
+      "constant_count": 40,
+      "bytes": 614,
+      "sha256": "67b9f399ab26f2c73c0046669b8402907b00207833448d2d26f0949748f9b19e"
+    },
+    {
+      "name": "pywinauto.tests",
+      "constant_count": 80,
+      "bytes": 1391,
+      "sha256": "b14711373087d3beb8e58cf9a945ab319da2f0cda4579b200642771093b85edb"
+    },
+    {
+      "name": "pywinauto.timings",
+      "constant_count": 113,
+      "bytes": 3586,
+      "sha256": "72839004780d383e1a91a3932b7ee113a8a07617a14262df2a126f12c3ee66b6"
+    },
+    {
+      "name": "pywinauto.uia_defines",
+      "constant_count": 147,
+      "bytes": 3189,
+      "sha256": "2ffee0858ce22e00ee59991754d3cb0aa8bb1c687e462e3ac796433ad2115d94"
+    },
+    {
+      "name": "pywinauto.uia_element_info",
+      "constant_count": 215,
+      "bytes": 3970,
+      "sha256": "73cd645dfd26a7b0ca7030021d93b35befb1534e44db739805f1750a5eb3cb02"
+    },
+    {
+      "name": "pywinauto.win32_element_info",
+      "constant_count": 156,
+      "bytes": 2820,
+      "sha256": "ad979e8fcb5a7de59151dd640fbc6ee75127b112a2c98f97cd3732405bfca5fb"
+    },
+    {
+      "name": "pywinauto.win32defines",
+      "constant_count": 14662,
+      "bytes": 242155,
+      "sha256": "f1cd9efd81b7fd481e99630c0ab92a8fe0e601d65a5e9ef4f97118e43ca1da95"
+    },
+    {
+      "name": "pywinauto.win32functions",
+      "constant_count": 238,
+      "bytes": 3509,
+      "sha256": "b3a7a803e95677dfe081dd6182fdcc0d6505b76125cc3d74727f0cb6676b3cba"
+    },
+    {
+      "name": "pywinauto.win32structures",
+      "constant_count": 455,
+      "bytes": 4950,
+      "sha256": "287ce8a002dd0d43592aa0482e9739e0265bf3b504e5818896d052b240144dae"
+    },
+    {
+      "name": "pywinauto.xml_helpers",
+      "constant_count": 181,
+      "bytes": 2677,
+      "sha256": "ca9188323794f5679aeaa1ef322868a5d3a99b3fe610c892709130c2f8b31c12"
+    },
+    {
+      "name": "pywintypes",
+      "constant_count": 50,
+      "bytes": 736,
+      "sha256": "74ca365bc1304079825f66feb71cd83a0709484ef78f9d2e45fd3e571ecea6e0"
+    },
+    {
+      "name": "requests.__version__",
+      "constant_count": 29,
+      "bytes": 421,
+      "sha256": "68140461b03bd8e11d05f1412f189149e6b053ecd626efc5c33ed716b4158d6a"
+    },
+    {
+      "name": "requests._internal_utils",
+      "constant_count": 34,
+      "bytes": 549,
+      "sha256": "9a4aaa02b712f3b4071cba96a7ad6f78b15d72aca8180d6a4053cdd7be459ba3"
+    },
+    {
+      "name": "requests.adapters",
+      "constant_count": 262,
+      "bytes": 5869,
+      "sha256": "d52637bd9791b75193bef39b4779fdb1605d1cb692a1cae19bc94aca2a59aaa0"
+    },
+    {
+      "name": "requests.api",
+      "constant_count": 38,
+      "bytes": 405,
+      "sha256": "ab06bd23b68e66cf1129ddd16376b1173cee09918e6907cddb0d368c612bc448"
+    },
+    {
+      "name": "requests.auth",
+      "constant_count": 200,
+      "bytes": 3271,
+      "sha256": "84be944f3c45c40522c76df6ec3ea2824329abdb3c1c6ca46b1d6d3283da46bc"
+    },
+    {
+      "name": "requests.certs",
+      "constant_count": 13,
+      "bytes": 142,
+      "sha256": "2bc2a2c64baa7bbd106f2ecfd36a5d6408bfd341411c07aa85463b4083667891"
+    },
+    {
+      "name": "requests.compat",
+      "constant_count": 70,
+      "bytes": 1064,
+      "sha256": "56c0045012973a7e29a4555a0445b544d58d8d90c0218e1c069bc26e7ba0a47e"
+    },
+    {
+      "name": "requests",
+      "constant_count": 118,
+      "bytes": 2135,
+      "sha256": "0e39306fc14fb92f49b0b003248e0186de65903304f497bcddb47018c46f8cfe"
+    },
+    {
+      "name": "requests.cookies",
+      "constant_count": 248,
+      "bytes": 4352,
+      "sha256": "3114b349cb40cdf0233188cd06b40083575d413dd4d249674378e746c98488cf"
+    },
+    {
+      "name": "requests.exceptions",
+      "constant_count": 69,
+      "bytes": 1079,
+      "sha256": "2ced0d45bb853926acd44ec578a51b461d0a7ccd4492db2ed1336f536b4d435d"
+    },
+    {
+      "name": "requests.hooks",
+      "constant_count": 17,
+      "bytes": 236,
+      "sha256": "3f91a389ac7d09a87bea885528beaf3468c6e586b632faad53df4ff6bd7b8b3c"
+    },
+    {
+      "name": "requests.models",
+      "constant_count": 381,
+      "bytes": 7027,
+      "sha256": "e9b78da7658e9dd3c1ce89e5dd831f0c9ec3a7c565ef249c05ff355b169d46e1"
+    },
+    {
+      "name": "requests.packages",
+      "constant_count": 26,
+      "bytes": 276,
+      "sha256": "9aac102d5bb78a19df1d8fadd76d560ccb87e385b3ddaf01130d9358df598246"
+    },
+    {
+      "name": "requests.sessions",
+      "constant_count": 285,
+      "bytes": 5390,
+      "sha256": "a41361c52ffffe53b54a15a0c80c6f5360ff21080f52f2d6e179226c37c4d72d"
+    },
+    {
+      "name": "requests.status_codes",
+      "constant_count": 39,
+      "bytes": 2913,
+      "sha256": "173d475459113339ed2acf7e789c171ddfa4c2c784926eb4135db04f2fba9c8c"
+    },
+    {
+      "name": "requests.structures",
+      "constant_count": 78,
+      "bytes": 1334,
+      "sha256": "79e58f73d2c7ae9358561c3c37a2ab651d1a1c8bd39266a06eff466efea72532"
+    },
+    {
+      "name": "requests.utils",
+      "constant_count": 405,
+      "bytes": 7315,
+      "sha256": "16ff17e9297625589dacbf00d505b89a53f297117c11a0cbaa7bc804c1b925b3"
+    },
+    {
+      "name": "rsa.asn1",
+      "constant_count": 47,
+      "bytes": 587,
+      "sha256": "1ce585ba4492c885b158b0cf30330df47f54d7fd69e3a7bd7f70678eb59a96b0"
+    },
+    {
+      "name": "rsa.common",
+      "constant_count": 68,
+      "bytes": 1002,
+      "sha256": "f2692ef59b7fa1f2d7aa19ddfe8da3511d7e2d42d0359be67be876db638e4a83"
+    },
+    {
+      "name": "rsa",
+      "constant_count": 41,
+      "bytes": 786,
+      "sha256": "71f95d1b24a03f3cb928c662b93f913542ed584e9cd8aed2d5dee9467eba2cbe"
+    },
+    {
+      "name": "rsa.core",
+      "constant_count": 28,
+      "bytes": 462,
+      "sha256": "7209df1264566969e8b42151d30c622369366d1caacbbdd26891fba68a8847c3"
+    },
+    {
+      "name": "rsa.key",
+      "constant_count": 298,
+      "bytes": 5335,
+      "sha256": "f1d072a57e87a281afc0be4b19e9895e0a0ac0af77c255a3f04ea0ebdb9e6537"
+    },
+    {
+      "name": "rsa.parallel",
+      "constant_count": 43,
+      "bytes": 565,
+      "sha256": "29ad9bbfe78a5d35d788a55afbf850dafde5262e6bfdb71edfa74345a40f9bbc"
+    },
+    {
+      "name": "rsa.pem",
+      "constant_count": 55,
+      "bytes": 808,
+      "sha256": "782edfe5549041f7f2447c70035fd5bf598894f9bed0cd49b07a1de93628cca5"
+    },
+    {
+      "name": "rsa.pkcs1",
+      "constant_count": 143,
+      "bytes": 2675,
+      "sha256": "d038f24af9f86be25cbed6b120bdfe648f129f1d9df4647e27e09695d8417b5d"
+    },
+    {
+      "name": "rsa.prime",
+      "constant_count": 56,
+      "bytes": 671,
+      "sha256": "f6751849901de9ac423b7ca9fa168936f59c46df9f531aba491966dd73189628"
+    },
+    {
+      "name": "rsa.randnum",
+      "constant_count": 38,
+      "bytes": 547,
+      "sha256": "9ecaf6b568cfddaa7fd89fb83858a4baf0e5dbc10404732b5f5f15bbab7f646e"
+    },
+    {
+      "name": "rsa.transform",
+      "constant_count": 28,
+      "bytes": 386,
+      "sha256": "d13aa0840f6286c36c1598656eab9d8d85ef804a456a8e3971ad5f46e4515016"
+    },
+    {
+      "name": "sda_window",
+      "constant_count": 543,
+      "bytes": 10335,
+      "sha256": "5fbd54267974dfa30e8498749570d61227d17818e5bec4f8dbcd734fc3a237b8"
+    },
+    {
+      "name": "six",
+      "constant_count": 533,
+      "bytes": 12357,
+      "sha256": "40c3786ae404d2e424f36b070145b3c6399a84e5f832f27a9aac74640b757f43"
+    },
+    {
+      "name": "socks",
+      "constant_count": 345,
+      "bytes": 7003,
+      "sha256": "968092708c0e35d85a90fd5dd3ae76c14892c27c2726592639df5bbcb1d09879"
+    },
+    {
+      "name": "soupsieve.__meta__",
+      "constant_count": 95,
+      "bytes": 2029,
+      "sha256": "2ac103b9f4e1d8eea431e34104908eb17bf15639151edc4d47ced9433e1188b6"
+    },
+    {
+      "name": "soupsieve",
+      "constant_count": 81,
+      "bytes": 2217,
+      "sha256": "936beb7a855e127d7afef70a21c6903c9c323b8e5d9a15a5416384a94ac9d66c"
+    },
+    {
+      "name": "soupsieve.css_match",
+      "constant_count": 604,
+      "bytes": 12686,
+      "sha256": "94689a38b6ebdcbd33b9d9abb9c1bf381755b104582129568d2a7ad23874929a"
+    },
+    {
+      "name": "soupsieve.css_parser",
+      "constant_count": 548,
+      "bytes": 14521,
+      "sha256": "a099b003b6977dbe20934adcaf9444791aecd44a749e7fd1f13dab91ad6f56c0"
+    },
+    {
+      "name": "soupsieve.css_types",
+      "constant_count": 232,
+      "bytes": 4915,
+      "sha256": "871f3f12098adffb560b469d27de975d50c55acc7845f30e07fe966f1e0a3032"
+    },
+    {
+      "name": "soupsieve.pretty",
+      "constant_count": 84,
+      "bytes": 929,
+      "sha256": "fdd12c88ce3629db96f6a7a8703ea16a82623815a47c20dd7b6f95bb65ea85fa"
+    },
+    {
+      "name": "soupsieve.util",
+      "constant_count": 100,
+      "bytes": 1672,
+      "sha256": "af5a1e21ed8d05d559680cf8fa56d85e2b7d2633964ae1ead7349438fa364461"
+    },
+    {
+      "name": "steampy",
+      "constant_count": 16,
+      "bytes": 215,
+      "sha256": "a64e921ebdf1d1d6a31d6c2f2107762f99a10e2d581bb9c7fc89940543336d31"
+    },
+    {
+      "name": "steampy.guard",
+      "constant_count": 68,
+      "bytes": 964,
+      "sha256": "55051c9d39accea9c6733d0f7c35ca6dfa43006fc497dc9fcaf34d780b27a67f"
+    },
+    {
+      "name": "tkinter-preLoad",
+      "constant_count": 17,
+      "bytes": 188,
+      "sha256": "501cb6be70bdf398d00526f30a8ce087cbb5afef68809cc52033cb41bd4e9c0f"
+    },
+    {
+      "name": "typing_extensions",
+      "constant_count": 765,
+      "bytes": 19184,
+      "sha256": "c05170d0edb3965b8ce68d620d05a5b0289584092157a56830ce7976a65e5017"
+    },
+    {
+      "name": "urllib3._base_connection",
+      "constant_count": 56,
+      "bytes": 850,
+      "sha256": "705f35e250740bf78b3f7afc31aa6cca3ed6aacbbe56c46a340483caa9bacb38"
+    },
+    {
+      "name": "urllib3._collections",
+      "constant_count": 225,
+      "bytes": 4696,
+      "sha256": "72041dce82ff36aa23770119aa0fd8ff8331e60c17812d33392e0bb35c326e6c"
+    },
+    {
+      "name": "urllib3._request_methods",
+      "constant_count": 92,
+      "bytes": 2498,
+      "sha256": "87d9227beb8a44d6e4668ddd1d6becc5bcefae937cae05e804b410e71cf12b41"
+    },
+    {
+      "name": "urllib3._version",
+      "constant_count": 20,
+      "bytes": 310,
+      "sha256": "7493968150d7544ce7cb424ce7bfc0a4520b3bf84c7436abbff1ce4482bdf57f"
+    },
+    {
+      "name": "urllib3.connection",
+      "constant_count": 444,
+      "bytes": 12676,
+      "sha256": "3af4e537d9cf1377ae7f84e3c6362685e54ee47db1cf905ede8787d40927c7b8"
+    },
+    {
+      "name": "urllib3.connectionpool",
+      "constant_count": 347,
+      "bytes": 9397,
+      "sha256": "0380ee7505a9656af92bebdb964ea1d3b149a9aaa851ec6b8d97b949f8b1fd8f"
+    },
+    {
+      "name": "urllib3",
+      "constant_count": 111,
+      "bytes": 2739,
+      "sha256": "7fde5cdc8f96dac285787bb91d2663b1459e3a473e5404d7435cc8cc2a8aaa77"
+    },
+    {
+      "name": "urllib3.contrib",
+      "constant_count": 19,
+      "bytes": 295,
+      "sha256": "5c53c4a1dbbfab0bbacdbc67d6ac4a2f8a54d713ef150c5957995db085064c56"
+    },
+    {
+      "name": "urllib3.contrib.pyopenssl",
+      "constant_count": 331,
+      "bytes": 6710,
+      "sha256": "b9f1e862f25f79fb38c2abf27b172436a49cdff9c7d8150e0d7ee6b3e78a99a0"
+    },
+    {
+      "name": "urllib3.contrib.socks",
+      "constant_count": 118,
+      "bytes": 2379,
+      "sha256": "e8ef3288157146a65459c65f7d2b59ea5dac9a75ee8421f02921b79ab1b2c243"
+    },
+    {
+      "name": "urllib3.exceptions",
+      "constant_count": 178,
+      "bytes": 3916,
+      "sha256": "5beff67c248e5992228408fa741b552b9e2f0fc06fd406c5e65f9249c06a7063"
+    },
+    {
+      "name": "urllib3.fields",
+      "constant_count": 112,
+      "bytes": 2915,
+      "sha256": "79a3f7d1d81003df185f1fb5a27cafcd564214036d79a7e8c3592f63119bcb4f"
+    },
+    {
+      "name": "urllib3.filepost",
+      "constant_count": 56,
+      "bytes": 816,
+      "sha256": "cafc5c60b0ab8ff9aef6222b2a296e0b9d58cde3d4de70f6587209208553d916"
+    },
+    {
+      "name": "urllib3.http2.connection",
+      "constant_count": 236,
+      "bytes": 4824,
+      "sha256": "c2bb2b75b03cd8fb24890d01f76ea0057d0d3d8aa9aa3152ff361e18ecfea8a7"
+    },
+    {
+      "name": "urllib3.http2",
+      "constant_count": 54,
+      "bytes": 998,
+      "sha256": "2ad37ee382f37615f6a072fb29355587089de71eded9a7d05bf851ba28c17397"
+    },
+    {
+      "name": "urllib3.http2.probe",
+      "constant_count": 52,
+      "bytes": 991,
+      "sha256": "9848afb20d45c03a1df29f3410f74c52b33b78a0c6d5d1d849196d20b03b6426"
+    },
+    {
+      "name": "urllib3.poolmanager",
+      "constant_count": 287,
+      "bytes": 7040,
+      "sha256": "0b85c6d6efb385304caf14189af5c749a2fa51042ff83f827da2bf55fa4bbaaa"
+    },
+    {
+      "name": "urllib3.response",
+      "constant_count": 450,
+      "bytes": 10313,
+      "sha256": "377e92817092fb1f10fd98e99feb4d4810800486df86dd043f2dfffbd7d5a6be"
+    },
+    {
+      "name": "urllib3.util.connection",
+      "constant_count": 70,
+      "bytes": 1350,
+      "sha256": "aecf347ae91b8eda4effecffc37aa02c88545675a6b3f95e80f30cc7cbc0e427"
+    },
+    {
+      "name": "urllib3.util",
+      "constant_count": 59,
+      "bytes": 1264,
+      "sha256": "8210855c289d47a16a148a9514bb279bbfcea9db4c4757061992171c1499b961"
+    },
+    {
+      "name": "urllib3.util.proxy",
+      "constant_count": 24,
+      "bytes": 405,
+      "sha256": "03724c1a9954fe54827834704aa115ab2411ed2e903db1a53b6eaa8a796d6343"
+    },
+    {
+      "name": "urllib3.util.request",
+      "constant_count": 115,
+      "bytes": 2429,
+      "sha256": "11082dc531dfb40807ea7d88509b43ff73be9cb6b283e14ff34e3a6454dbb896"
+    },
+    {
+      "name": "urllib3.util.response",
+      "constant_count": 46,
+      "bytes": 843,
+      "sha256": "d7e747c1d49d065532542a98811e10820c950450775845637825fe408a634e14"
+    },
+    {
+      "name": "urllib3.util.retry",
+      "constant_count": 194,
+      "bytes": 4462,
+      "sha256": "e11426310f353ae47f029b74e0a4b887da121e4d8f5038c717897f6403a74ba6"
+    },
+    {
+      "name": "urllib3.util.ssl_",
+      "constant_count": 180,
+      "bytes": 5340,
+      "sha256": "0ea23939dbc13107003779edec87a3bb1c9ba63112239b8d38e58ac524685db6"
+    },
+    {
+      "name": "urllib3.util.ssl_match_hostname",
+      "constant_count": 87,
+      "bytes": 1616,
+      "sha256": "72c9cfb54febbfaff5b5886dec8a8b369a63914ac6c129192f96507f34eff865"
+    },
+    {
+      "name": "urllib3.util.ssltransport",
+      "constant_count": 182,
+      "bytes": 4144,
+      "sha256": "e50e227c023157c980f15d0502f813b26bb23b266929b79916d0de53bb54bc45"
+    },
+    {
+      "name": "urllib3.util.timeout",
+      "constant_count": 101,
+      "bytes": 1894,
+      "sha256": "9b5d9a5c67f4c04cedf9c2173452902ffd40c865399e317340a9a3e5928e5807"
+    },
+    {
+      "name": "urllib3.util.url",
+      "constant_count": 229,
+      "bytes": 4363,
+      "sha256": "b03cf48499deb2069f2e3aabe47cc95b68211ef45917f6b08f496490fdead596"
+    },
+    {
+      "name": "urllib3.util.util",
+      "constant_count": 32,
+      "bytes": 588,
+      "sha256": "323753277ff2b6d6988d9cf41c7484e261c391a6763c0e580fe835be9991080b"
+    },
+    {
+      "name": "urllib3.util.wait",
+      "constant_count": 50,
+      "bytes": 978,
+      "sha256": "02da326edf37a48315e037305d3bb867dc4f76f6ebaa54d0791a10a2fd804bb5"
+    },
+    {
+      "name": "websocket._abnf",
+      "constant_count": 262,
+      "bytes": 4382,
+      "sha256": "d6285a1ce165f99542fa1083db4a211cc68d3ba909a90bba6059749adb050b0f"
+    },
+    {
+      "name": "websocket._app",
+      "constant_count": 246,
+      "bytes": 5555,
+      "sha256": "b565795f60a0db202655e51ab383c7e2281b2970d1bdca0e27871a1bd8bf40fd"
+    },
+    {
+      "name": "websocket._cookiejar",
+      "constant_count": 59,
+      "bytes": 781,
+      "sha256": "dbfd1fa3866fd7f029f604ddc8dc228cf9d352f0c2ce341aa0e1f2eb2a42c68b"
+    },
+    {
+      "name": "websocket._core",
+      "constant_count": 229,
+      "bytes": 3823,
+      "sha256": "a88504f1d8d89622853fbafea466f6ee69864cb422f0c7ce4b6fd93ad825eadb"
+    },
+    {
+      "name": "websocket._dispatcher",
+      "constant_count": 102,
+      "bytes": 1566,
+      "sha256": "1ca758284c1fb0e2e7ec47e619b718118372d33969a2c8d351e5db403fb80334"
+    },
+    {
+      "name": "websocket._exceptions",
+      "constant_count": 40,
+      "bytes": 741,
+      "sha256": "6a9c42c12422553750fe5975c16bc83242b86a85602ec69ac4f4c8b168c99afe"
+    },
+    {
+      "name": "websocket._handshake",
+      "constant_count": 163,
+      "bytes": 2637,
+      "sha256": "cedd5ed98d53df0c2e0dd356a94d89e644f6b690a0de4c4c1829d26469ecf222"
+    },
+    {
+      "name": "websocket._http",
+      "constant_count": 224,
+      "bytes": 4286,
+      "sha256": "d09bb5014b47e131d70083f2fd49b5e1dcc87775a5c9ecad1cc171e08233591d"
+    },
+    {
+      "name": "websocket._logging",
+      "constant_count": 63,
+      "bytes": 934,
+      "sha256": "62aa47158425fd5c9df75b01026d35293023d4bdae19a40b25e28d385a66294b"
+    },
+    {
+      "name": "websocket._socket",
+      "constant_count": 103,
+      "bytes": 1641,
+      "sha256": "4c6cb45f11a4ae49d43312e9cae4adc46c0b071bbd56c7fdd85dd673613c6837"
+    },
+    {
+      "name": "websocket._ssl_compat",
+      "constant_count": 35,
+      "bytes": 637,
+      "sha256": "2410c4c0dbe0124fd52e668c3ff88309daa0815c992069798667475fa961686a"
+    },
+    {
+      "name": "websocket._url",
+      "constant_count": 86,
+      "bytes": 1292,
+      "sha256": "1371e8f1a2c7cba51940606de6e8c37e9fd3a9395ec202e48c19f3a7ba7e4cdb"
+    },
+    {
+      "name": "websocket._utils",
+      "constant_count": 60,
+      "bytes": 1454,
+      "sha256": "2f380de83d3f4ff85e43fb05fbfd971d92ab7ad3aae36f5141ecb9e17c8494d7"
+    },
+    {
+      "name": "websocket",
+      "constant_count": 30,
+      "bytes": 367,
+      "sha256": "0f9e8510297b84f877e97c8a5b860d17276b1a2b0dc66249c81b4d862799b05b"
+    },
+    {
+      "name": "win32com.client.CLSIDToClass",
+      "constant_count": 18,
+      "bytes": 263,
+      "sha256": "a1da8a5ded3b8658164bfefd92884d50a5f7448614a73f5b9003deea79b29aa7"
+    },
+    {
+      "name": "win32com.client.build",
+      "constant_count": 325,
+      "bytes": 5970,
+      "sha256": "7d3b412f2e03f3f1645338752a50ba5b64478028d571cf72ad65d01b8828faf6"
+    },
+    {
+      "name": "win32com.client",
+      "constant_count": 253,
+      "bytes": 5215,
+      "sha256": "e23aeb627a9c52a3d4eacf81e5089843bb159b90f74f7b51d2b202ec6c02e654"
+    },
+    {
+      "name": "win32com.client.dynamic",
+      "constant_count": 299,
+      "bytes": 5660,
+      "sha256": "c35a164cefc466df53826294da69f2672b848494fb454eac8089872c65d73b4b"
+    },
+    {
+      "name": "win32com.client.gencache",
+      "constant_count": 216,
+      "bytes": 4443,
+      "sha256": "35699497be19bae94eeda41a780afcd4cc9613b7600e03797842fc338cf58466"
+    },
+    {
+      "name": "win32com.client.genpy",
+      "constant_count": 548,
+      "bytes": 12654,
+      "sha256": "fe913c8cc1a300a284d52ff99bc3fceff2881536453ffd79242ba1d1fb3c0a13"
+    },
+    {
+      "name": "win32com.client.makepy",
+      "constant_count": 198,
+      "bytes": 4909,
+      "sha256": "282c5576e765da78d8e566093ab7fff6c87055e2a010fdf235797d5db85eab1a"
+    },
+    {
+      "name": "win32com.client.selecttlb",
+      "constant_count": 103,
+      "bytes": 1457,
+      "sha256": "ea7a6ec58999fbab2a7c64f177fd6245078b8241eb38314d0d843d56efd07d65"
+    },
+    {
+      "name": "win32com.client.util",
+      "constant_count": 82,
+      "bytes": 1237,
+      "sha256": "2dc65495c52ff994e08ec68b89ff7a40a2c9ea05e4c5938862700705a455900c"
+    },
+    {
+      "name": "win32com",
+      "constant_count": 55,
+      "bytes": 733,
+      "sha256": "2f290a0ad93a10205a653ddb5647a6563adcb12a7e6a95bd364d2cada970bd2c"
+    },
+    {
+      "name": "win32con",
+      "constant_count": 5626,
+      "bytes": 87697,
+      "sha256": "63616b2803ac5f318bed08c00be5630732942bb193125b103a92944ae49ce47f"
+    },
+    {
+      "name": "win32gui_struct",
+      "constant_count": 255,
+      "bytes": 6001,
+      "sha256": "0e6e2be57f1be899a5a80dd70570f1b643afcd0dfe86fa31d325ae023290aa42"
+    },
+    {
+      "name": "winerror",
+      "constant_count": 5093,
+      "bytes": 82131,
+      "sha256": "ae6751413f5da76374dfed640ef1d408fd7571b639278e091431f512dffc421d"
+    },
+    {
+      "name": "wmi",
+      "constant_count": 536,
+      "bytes": 10457,
+      "sha256": "736953f1c879c062c2f41d76799880c07c0f623f2e9ef7cd8017398a3d9e93b1"
+    },
+    {
+      "name": "zstandard.backend_cffi",
+      "constant_count": 775,
+      "bytes": 21359,
+      "sha256": "fed9aff48d6abeb712ae224c8ab20e9efee71d068adba7921ad0d92b7c565a18"
+    },
+    {
+      "name": "zstandard",
+      "constant_count": 97,
+      "bytes": 1412,
+      "sha256": "191228728fdfba2a19ba0ffce831a4d96a1e4ce1a7a2347c2d9f2d245a856203"
+    }
+  ],
+  "application_candidates": [
+    "__main__",
+    "__parents_main__",
+    "sda_window"
+  ],
+  "code_metadata": {
+    "main_code_object_specs": 1024,
+    "source_file": "FSMPANEL_CS2.py",
+    "source_line_span": [
+      1,
+      37076
+    ],
+    "named_app_class": {
+      "name": "App",
+      "source_line": 13885,
+      "code_spec_index": 140,
+      "native_reference_root": "0x140c092d0"
+    }
+  },
+  "functions": [
+    {
+      "role_candidate": "Steam/CS2 launch",
+      "native_unwind_root": "0x14067ae90",
+      "code_spec_index": 417,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 9341,
+      "compiled_name": "RvorgLqLUOoP",
+      "qualname": "RvorgLqLUOoP",
+      "argument_count": 4,
+      "parameter_names": [
+        "self",
+        "PsrWppciGZgI",
+        "STEAM_PATH",
+        "UPDATE_MODE"
+      ],
+      "local_variable_names": [
+        "process",
+        "window_name",
+        "st",
+        "account_start_locker_path",
+        "file",
+        "last_acc_time",
+        "cfg_path",
+        "FREE_PORT",
+        "STEAM_OPTIONS",
+        "main_launch_params",
+        "new_params",
+        "i",
+        "banned_params",
+        "l_p",
+        "env",
+        "path_userprofile",
+        "target",
+        "link_path",
+        "command",
+        "loginusers_path",
+        "data",
+        "procc",
+        "launched_steam",
+        "hwnds",
+        "hwnd",
+        "process_data",
+        "err_counter",
+        "VALIDATING_CS2_FILES",
+        "last_content_log_check",
+        "launched_accounts_list",
+        "content_log_path",
+        "file_size",
+        "read_from",
+        "_clf",
+        "log_lines",
+        "last_730_status",
+        "last_730_ts_str",
+        "_line",
+        "_m",
+        "_log_ts",
+        "status_enter_steam",
+        "e",
+        "d",
+        "mx",
+        "my",
+        "CS_PID_EXIST",
+        "old_pid",
+        "f",
+        "ex"
+      ],
+      "code_object_storage": "0x142df37a0",
+      "code_object_load_addresses": [
+        "0x14067b093"
+      ],
+      "config_key_references": [
+        "ACCOUNT_LOGIN_TIMEOUT",
+        "CSGO_PATH",
+        "NO_AVAST_MODE",
+        "STEAM_LAUNCH_OPTIONS",
+        "STEAM_PATH"
+      ],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "Steam sign-in window automation",
+      "native_unwind_root": "0x140666aa0",
+      "code_spec_index": 451,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 8982,
+      "compiled_name": "UCbDORCMUJWy",
+      "qualname": "UCbDORCMUJWy",
+      "argument_count": 3,
+      "parameter_names": [
+        "self",
+        "hwnd",
+        "QKapWuXvGxZA"
+      ],
+      "local_variable_names": [
+        "element_info",
+        "error_sign_text_element_info",
+        "guard_error_text_element_info",
+        "app",
+        "window",
+        "steam_exe_name",
+        "login",
+        "password",
+        "login_edit",
+        "password_edit",
+        "sign_button",
+        "error_sign_text",
+        "guard_list_edit",
+        "guard_error_text",
+        "retry_button",
+        "play_anyway_button",
+        "enter_code_instead_mobile_auth",
+        "whos_playing",
+        "controls",
+        "i",
+        "control",
+        "guard_error_text_predict",
+        "a",
+        "super_id",
+        "e",
+        "ZRhTFCLAZsRw",
+        "obEwYaTcZZjl",
+        "real_login_edit",
+        "real_password_edit",
+        "new_code_2fa",
+        "VK_CONTROL",
+        "VK_V",
+        "index",
+        "guard_element",
+        "window_title",
+        "KEYEVENTF_SCANCODE",
+        "KEYEVENTF_KEYUP"
+      ],
+      "code_object_storage": "0x142df38b0",
+      "code_object_load_addresses": [
+        "0x140666be1"
+      ],
+      "config_key_references": [
+        "STEAM_PATH"
+      ],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "CS2 video configuration",
+      "native_unwind_root": "0x1406787d0",
+      "code_spec_index": 693,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 9317,
+      "compiled_name": "hSjuJlBgrRKC",
+      "qualname": "hSjuJlBgrRKC",
+      "argument_count": 1,
+      "parameter_names": [
+        "self"
+      ],
+      "local_variable_names": [
+        "user",
+        "userdata_path",
+        "f",
+        "video_panel_cfg",
+        "path",
+        "video_steam_cfg",
+        "vendor_panel_id",
+        "device_panel_id",
+        "vendor_steam_id",
+        "device_steam_id"
+      ],
+      "code_object_storage": "0x142df4040",
+      "code_object_load_addresses": [
+        "0x1406788a8"
+      ],
+      "config_key_references": [
+        "STEAM_PATH"
+      ],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "Configuration initialization",
+      "native_unwind_root": "0x1406b0d40",
+      "code_spec_index": 555,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 10541,
+      "compiled_name": "__init__",
+      "qualname": "__init__",
+      "argument_count": 1,
+      "parameter_names": [
+        "self"
+      ],
+      "local_variable_names": [
+        "f",
+        "old_auto_loot",
+        "raw_send",
+        "gsys_name",
+        "disk",
+        "_coop_stale",
+        "k"
+      ],
+      "code_object_storage": "0x142df3bf0",
+      "code_object_load_addresses": [
+        "0x1406b0e1f"
+      ],
+      "config_key_references": [
+        "ACCOUNTS_LAUNCH_DELAY",
+        "ACCOUNT_LOGIN_TIMEOUT",
+        "AUTO_COLLECT_DROP",
+        "AUTO_SEND_DROP",
+        "CHANGE_BATCH_AFTER_N_MINUTES",
+        "COOP_MODE",
+        "CSGO_PATH",
+        "FARMING_MODE",
+        "LOBBY_CREATION_ATTEMPTS_BEFORE_SHUFFLE",
+        "LOBBY_INVITE_MODE",
+        "NO_AVAST_MODE",
+        "STEAM_LAUNCH_OPTIONS",
+        "STEAM_PATH"
+      ],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "App UI initialization",
+      "native_unwind_root": "0x140733da0",
+      "code_spec_index": 552,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 13886,
+      "compiled_name": "__init__",
+      "qualname": "__init__",
+      "argument_count": 3,
+      "parameter_names": [
+        "self",
+        "data_ex",
+        "accounts_manager"
+      ],
+      "local_variable_names": [
+        "_CTRL_KEYCODE_MAP",
+        "YeTEiqTFyFDa",
+        "call_return",
+        "go",
+        "_st",
+        "_cr",
+        "k",
+        "l",
+        "lk",
+        "jo",
+        "jo1",
+        "jo2",
+        "width",
+        "height",
+        "main_menu_tab_frame",
+        "main_menu_tab_frameleft_column",
+        "main_menu_tab_frameright_column",
+        "accounts_tab_frame",
+        "accounts_tab_frameleft_column",
+        "accounts_tab_frameright_column",
+        "config_tab_frame",
+        "config_tab_frame_frameleft_column",
+        "config_tab_frame_frameright_column",
+        "utils_tab_frame",
+        "utils_tab_frameleft_column",
+        "result",
+        "output",
+        "features",
+        "_geo",
+        "_hosts_path",
+        "_tg_line",
+        "_hf",
+        "_hosts_content",
+        "arg",
+        "__class__"
+      ],
+      "code_object_storage": "0x142df3bd8",
+      "code_object_load_addresses": [
+        "0x140733f48"
+      ],
+      "config_key_references": [
+        "AUTO_COLLECT_DROP",
+        "FARMING_MODE",
+        "LOBBY_INVITE_MODE",
+        "NO_AVAST_MODE"
+      ],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "Lobby composition",
+      "native_unwind_root": "0x1409d1f30",
+      "code_spec_index": 642,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 26215,
+      "compiled_name": "eOhURGuOcAjM",
+      "qualname": "eOhURGuOcAjM",
+      "argument_count": 1,
+      "parameter_names": [
+        "self"
+      ],
+      "local_variable_names": [
+        "st",
+        "csgo_windows",
+        "p_levels",
+        "i",
+        "j",
+        "current_acc_lvl",
+        "n",
+        "lobbies_list",
+        "current_lobby",
+        "index",
+        "_",
+        "first_lobby",
+        "add_friends",
+        "main_acc",
+        "friends_list",
+        "to_delete",
+        "ans"
+      ],
+      "code_object_storage": "0x142df3ea8",
+      "code_object_load_addresses": [
+        "0x1409d2029"
+      ],
+      "config_key_references": [
+        "LOBBY_INVITE_MODE"
+      ],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "Lobby invite workflow",
+      "native_unwind_root": "0x1409fa930",
+      "code_spec_index": 869,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 26882,
+      "compiled_name": "qthivVtyrkyI",
+      "qualname": "qthivVtyrkyI",
+      "argument_count": 2,
+      "parameter_names": [
+        "self",
+        "csgo_windows"
+      ],
+      "local_variable_names": [
+        "codes",
+        "launched",
+        "index",
+        "csgo_window",
+        "current_nick",
+        "EOrdRMJEgNaH",
+        "b",
+        "ans",
+        "m",
+        "e"
+      ],
+      "code_object_storage": "0x142df45c0",
+      "code_object_load_addresses": [
+        "0x1409fa9e6"
+      ],
+      "config_key_references": [
+        "LOBBY_INVITE_MODE"
+      ],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "accept_invite",
+      "native_unwind_root": "0x1409f6790",
+      "code_spec_index": 569,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 26817,
+      "compiled_name": "accept_invite",
+      "qualname": "accept_invite",
+      "argument_count": 2,
+      "parameter_names": [
+        "self",
+        "csgo_window"
+      ],
+      "local_variable_names": [
+        "blue_line_on_top",
+        "top_bar_color",
+        "x",
+        "y",
+        "width",
+        "height",
+        "pixel_color_top_bar",
+        "k_bar",
+        "ans_top_bar"
+      ],
+      "code_object_storage": "0x142df3c60",
+      "code_object_load_addresses": [
+        "0x1409f686d"
+      ],
+      "config_key_references": [],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "GSI HTTP do_POST",
+      "native_unwind_root": "0x1409ffad0",
+      "code_spec_index": 635,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 26986,
+      "compiled_name": "do_POST",
+      "qualname": "do_POST",
+      "argument_count": 1,
+      "parameter_names": [
+        "self"
+      ],
+      "local_variable_names": [
+        "length",
+        "body",
+        "payload"
+      ],
+      "code_object_storage": "0x142df3e70",
+      "code_object_load_addresses": [
+        "0x1409ffb3c"
+      ],
+      "config_key_references": [],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "GSI get_info_about_players",
+      "native_unwind_root": "0x1409ff130",
+      "code_spec_index": 678,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 26970,
+      "compiled_name": "get_info_about_players",
+      "qualname": "get_info_about_players",
+      "argument_count": 2,
+      "parameter_names": [
+        "self",
+        "payload"
+      ],
+      "local_variable_names": [],
+      "code_object_storage": "0x142df3fc8",
+      "code_object_load_addresses": [
+        "0x1409ff191"
+      ],
+      "config_key_references": [
+        "LAUNCHED_ACCOUNTS_IDS"
+      ],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "Batch launch timer",
+      "native_unwind_root": "0x140b76f20",
+      "code_spec_index": 726,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 34716,
+      "compiled_name": "jLqkHkyCOfBm",
+      "qualname": "jLqkHkyCOfBm",
+      "argument_count": 2,
+      "parameter_names": [
+        "app",
+        "data_ex"
+      ],
+      "local_variable_names": [
+        "launched_accs",
+        "_",
+        "selected",
+        "launched_amount"
+      ],
+      "code_object_storage": "0x142df4148",
+      "code_object_load_addresses": [
+        "0x140b76fb4"
+      ],
+      "config_key_references": [
+        "CHANGE_BATCH_AFTER_N_MINUTES"
+      ],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "Farm/batch orchestration",
+      "native_unwind_root": "0x140b81ec0",
+      "code_spec_index": 395,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 34878,
+      "compiled_name": "QeLYmalabURu",
+      "qualname": "QeLYmalabURu",
+      "argument_count": 5,
+      "parameter_names": [
+        "data_ex",
+        "app",
+        "force",
+        "timer",
+        "found_in_party"
+      ],
+      "local_variable_names": [
+        "start_time_for_sign",
+        "moved_windows_after_not_all_joined_menu",
+        "st",
+        "shuffles_counter",
+        "lobby_creation_attemps",
+        "restarted_explorer",
+        "c",
+        "j",
+        "launched_accounts_tmp",
+        "launched_accs",
+        "needed",
+        "start_time",
+        "old_timer",
+        "amount",
+        "i",
+        "launched_amount",
+        "dropped_accs",
+        "stars_required",
+        "accounts_armorypasses_info",
+        "acc_armory_data",
+        "accounts_armory_stars",
+        "accounts_armory_passes_amount",
+        "acc_stars_progress",
+        "notification_text",
+        "uu",
+        "selected",
+        "success_drops",
+        "already_collected",
+        "error_collecting",
+        "start_lobby_searching_time",
+        "lobby_start_time",
+        "p",
+        "in_game_counter",
+        "restart_stucked_accounts",
+        "_",
+        "in_game",
+        "done_disc",
+        "current_in_game",
+        "___",
+        "parent",
+        "accounts_list",
+        "___cur_acc",
+        "l",
+        "csgo_windows",
+        "cur_wind",
+        "x",
+        "y",
+        "width",
+        "height",
+        "drop_counter_tmp",
+        "lagged_window",
+        "in_party",
+        "d",
+        "play_pressed_at",
+        "start_search_time",
+        "grace",
+        "resp",
+        "divide_sleep",
+        "index"
+      ],
+      "code_object_storage": "0x142df36f0",
+      "code_object_load_addresses": [
+        "0x140b8216b"
+      ],
+      "config_key_references": [
+        "AUTO_COLLECT_DROP",
+        "AUTO_SEND_DROP",
+        "CHANGE_BATCH_AFTER_N_MINUTES",
+        "COOP_MODE",
+        "LOBBY_CREATION_ATTEMPTS_BEFORE_SHUFFLE",
+        "NO_AVAST_MODE"
+      ],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "Steam refresh-token session restoration",
+      "native_unwind_root": "0x140be5190",
+      "code_spec_index": 744,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 6993,
+      "compiled_name": "kIEKJSJGXSjU",
+      "qualname": "kIEKJSJGXSjU",
+      "argument_count": 4,
+      "parameter_names": [
+        "login",
+        "refresh_token",
+        "steamid",
+        "proxy_url"
+      ],
+      "local_variable_names": [
+        "session",
+        "uuid",
+        "sid",
+        "domain",
+        "sessionid",
+        "finalize_resp",
+        "finalize_json",
+        "transfer_info",
+        "resp_steamid",
+        "t",
+        "url",
+        "params",
+        "cookie_dict",
+        "c",
+        "key",
+        "value",
+        "slc",
+        "payload_b64",
+        "payload",
+        "jwt_steamid",
+        "at_resp",
+        "at",
+        "resp",
+        "location"
+      ],
+      "code_object_storage": "0x142df41d8",
+      "code_object_load_addresses": [
+        "0x140be52c1"
+      ],
+      "config_key_references": [
+        "API_URL"
+      ],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "Steam HTTP GET/POST helper",
+      "native_unwind_root": "0x140bec990",
+      "code_spec_index": 703,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 7175,
+      "compiled_name": "hqRAXEJIJAkg",
+      "qualname": "hqRAXEJIJAkg",
+      "argument_count": 6,
+      "parameter_names": [
+        "self",
+        "method",
+        "service",
+        "endpoint",
+        "version",
+        "params"
+      ],
+      "local_variable_names": [
+        "url",
+        "headers"
+      ],
+      "code_object_storage": "0x142df4090",
+      "code_object_load_addresses": [
+        "0x140beca2a"
+      ],
+      "config_key_references": [
+        "API_URL"
+      ],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "Steam web login",
+      "native_unwind_root": "0x140beed90",
+      "code_spec_index": 772,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 7215,
+      "compiled_name": "login",
+      "qualname": "login",
+      "argument_count": 2,
+      "parameter_names": [
+        "self",
+        "one_time_code"
+      ],
+      "local_variable_names": [
+        "login_response_json",
+        "finallized_response_json",
+        "login_response",
+        "response_block",
+        "finallized_response",
+        "steamid",
+        "payload_b64",
+        "payload"
+      ],
+      "code_object_storage": "0x142df42b8",
+      "code_object_load_addresses": [
+        "0x140beee3e"
+      ],
+      "config_key_references": [],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "RSA-PSS signed proof validation",
+      "native_unwind_root": "0x140706b70",
+      "code_spec_index": 909,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 4826,
+      "compiled_name": "tCzdOweDdAzH",
+      "qualname": "tCzdOweDdAzH",
+      "argument_count": 5,
+      "parameter_names": [
+        "self",
+        "body",
+        "endpoint",
+        "hwid",
+        "nonce"
+      ],
+      "local_variable_names": [
+        "pss",
+        "SHA256",
+        "proof",
+        "sig",
+        "where",
+        "who",
+        "granted",
+        "ts",
+        "echo",
+        "features"
+      ],
+      "code_object_storage": "0x142df4700",
+      "code_object_load_addresses": [
+        "0x140706c40"
+      ],
+      "config_key_references": [],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "Cached proof validation candidate",
+      "native_unwind_root": "0x140714980",
+      "code_spec_index": 175,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 4860,
+      "compiled_name": "DGmQXUBZeTlz",
+      "qualname": "DGmQXUBZeTlz",
+      "argument_count": 1,
+      "parameter_names": [
+        "self"
+      ],
+      "local_variable_names": [
+        "p"
+      ],
+      "code_object_storage": "0x142df3010",
+      "code_object_load_addresses": [
+        "0x1407149e9"
+      ],
+      "config_key_references": [],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "License service request candidate",
+      "native_unwind_root": "0x14081e0b0",
+      "code_spec_index": 978,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 4903,
+      "compiled_name": "xIVLTDZOwWWv",
+      "qualname": "xIVLTDZOwWWv",
+      "argument_count": 1,
+      "parameter_names": [
+        "self"
+      ],
+      "local_variable_names": [
+        "rand_string",
+        "data",
+        "payload",
+        "_71151",
+        "hashed_payload",
+        "headers",
+        "resp",
+        "body",
+        "dec",
+        "hw",
+        "t",
+        "rn",
+        "features",
+        "condition1",
+        "condition3",
+        "file"
+      ],
+      "code_object_storage": "0x142df4928",
+      "code_object_load_addresses": [
+        "0x14081e193"
+      ],
+      "config_key_references": [],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "License service note request candidate",
+      "native_unwind_root": "0x140836410",
+      "code_spec_index": 519,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 4969,
+      "compiled_name": "YRmXLZMOkCcx",
+      "qualname": "YRmXLZMOkCcx",
+      "argument_count": 2,
+      "parameter_names": [
+        "self",
+        "note"
+      ],
+      "local_variable_names": [
+        "rand_string",
+        "data",
+        "payload",
+        "_71151",
+        "hashed_payload",
+        "headers",
+        "HFCjyHHQFkFa",
+        "ce_pa",
+        "resp",
+        "body",
+        "dec",
+        "hw",
+        "t",
+        "rn",
+        "condition1",
+        "condition2",
+        "condition3",
+        "condition4",
+        "final_result",
+        "file"
+      ],
+      "code_object_storage": "0x142df3ad0",
+      "code_object_load_addresses": [
+        "0x14083650a"
+      ],
+      "config_key_references": [],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "Panel registration response candidate",
+      "native_unwind_root": "0x14084e780",
+      "code_spec_index": 273,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 5054,
+      "compiled_name": "IoHigjaYXFID",
+      "qualname": "IoHigjaYXFID",
+      "argument_count": 1,
+      "parameter_names": [
+        "self"
+      ],
+      "local_variable_names": [
+        "rand_string",
+        "data",
+        "payload",
+        "url",
+        "headers",
+        "t_c",
+        "resp",
+        "body",
+        "cipher",
+        "dec",
+        "hw",
+        "t",
+        "rn",
+        "panel_uuid",
+        "panel_secret"
+      ],
+      "code_object_storage": "0x142df3320",
+      "code_object_load_addresses": [
+        "0x14084e86b"
+      ],
+      "config_key_references": [],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "Encrypted response decoder",
+      "native_unwind_root": "0x1408a9050",
+      "code_spec_index": 493,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 5108,
+      "compiled_name": "WvxVrYbCouBn",
+      "qualname": "WvxVrYbCouBn",
+      "argument_count": 2,
+      "parameter_names": [
+        "self",
+        "data"
+      ],
+      "local_variable_names": [
+        "_",
+        "__",
+        "_9082",
+        "_26746",
+        "_21777",
+        "_7436",
+        "_17581",
+        "_11087",
+        "_51335",
+        "_13706",
+        "_51338",
+        "_530",
+        "_992",
+        "_48510",
+        "_12559",
+        "_87487",
+        "_49580",
+        "_43870",
+        "_81366",
+        "_76288",
+        "_24522",
+        "_16202",
+        "_61363",
+        "_68353",
+        "_15400",
+        "_73272",
+        "_50918",
+        "_27171",
+        "_10606",
+        "_17542",
+        "_77584",
+        "_15799",
+        "_21416",
+        "_570",
+        "_1367",
+        "_55891",
+        "_54958",
+        "private_key",
+        "cipher",
+        "decrypted_message"
+      ],
+      "code_object_storage": "0x142df3a00",
+      "code_object_load_addresses": [
+        "0x1408a90bf"
+      ],
+      "config_key_references": [],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    },
+    {
+      "role_candidate": "Application startup and post-exit cleanup candidate",
+      "native_unwind_root": "0x140bd7350",
+      "code_spec_index": 662,
+      "source_file": "FSMPANEL_CS2.py",
+      "source_line": 36962,
+      "compiled_name": "fWgmwJgPhnjI",
+      "qualname": "fWgmwJgPhnjI",
+      "argument_count": 0,
+      "parameter_names": [],
+      "local_variable_names": [
+        "ss",
+        "i",
+        "p",
+        "data_ex",
+        "accounts_manager",
+        "app",
+        "steam_accounts",
+        "steam3ids",
+        "hwid",
+        "File",
+        "file_path",
+        "number_of_bytes",
+        "rand_string",
+        "new_name",
+        "current_datetime",
+        "new_creation_date",
+        "target_processes",
+        "target_pid",
+        "current_user",
+        "proc",
+        "proc_username",
+        "proc_user_only",
+        "e",
+        "safe_path",
+        "mutate_cmd",
+        "command",
+        "encoded"
+      ],
+      "code_object_storage": "0x142df3f48",
+      "code_object_load_addresses": [
+        "0x140bd7483"
+      ],
+      "config_key_references": [
+        "COOP_MODE"
+      ],
+      "instruction_boundary_validation": "all selected constant references aligned from PE unwind starts",
+      "confidence": "Static metadata and native loads verified; role inferred from local names and referenced constants unless method name explicit"
+    }
+  ],
+  "ui_text": [
+    {
+      "module": "__main__",
+      "payload_offset": 24868,
+      "text": "Fixed DeviceID and VendorID values in the config."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 25334,
+      "text": "Starting with GSI \u2116"
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 28193,
+      "text": "Wrong Steam path! Check it in config."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 76585,
+      "text": "Don't have enough accounts to farm. Stopping..."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 83064,
+      "text": "Starting lobby by timer..."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 93805,
+      "text": "Farming Mode: [Random score | Disconnects]"
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 93874,
+      "text": "Farming Mode: [5vs5 random s. | Simulation]"
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 108031,
+      "text": "Co-op: 2 accounts here + 2 on another panel, played to an 8:8 draw. The server pairs you automatically with whoever lands in the same match."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 108173,
+      "text": "Co-op: 2 accounts here + 2 on another panel, closed on a random final score. The server pairs you automatically with whoever lands in the same match."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 118983,
+      "text": "All running accounts stopped."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 140212,
+      "text": "Trade URL..."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 152876,
+      "text": "Panel will only start Steam and login to account."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 152929,
+      "text": "Panel will launch Steam and CS2 as usually."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 153039,
+      "text": "NODE.JS IS NOT INSTALLED! Stoping looter."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 157673,
+      "text": "Selected all accounts."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 162554,
+      "text": "No accounts selected!"
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 169615,
+      "text": "All accounts launched. Will start lobby creation in "
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 176088,
+      "text": "Lobby will be created using codes."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 176126,
+      "text": "Lobby will be created using friends list."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 176246,
+      "text": "Replace error accounts enabled."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 176281,
+      "text": "Replace error accounts disabled."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 176627,
+      "text": "You're now launching CS2 using AvastSandbox"
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 176760,
+      "text": "Armory Pass farming mode enabled."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 176797,
+      "text": "Armory Pass farming mode disabled."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 179765,
+      "text": "Starting to make lobbies. Don't touch your keyboard and mouse!"
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 179845,
+      "text": "Auto collect drop enabled! Drops will be automatically collected after farming."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 184932,
+      "text": "Autofarm will work only on de_ancient"
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 213986,
+      "text": "Autofarm error. Saved to autofarm_error.txt."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 220965,
+      "text": "Starting lobby by auto timer after farming..."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 221145,
+      "text": "Start after changing batch..."
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 222247,
+      "text": "All accounts farmed Stars from armory pass!"
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 222339,
+      "text": "All accounts received drop. Collecting in "
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 222691,
+      "text": "Collecting drop disabled. Swapping batches without collecting drop!"
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 222833,
+      "text": "All accounts received drop in current batch. Collect them!"
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 223000,
+      "text": "Exit thread. Manually stopped lobby creation"
+    },
+    {
+      "module": "__main__",
+      "payload_offset": 223048,
+      "text": "Autofarm stopped!"
+    }
+  ],
+  "validation": {
+    "selected_native_roots": 22,
+    "selected_native_ranges": 33,
+    "constant_references_checked": 8046,
+    "unaligned_constant_references": 0
+  }
+}

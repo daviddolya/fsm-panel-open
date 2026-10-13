@@ -127,21 +127,26 @@ class TradePanel(QWidget):
         if not self.owner.simulate or self.owner._closing:
             return
         selected = self.owner.selected_ids()
-        if action != "reconcile":
+        if action == "reconcile":
+            account_id = self.account_id
+        else:
             if len(selected) != 1:
                 self.result.appendPlainText("Выберите ровно один аккаунт.")
                 return
-            self.account_id = selected[0]
+            account_id = selected[0]
         if action == "send":
+            self.account_id = account_id
             self.operation_id = str(uuid.uuid4())
             self.result.appendPlainText(f"Операция: {self.operation_id}")
         self._set_busy(True)
-        self._future = self.owner.bridge.submit(self._perform(action))
+        self._future = self.owner.bridge.submit(self._perform(action, account_id, self.operation_id))
 
-    async def _perform(self, action: str) -> dict:
+    async def _perform(self, action: str, account_id: str | None, operation_id: str | None) -> dict:
         from fsm_panel.trading import SteamCredentials
 
         service = await self._get_service()
+        if account_id is None:
+            raise RuntimeError("trade_account_missing")
         credentials = SteamCredentials(
             account_name="synthetic",
             password="synthetic-password",
@@ -149,18 +154,20 @@ class TradePanel(QWidget):
             identity_secret="c3ludGhldGlj",
         )
         if action == "inventory":
-            result = await service.inventory(self.account_id, credentials)
+            result = await service.inventory(account_id, credentials)
             message = f"Тестовый инвентарь: {len(result.assets)} предметов; ошибок: {len(result.failures)}"
         else:
+            if operation_id is None:
+                raise RuntimeError("trade_operation_missing")
             if action == "send":
                 result = await service.send(
-                    self.account_id,
-                    self.operation_id,
+                    account_id,
+                    operation_id,
                     "https://steamcommunity.com/tradeoffer/new/?partner=123&token=synthetic",
                     credentials,
                 )
             else:
-                result = await service.reconcile(self.account_id, self.operation_id, credentials)
+                result = await service.reconcile(account_id, operation_id, credentials)
             message = (
                 f"{result.operation_id}: {result.state.value}; offer_id={result.offer_id or '—'}"
             )

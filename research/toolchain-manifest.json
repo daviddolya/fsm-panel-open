@@ -1,0 +1,39 @@
+{
+  "scope": "Local static analysis only; no global PATH or existing MCP configuration changed",
+  "tools": [
+    {
+      "name": "rea-agents",
+      "version": "6.4.0",
+      "native_provider": "Ghidra 12.1.4",
+      "status": "Availability passed with explicit environment; target auto-analysis exhausted 2 GiB heap"
+    },
+    {
+      "name": "Ghidra",
+      "version": "12.1.4",
+      "archive": "ghidra_12.1.4_PUBLIC_20260921.zip",
+      "archive_sha256": "ddac49f903da9d5bac833e5cc79395098b9c33cfd3279be5f31bd00387d2d4db",
+      "official_release": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.1.4_build",
+      "manual_profile": "-noanalysis, selected PE chained unwind ranges, no automatic code analysis, decompiler timeout 30 seconds per function, heap 2048M"
+    },
+    {
+      "name": "Eclipse Temurin full JDK",
+      "version": "21.0.12.1+1",
+      "archive_sha256": "f9d6e191ab098c0d416e7d588a24420a8621cd2f4720dab2459b8b7b2d2d8b4e",
+      "official_metadata": "https://api.adoptium.net/v3/assets/latest/21/hotspot?architecture=x64&image_type=jdk&os=windows",
+      "verification": "Official metadata digest matched archive; full JDK includes jdk.compiler"
+    },
+    {
+      "name": "Capstone",
+      "version": "5.0.7",
+      "wheel_sha256": "4ab8bcb7da8f221ff45926ca168ca33e76f7237d06fbf3c10780002faa2670e1",
+      "official_metadata": "https://pypi.org/pypi/capstone/5.0.7/json",
+      "scope": "Task-local Python module directory"
+    },
+    {
+      "name": "CPython",
+      "version": "3.11.16",
+      "installation": "Existing uv, task-local directory, --no-bin --no-registry",
+      "scope": "Inert marshal metadata parsing and recovery verification; no target code execution"
+    }
+  ]
+}

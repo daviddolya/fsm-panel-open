@@ -1,0 +1,11 @@
+test_388_inert_marshal_records_and_12593_code_objects (__main__.RecoveryTests.test_388_inert_marshal_records_and_12593_code_objects) ... ok
+test_all_458_section_counts_and_exact_extents (__main__.RecoveryTests.test_all_458_section_counts_and_exact_extents) ... ok
+test_corrupted_payload_is_rejected (__main__.RecoveryTests.test_corrupted_payload_is_rejected) ... ok
+test_invalid_section_terminator_is_rejected (__main__.RecoveryTests.test_invalid_section_terminator_is_rejected) ... ok
+test_original_identity_and_decoded_crc (__main__.RecoveryTests.test_original_identity_and_decoded_crc) ... ok
+test_truncated_resource_is_rejected (__main__.RecoveryTests.test_truncated_resource_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 6.475s
+
+OK

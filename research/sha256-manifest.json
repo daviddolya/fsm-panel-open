@@ -1,0 +1,32 @@
+[
+  {
+    "path": "feature-catalogue.json",
+    "bytes": 121308,
+    "sha256": "d435df2b34294da54078511c5acfd86a487be431ce67ca21d003d997b3921333"
+  },
+  {
+    "path": "README.md",
+    "bytes": 1541,
+    "sha256": "4cb2a4361cde30699e3195bc7047ba1138a0a891a605f256d3356a84fc998d10"
+  },
+  {
+    "path": "STATIC_FINDINGS.md",
+    "bytes": 18279,
+    "sha256": "dc60a83f72be6d3613063d4bc0dd7e997a0bade4613bf6549f807b23478100bd"
+  },
+  {
+    "path": "toolchain-manifest.json",
+    "bytes": 1739,
+    "sha256": "2af36f2a657eae5cc10d5b1efc0234cd78ce869f70ac7914706c8bb9b1115e36"
+  },
+  {
+    "path": "verification-results.txt",
+    "bytes": 809,
+    "sha256": "26e57f63b98de8e12b49fc4d7479a9c6887c3e0940d4e92f2137cfd7e150f9f0"
+  },
+  {
+    "path": "verify_panel_constants.py",
+    "bytes": 9603,
+    "sha256": "bf621ebb744f1bc9a0ff12611b1cfa81c381a4e1fdbecafaaaeed7a2e6c4aeff"
+  }
+]
