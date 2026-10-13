@@ -68,7 +68,7 @@ class TradePanel(QWidget):
 
             if getattr(sys, "frozen", False):
                 root = Path(sys.executable).parent
-                node = root / "node.exe"
+                node = root / "worker/node.exe"
                 script = root / "worker/dist/main.js"
             else:
                 root = Path(__file__).resolve().parents[3]
@@ -139,7 +139,9 @@ class TradePanel(QWidget):
             self.operation_id = str(uuid.uuid4())
             self.result.appendPlainText(f"Операция: {self.operation_id}")
         self._set_busy(True)
-        self._future = self.owner.bridge.submit(self._perform(action, account_id, self.operation_id))
+        self._future = self.owner.bridge.submit(
+            self._perform(action, account_id, self.operation_id)
+        )
 
     async def _perform(self, action: str, account_id: str | None, operation_id: str | None) -> dict:
         from fsm_panel.trading import SteamCredentials

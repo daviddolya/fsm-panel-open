@@ -6,7 +6,6 @@ import os
 import sys
 from pathlib import Path
 
-from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QApplication
 
 from fsm_license.crypto import b64decode
@@ -35,7 +34,10 @@ def main() -> int:
         action="store_true",
         help="Open UI and close automatically for packaging validation",
     )
+    parser.add_argument("--smoke-report", type=Path, help="Synthetic smoke result JSON")
     args = parser.parse_args()
+    if (args.smoke_test and not args.simulate) or (args.smoke_report and not args.smoke_test):
+        parser.error("Smoke validation requires --simulate --smoke-test")
     if args.simulate and args.license_config:
         parser.error("--simulate and --license-config select different environments")
     default_root = (
@@ -69,10 +71,14 @@ def main() -> int:
     if client:
         window.attach_license(client, config["base_url"])
     window.show()
+    smoke = None
     if args.smoke_test:
-        QTimer.singleShot(700, window.close)
+        from fsm_panel.ui.smoke import DesktopSmoke
+
+        smoke = DesktopSmoke(window, args.smoke_report or data_dir / "smoke-result.json")
     try:
-        return app.exec()
+        result = app.exec()
+        return result if smoke is None or smoke.passed else 1
     finally:
         repository.close()
 

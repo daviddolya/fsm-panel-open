@@ -1,20 +1,60 @@
-# Implementation status
+# Состояние реализации — 13 октября 2026
 
-The accepted plan is being implemented. This is not yet a functional replacement for FSM_PANEL.
-The original app is license-blocked, and its native game behavior has not been fully recovered.
+Это работающая исследовательская основа переписывания, **пока не замена FSM_PANEL**.
+По решению владельца сейчас используется только локальная поставка; реальные проверки
+перенесены на будущий Windows-стенд. Полный функциональный паритет не заявляется.
 
-## Evidence and constraints
+## Что реализовано
 
-- Original SHA-256: `3731a48590e3169071b81aab9338a36b38a788133adfd43fada99ad3add1f308`.
-- 5,406 files; 137,624,045 bytes. 49 setting keys and types inventoried without exposing values.
-- Looter dependencies differ from lock; no claim of reproducibility of the legacy npm tree.
-- Native Ghidra/REA investigation is running separately; private evidence stays outside this repository.
-- Original execution, live Steam/trades, 50 real clients, and the 24-hour stand run have not occurred.
-- Local Docker daemon is unavailable; PostgreSQL concurrency results must come from actual PostgreSQL runs.
-- `docs/feature-matrix.json` distinguishes schema/source evidence from unverified game behavior.
+- Отдельный Git-репозиторий, GPL-3.0-only для нового кода, десять ролей агентов,
+  закреплённые зависимости Python/Node, CI, контракты и документация.
+- Типизированное ядро, состояния, очередь на аккаунт, ограничение 50 сессий,
+  отмена, восстановление, журнал внешних операций, SQLite и проверки миграций.
+- Импорт/экспорт схемы всех 49 настроек с неизвестными полями; Windows DPAPI
+  для секретов и устройства, зашифрованное хранилище настроек с резервной копией.
+- Qt-интерфейс с отдельным asyncio-потоком: аккаунты, настройки, симуляция обменов,
+  лицензия, совместимость и журнал. Реальные игровые команды явно недоступны.
+- Node/TypeScript worker и Python-клиент: версионный IPC через приватные pipes,
+  инвентарь, обмены, подтверждение, сверка, таймауты и сохранение неизвестного исхода.
+  Повторный идентификатор операции не обходит защиту от двойной отправки.
+- Локальный GSI-приёмник: идентификация зарегистрированных аккаунтов,
+  аутентификация, ограничение размера, очистка секретов и хранение телеметрии.
+  Он не запускается GUI автоматически до подключения подтверждённого GameAdapter.
+- Собственный сервер лицензирования: PostgreSQL, миграции, внешние права доступа,
+  транзакционный лимит устройств, подписанные допуски до 60 секунд и отзыв.
+  Платёжной логики нет. Конкурентные проверки выполнены на настоящем PostgreSQL;
+  контейнер также проверен через настоящий локальный HTTP.
 
-## Release gate
+## Что установлено об оригинале
 
-Do not label this build as parity-complete. Simulator and unit test passes are development
-evidence only. Features blocked on original behavior must remain visibly unavailable.
-Use the final verification report for actual executed checks and remaining blockers.
+SHA-256 `Panel.exe`: `3731a48590e3169071b81aab9338a36b38a788133adfd43fada99ad3add1f308`.
+Поставка: 5 406 файлов, 137 624 045 байт. Оригинал не запускался и не изменялся.
+
+Декодирован ресурс Nuitka с проверкой CRC и структуры всех 458 секций; извлечены
+метаданные 1 024 функций основного модуля. Восстановлены отдельные нативные границы
+GSI и старой проверки подписи, частичная последовательность запуска, два встроенных
+Node-скрипта. Полные алгоритмы партий, лобби и запуска пока не восстановлены.
+
+REA подтвердил доступность Ghidra/JDK и разобрал встроенный JavaScript. Полный
+нативный автоанализ завершился нехваткой Java heap; успешная нативная декомпиляция
+через REA не заявляется. Ограниченный ручной анализ Ghidra дал отдельные функции.
+Подробные адреса и доказательства: `research/STATIC_FINDINGS.md`.
+
+## Открытые условия выпуска
+
+1. Завершить спецификации GameAdapter: оба режима запуска, лобби, поиск,
+   autoaccept, anti-AFK, переподключения, партии, статистика и Telegram.
+   Реальные maFile/session-образцы отсутствуют; их формат не выдумывается.
+2. Проследить все настройки до фактического поведения. Поддержка JSON-схемы
+   не означает реализацию каждого потребителя настройки.
+3. Проверить живые Steam-адаптеры и сравнительные сценарии оригинала на стенде.
+   Новые зависимости отличаются от поставленных; тесты SDK-двойников не доказывают
+   совместимость с внешним сервисом.
+4. Разобрать известные уязвимости транзитивных Steam-зависимостей и подтвердить
+   состав/лицензии поставки. `worker/audit` содержит результаты, а не разрешение выпуска.
+5. Выполнить чистую Windows-установку, 50 реальных клиентов и 24-часовой прогон.
+   Локальная упаковка и нагрузка симулятора эти пункты не закрывают.
+
+Матрица `docs/feature-matrix.json` намеренно имеет `catalog_complete: false`.
+Выполненные команды и результаты приведены в `docs/VERIFICATION.md`;
+следующие стендовые сценарии — в `docs/stand-acceptance.md`.

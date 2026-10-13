@@ -16,6 +16,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
       - run: uv sync --frozen --group dev
       - run: uv run ruff check src tests scripts
+      - run: uv run ruff format --check src tests scripts
       - run: uv run mypy src
       - run: uv run pytest -m "not stand and not postgres" --junitxml=test-results/python.xml --cov=fsm_panel.core --cov-branch --cov-report=json:test-results/core-coverage.json
         env:
@@ -59,3 +60,24 @@ jobs:
       - run: pnpm --dir worker typecheck
       - run: pnpm --dir worker test
       - run: pnpm --dir worker build
+  package:
+    needs: [python, postgres, worker]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.19.0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen --group dev
+      - run: uv run python scripts/build_desktop.py --research-build
+      - run: uv run python scripts/verify_desktop.py dist/FSMPanelOpen/FSMPanelOpen.exe --output test-results/packaged-smoke.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FSMPanelOpen-research-windows
+          path: |
+            dist/FSMPanelOpen/
+            test-results/packaged-smoke.json

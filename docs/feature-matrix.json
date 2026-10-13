@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "catalog_complete": false,
   "original_sha256": "3731a48590e3169071b81aab9338a36b38a788133adfd43fada99ad3add1f308",
   "features": [
@@ -9,10 +9,37 @@
       "input_type": "str",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [
+        {
+          "address": "0x14067ae90",
+          "source_line": 9341
+        },
+        {
+          "address": "0x140666aa0",
+          "source_line": 8982
+        },
+        {
+          "address": "0x1406787d0",
+          "source_line": 9317
+        },
+        {
+          "address": "0x1406b0d40",
+          "source_line": 10541
+        }
+      ],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "str",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.CSGO_PATH",
@@ -20,10 +47,29 @@
       "input_type": "str",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [
+        {
+          "address": "0x14067ae90",
+          "source_line": 9341
+        },
+        {
+          "address": "0x1406b0d40",
+          "source_line": 10541
+        }
+      ],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "str",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.ADDITIONAL_LAUNCH_OPTIONS",
@@ -31,10 +77,20 @@
       "input_type": "str",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "str",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.DISABLE_STEAM_OVERLAY",
@@ -42,10 +98,20 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.TG_BOT_API_KEY",
@@ -53,10 +119,20 @@
       "input_type": "str",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "str",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.TG_BOT_CHAT_ID",
@@ -64,10 +140,20 @@
       "input_type": "str",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "str",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.BES_REDUCTION_PERCENT",
@@ -75,10 +161,20 @@
       "input_type": "int",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "int",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.SORT_ACCOUNTS_BY_LVL",
@@ -86,10 +182,20 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.TRADEOFFER_LINK",
@@ -97,10 +203,20 @@
       "input_type": "str",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "str",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.AUTO_LOOT",
@@ -108,10 +224,20 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.DELAY_BETWEEN_TRADES",
@@ -119,10 +245,20 @@
       "input_type": "int",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "int",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.ITEM_PICTURES_IN_TG",
@@ -130,10 +266,20 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.STEAM_LAUNCH_OPTIONS",
@@ -141,10 +287,29 @@
       "input_type": "str",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [
+        {
+          "address": "0x14067ae90",
+          "source_line": 9341
+        },
+        {
+          "address": "0x1406b0d40",
+          "source_line": 10541
+        }
+      ],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "str",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.REPLACE_ERROR_ACCOUNT",
@@ -152,10 +317,20 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.ACCOUNTS_LAUNCH_DELAY",
@@ -163,10 +338,25 @@
       "input_type": "int",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [
+        {
+          "address": "0x1406b0d40",
+          "source_line": 10541
+        }
+      ],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "int",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.AUTODISCONNECTS_DELAY",
@@ -174,10 +364,20 @@
       "input_type": "int",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "int",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.AUTODISCONNECTS",
@@ -185,10 +385,20 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.AVASTSANDBOX_FOLDER",
@@ -196,10 +406,20 @@
       "input_type": "str",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "str",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.ANTI_AFK",
@@ -207,10 +427,20 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.ANTI_AFK_DELAY",
@@ -218,10 +448,20 @@
       "input_type": "int",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "int",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.ANTI_AFK_MINIMIZE",
@@ -229,10 +469,20 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.DISABLE_CS2_BACKGROUND",
@@ -240,10 +490,20 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.CS_RESOLUTION",
@@ -251,10 +511,20 @@
       "input_type": "str",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "str",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.MAP_LOAD_DELAY",
@@ -262,10 +532,20 @@
       "input_type": "int",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "int",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.AUTODISCONNECTS_CHANGE_TEAMS_DELAY",
@@ -273,10 +553,20 @@
       "input_type": "int",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "int",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.ANTI_AFK_POWER",
@@ -284,10 +574,20 @@
       "input_type": "int",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "int",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.PANEL_POSITION",
@@ -295,10 +595,20 @@
       "input_type": "str",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "str",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.KILL_MONITOR_POSITION",
@@ -306,10 +616,20 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.ALTERNATIVE_AUTOACCEPTER",
@@ -317,10 +637,20 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.ENABLE_AUTOACCEPT",
@@ -328,10 +658,20 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.START_FARM_WHEN_LAUNCHED",
@@ -339,10 +679,20 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.LOBBY_CREATION_ATTEMPTS_BEFORE_SHUFFLE",
@@ -350,10 +700,29 @@
       "input_type": "int",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [
+        {
+          "address": "0x1406b0d40",
+          "source_line": 10541
+        },
+        {
+          "address": "0x140b81ec0",
+          "source_line": 34878
+        }
+      ],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "int",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.SEARCH_RETRIES_BEFORE_SHUFFLE",
@@ -361,10 +730,20 @@
       "input_type": "int",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "int",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.GAME_SEARCH_TIMEOUT",
@@ -372,10 +751,20 @@
       "input_type": "int",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "int",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.CHANGE_BATCH_AFTER_N_MINUTES",
@@ -383,10 +772,33 @@
       "input_type": "int",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [
+        {
+          "address": "0x1406b0d40",
+          "source_line": 10541
+        },
+        {
+          "address": "0x140b76f20",
+          "source_line": 34716
+        },
+        {
+          "address": "0x140b81ec0",
+          "source_line": 34878
+        }
+      ],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "int",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.GUI_SCALING",
@@ -394,10 +806,20 @@
       "input_type": "str",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "str",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.STATS_SKIN_PRICE",
@@ -405,10 +827,20 @@
       "input_type": "float",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "float",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.LOBBY_INVITE_MODE",
@@ -416,10 +848,37 @@
       "input_type": "int",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [
+        {
+          "address": "0x1406b0d40",
+          "source_line": 10541
+        },
+        {
+          "address": "0x140733da0",
+          "source_line": 13886
+        },
+        {
+          "address": "0x1409d1f30",
+          "source_line": 26215
+        },
+        {
+          "address": "0x1409fa930",
+          "source_line": 26882
+        }
+      ],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "int",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.FARMING_MODE",
@@ -427,10 +886,29 @@
       "input_type": "int",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [
+        {
+          "address": "0x1406b0d40",
+          "source_line": 10541
+        },
+        {
+          "address": "0x140733da0",
+          "source_line": 13886
+        }
+      ],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "int",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.RUNNING2VS2",
@@ -438,10 +916,20 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.DROP_HISTORY_CACHE",
@@ -449,10 +937,20 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.ROUND_TARGET",
@@ -460,10 +958,20 @@
       "input_type": "int",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "int",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.ACCOUNTS_SORT_MODE",
@@ -471,10 +979,20 @@
       "input_type": "int",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "int",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.ACCOUNT_LOGIN_ATTEMPTS",
@@ -482,10 +1000,20 @@
       "input_type": "int",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "int",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.CS2_AUTOUPDATER_ENABLED",
@@ -493,10 +1021,20 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.ANCIENT_MAP_PRELOAD",
@@ -504,10 +1042,20 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.AUTOSHUFFLE_AFTER_GAME",
@@ -515,10 +1063,20 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.NO_AVAST_MODE",
@@ -526,10 +1084,37 @@
       "input_type": "bool",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [
+        {
+          "address": "0x14067ae90",
+          "source_line": 9341
+        },
+        {
+          "address": "0x1406b0d40",
+          "source_line": 10541
+        },
+        {
+          "address": "0x140733da0",
+          "source_line": 13886
+        },
+        {
+          "address": "0x140b81ec0",
+          "source_line": 34878
+        }
+      ],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "bool",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "SETTING.AUTOACCEPT_READ_TIME",
@@ -537,143 +1122,424 @@
       "input_type": "int",
       "evidence": "settings/settings.json (key/type only)",
       "confidence": "observed-schema",
-      "original_consumer": "unknown",
-      "implementation": "pending",
+      "original_consumer": "partial_static_references_only",
+      "native_references": [],
+      "expected_result": "Exact observed type; preserve unknown keys; redact exported secrets",
+      "preconditions": "User explicitly imports a legacy JSON copy",
+      "state_changes": "Versioned DPAPI-backed settings vault",
+      "external_effects": "Encrypted file and backup; no game configuration writes",
+      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "tests/core/test_settings.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "input": "int",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "TRADE.LOGIN",
       "action": "Steam login and TOTP",
       "evidence": "looter_core.js:34-50",
       "confidence": "observed-source",
-      "implementation": "pending",
+      "implementation": "worker_implemented_stand_pending",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "worker/tests",
+        "tests/trading",
+        "tests/qa"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "TRADE.INVENTORY",
       "action": "Parallel tradable inventories; tolerate partial failures",
       "evidence": "looter_core.js:59-95",
       "confidence": "observed-source",
-      "implementation": "pending",
+      "implementation": "worker_implemented_stand_pending",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "worker/tests",
+        "tests/trading",
+        "tests/qa"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "TRADE.SEND",
       "action": "One outgoing offer from successful inventories",
       "evidence": "looter_core.js:97-108",
       "confidence": "observed-source",
-      "implementation": "pending",
+      "implementation": "worker_implemented_stand_pending",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "worker/tests",
+        "tests/trading",
+        "tests/qa"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "TRADE.CONFIRM",
       "action": "Confirm pending offer",
       "evidence": "looter_core.js:100-108",
       "confidence": "observed-source",
-      "implementation": "pending",
+      "implementation": "worker_implemented_stand_pending",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [
+        "worker/tests",
+        "tests/trading",
+        "tests/qa"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "CPU.BES",
       "action": "CPU limiter process",
       "evidence": "BES/src/hack.cpp",
       "confidence": "observed-source",
-      "implementation": "pending",
+      "implementation": "not_implemented",
       "runtime_parity": "not_verified",
-      "tests": []
+      "tests": [],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "GUI.ALL",
-      "evidence": "Not yet recovered from Panel.exe",
-      "confidence": "unknown",
+      "evidence": "research/STATIC_FINDINGS.md; research/feature-catalogue.json (partial static candidates)",
+      "confidence": "partial_static; algorithms_and_error_paths_incomplete",
       "implementation": "blocked_specification",
       "runtime_parity": "blocked_original_license",
-      "tests": []
+      "tests": [],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "GAME.LAUNCH",
-      "evidence": "Not yet recovered from Panel.exe",
-      "confidence": "unknown",
+      "evidence": "research/STATIC_FINDINGS.md; research/feature-catalogue.json (partial static candidates)",
+      "confidence": "partial_static; algorithms_and_error_paths_incomplete",
       "implementation": "blocked_specification",
       "runtime_parity": "blocked_original_license",
-      "tests": []
+      "tests": [],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "GAME.SANDBOX",
-      "evidence": "Not yet recovered from Panel.exe",
-      "confidence": "unknown",
+      "evidence": "research/STATIC_FINDINGS.md; research/feature-catalogue.json (partial static candidates)",
+      "confidence": "partial_static; algorithms_and_error_paths_incomplete",
       "implementation": "blocked_specification",
       "runtime_parity": "blocked_original_license",
-      "tests": []
+      "tests": [],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "GAME.LOBBY",
-      "evidence": "Not yet recovered from Panel.exe",
-      "confidence": "unknown",
+      "evidence": "research/STATIC_FINDINGS.md; research/feature-catalogue.json (partial static candidates)",
+      "confidence": "partial_static; algorithms_and_error_paths_incomplete",
       "implementation": "blocked_specification",
       "runtime_parity": "blocked_original_license",
-      "tests": []
+      "tests": [],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "GAME.SEARCH",
-      "evidence": "Not yet recovered from Panel.exe",
-      "confidence": "unknown",
+      "evidence": "research/STATIC_FINDINGS.md; research/feature-catalogue.json (partial static candidates)",
+      "confidence": "partial_static; algorithms_and_error_paths_incomplete",
       "implementation": "blocked_specification",
       "runtime_parity": "blocked_original_license",
-      "tests": []
+      "tests": [],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "GAME.AUTOACCEPT",
-      "evidence": "Not yet recovered from Panel.exe",
-      "confidence": "unknown",
+      "evidence": "research/STATIC_FINDINGS.md; research/feature-catalogue.json (partial static candidates)",
+      "confidence": "partial_static; algorithms_and_error_paths_incomplete",
       "implementation": "blocked_specification",
       "runtime_parity": "blocked_original_license",
-      "tests": []
+      "tests": [],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "GAME.ANTIAFK",
-      "evidence": "Not yet recovered from Panel.exe",
-      "confidence": "unknown",
+      "evidence": "research/STATIC_FINDINGS.md; research/feature-catalogue.json (partial static candidates)",
+      "confidence": "partial_static; algorithms_and_error_paths_incomplete",
       "implementation": "blocked_specification",
       "runtime_parity": "blocked_original_license",
-      "tests": []
+      "tests": [],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "GAME.RECONNECT",
-      "evidence": "Not yet recovered from Panel.exe",
-      "confidence": "unknown",
+      "evidence": "research/STATIC_FINDINGS.md; research/feature-catalogue.json (partial static candidates)",
+      "confidence": "partial_static; algorithms_and_error_paths_incomplete",
       "implementation": "blocked_specification",
       "runtime_parity": "blocked_original_license",
-      "tests": []
+      "tests": [],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "GAME.BATCHES",
-      "evidence": "Not yet recovered from Panel.exe",
-      "confidence": "unknown",
+      "evidence": "research/STATIC_FINDINGS.md; research/feature-catalogue.json (partial static candidates)",
+      "confidence": "partial_static; algorithms_and_error_paths_incomplete",
       "implementation": "blocked_specification",
       "runtime_parity": "blocked_original_license",
-      "tests": []
+      "tests": [],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "DROP.STATISTICS",
-      "evidence": "Not yet recovered from Panel.exe",
-      "confidence": "unknown",
+      "evidence": "research/STATIC_FINDINGS.md; research/feature-catalogue.json (partial static candidates)",
+      "confidence": "partial_static; algorithms_and_error_paths_incomplete",
       "implementation": "blocked_specification",
       "runtime_parity": "blocked_original_license",
-      "tests": []
+      "tests": [],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
     },
     {
       "feature_id": "LEGACY.LICENSE",
-      "evidence": "Not yet recovered from Panel.exe",
-      "confidence": "unknown",
+      "evidence": "research/STATIC_FINDINGS.md; research/feature-catalogue.json (partial static candidates)",
+      "confidence": "partial_static; algorithms_and_error_paths_incomplete",
       "implementation": "blocked_specification",
       "runtime_parity": "blocked_original_license",
-      "tests": []
+      "tests": [],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
+    },
+    {
+      "feature_id": "NEW.CORE",
+      "action": "Account lifecycle, cancellation, recovery and 50-session limit",
+      "evidence": "Approved new architecture; no original lifecycle claim",
+      "confidence": "new_contract",
+      "implementation": "implemented_simulator",
+      "runtime_parity": "not_applicable",
+      "tests": [
+        "tests/core",
+        "scripts/verify_simulator.py"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "see docs/VERIFICATION.md"
+    },
+    {
+      "feature_id": "NEW.GUI",
+      "action": "Accounts, settings, simulation trades, license, compatibility and journal tabs",
+      "evidence": "Approved new UI; legacy screen catalogue incomplete",
+      "confidence": "new_contract",
+      "implementation": "implemented_partial_ui",
+      "runtime_parity": "not_applicable",
+      "tests": [
+        "tests/ui",
+        "tests/qa"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "see docs/VERIFICATION.md"
+    },
+    {
+      "feature_id": "NEW.LICENSE",
+      "action": "Online activation, 60-second leases, external entitlements and transactional device limits",
+      "evidence": "Approved new licensing contract",
+      "confidence": "new_contract",
+      "implementation": "implemented_local_postgres_verified",
+      "runtime_parity": "not_applicable",
+      "tests": [
+        "tests/licensing",
+        "tests/qa/test_license_failure_boundaries.py",
+        "scripts/verify_license_container.py"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "see docs/VERIFICATION.md"
+    },
+    {
+      "feature_id": "NEW.SECRETS",
+      "action": "DPAPI secrets, device identity and encrypted settings",
+      "evidence": "Approved new secret-storage contract",
+      "confidence": "new_contract",
+      "implementation": "implemented_windows_verified",
+      "runtime_parity": "not_applicable",
+      "tests": [
+        "tests/adapters/test_secrets.py",
+        "tests/adapters/test_settings_vault.py"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "see docs/VERIFICATION.md"
+    },
+    {
+      "feature_id": "NEW.PROCESSES",
+      "action": "Own processes by PID, creation time and executable; clean up owned children",
+      "evidence": "Approved ownership contract; no CS2 behavior claim",
+      "confidence": "new_contract",
+      "implementation": "implemented_disposable_child_verified",
+      "runtime_parity": "not_applicable",
+      "tests": [
+        "tests/adapters/test_processes.py",
+        "tests/adapters/test_processes_live_local.py"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "see docs/VERIFICATION.md"
+    },
+    {
+      "feature_id": "GSI.RECEIVE",
+      "action": "Store last game-state payload for a registered account",
+      "evidence": "Manual Ghidra: 0x1409ffad0 and 0x1409ff130; docs/gsi.md",
+      "confidence": "static_contract",
+      "implementation": "implemented_defensive_contract",
+      "runtime_parity": "not_verified",
+      "tests": [
+        "tests/gsi"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
+    },
+    {
+      "feature_id": "TRADE.SELECTED",
+      "action": "Selected assets, comments, refresh token, proxy and grouped offers",
+      "evidence": "Embedded script SHA256 d010c676ce33adaee529a79fafc9501fd2ca39c3ca0794e90680ff7cb681302c",
+      "confidence": "static_contract",
+      "implementation": "implementation_in_progress",
+      "runtime_parity": "not_verified",
+      "tests": [
+        "worker/tests",
+        "tests/trading"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
+    },
+    {
+      "feature_id": "STEAM.ACTIVITY",
+      "action": "Free app entitlement request and bounded games-played session",
+      "evidence": "Embedded script SHA256 3349e3c1232551beb4f90f1849c39f289c84e014df0e0cbce07e948f70964f8c",
+      "confidence": "static_contract",
+      "implementation": "implementation_in_progress",
+      "runtime_parity": "not_verified",
+      "tests": [
+        "worker/tests",
+        "tests/trading"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
+    },
+    {
+      "feature_id": "NOTIFY.TELEGRAM",
+      "action": "Original text/image notification scenarios",
+      "evidence": "Dependency and settings only; complete scenario contract unresolved",
+      "confidence": "static_contract",
+      "implementation": "blocked_specification",
+      "runtime_parity": "not_verified",
+      "tests": [],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
     }
   ]
 }
