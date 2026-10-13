@@ -3,7 +3,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { safeCode, WorkerError } from "./types.ts";
-import type { Request, TradeResult, TradeState } from "./types.ts";
+import type { ActivityResult, ActivityState, Request, TradeResult, TradeState } from "./types.ts";
 
 type Row = TradeResult & { fingerprint: string; partner_id: string; phase: string };
 export class Journal {
@@ -21,7 +21,7 @@ export class Journal {
     const objects = this.db.prepare(`SELECT type,name FROM sqlite_master
       WHERE name NOT LIKE 'sqlite_%' AND type IN ('table','view','trigger')`).all();
     if ((version === 0 && objects.length) || objects.some(row => row.type !== "table" ||
-      !["operations", "worker_owner"].includes(String(row.name)))) throw new WorkerError("journal_error");
+      !["operations", "worker_owner", "activities"].includes(String(row.name)))) throw new WorkerError("journal_error");
     if (version === 1 && !objects.some(row => row.name === "operations")) throw new WorkerError("journal_error");
     this.db.exec(`CREATE TABLE IF NOT EXISTS operations (
       operation_id TEXT PRIMARY KEY, account_id TEXT NOT NULL, fingerprint TEXT NOT NULL,
@@ -62,6 +62,32 @@ export class Journal {
       "CREATEUNIQUEINDEXone_unresolved_offer_per_accountONoperations(account_id,simulation)WHEREstateIN('unknown_outcome','created_pending_confirmation')ORphase!='idle'") {
       throw new WorkerError("journal_error");
     }
+    this.db.exec(`CREATE TABLE IF NOT EXISTS activities (
+      operation_id TEXT PRIMARY KEY, account_id TEXT NOT NULL, fingerprint TEXT NOT NULL,
+      state TEXT NOT NULL, code TEXT, updated_at_ms INTEGER NOT NULL, simulation INTEGER NOT NULL,
+      granted_app_ids TEXT NOT NULL
+    );`);
+    const activityColumns = this.db.prepare("PRAGMA table_info(activities)").all()
+      .map(c => [c.name,c.type,c.notnull,c.pk]);
+    if (JSON.stringify(activityColumns) !== JSON.stringify([
+      ["operation_id","TEXT",0,1],["account_id","TEXT",1,0],["fingerprint","TEXT",1,0],
+      ["state","TEXT",1,0],["code","TEXT",0,0],["updated_at_ms","INTEGER",1,0],
+      ["simulation","INTEGER",1,0],["granted_app_ids","TEXT",1,0],
+    ]) || !this.db.prepare("PRAGMA index_list(activities)").all().some(i => i.origin === "pk" && i.unique === 1) ||
+        this.db.prepare("PRAGMA foreign_key_list(activities)").all().length) throw new WorkerError("journal_error");
+    for (const row of this.db.prepare("SELECT * FROM activities").iterate()) {
+      const apps = JSON.parse(String(row.granted_app_ids));
+      if (!Array.isArray(apps) || apps.length > 50 || apps.some(id => !Number.isSafeInteger(id) || id <= 0 || id > 2147483647) ||
+          !/^[a-zA-Z0-9_.:-]{1,128}$/.test(String(row.operation_id)) ||
+          !/^[a-zA-Z0-9_.:-]{1,128}$/.test(String(row.account_id)) ||
+          !/^[a-f0-9]{64}$/.test(String(row.fingerprint)) ||
+          !["not_started","warming_up","playing","completed","cancelled","failed","unknown_outcome"].includes(String(row.state)) ||
+          row.simulation !== Number(simulation) || !Number.isSafeInteger(row.updated_at_ms) || Number(row.updated_at_ms) < 0 ||
+          (row.code !== null && safeCode(new WorkerError(String(row.code))) !== row.code)) throw new WorkerError("journal_error");
+    }
+    const activityIndex = this.db.prepare(`SELECT sql FROM sqlite_master WHERE name='one_unresolved_activity_per_account'`).get();
+    if (activityIndex && String(activityIndex.sql).replace(/\s+/g, "").replace(/IFNOTEXISTS/gi, "") !==
+      "CREATEUNIQUEINDEXone_unresolved_activity_per_accountONactivities(account_id,simulation)WHEREstateIN('unknown_outcome','not_started','warming_up','playing')") throw new WorkerError("journal_error");
     this.db.exec(`CREATE TABLE IF NOT EXISTS worker_owner (
       singleton INTEGER PRIMARY KEY CHECK(singleton=1), owner_pid INTEGER NOT NULL,
       nonce TEXT NOT NULL
@@ -89,9 +115,13 @@ export class Journal {
     // UNKNOWN, committed before dispatch; no startup path ever dispatches an offer.
     this.db.prepare(`UPDATE operations SET phase='idle', code='recovered_after_restart',
       updated_at_ms=? WHERE phase != 'idle'`).run(Date.now());
+    this.db.prepare(`UPDATE activities SET state='cancelled',code='recovered_after_restart',updated_at_ms=?
+      WHERE state IN ('not_started','warming_up','playing')`).run(Date.now());
     this.db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS one_unresolved_offer_per_account
       ON operations(account_id, simulation)
       WHERE state IN ('unknown_outcome','created_pending_confirmation') OR phase != 'idle';`);
+    this.db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS one_unresolved_activity_per_account
+      ON activities(account_id, simulation) WHERE state IN ('unknown_outcome','not_started','warming_up','playing');`);
     this.db.exec("COMMIT");
     } catch (error) {
       try { this.db.exec("ROLLBACK"); } catch { /* No transaction opened. */ }
@@ -114,7 +144,7 @@ export class Journal {
       `${a.app_id}/${a.context_id}`.localeCompare(`${b.app_id}/${b.context_id}`));
     const fingerprint = createHash("sha256").update(JSON.stringify([
       p.account_id, p.credentials!.account_name.toLowerCase(), p.trade_url,
-      inventories, p.allow_partial ?? true, this.simulation,
+      inventories, p.allow_partial ?? true, this.simulation, p.selected_assets ?? null, p.comment ?? "",
     ])).digest("hex");
     const result = this.db.prepare(`INSERT OR IGNORE INTO operations VALUES
       (?,?,?,?, 'not_sent','preparing',NULL,NULL,?,?)`).run(
@@ -150,6 +180,37 @@ export class Journal {
   public(row: TradeResult): TradeResult {
     const { operation_id, account_id, state, offer_id, code, updated_at_ms, simulation } = row;
     return { operation_id, account_id, state, offer_id, code, updated_at_ms, simulation };
+  }
+  getActivity(id: string, accountId: string): ActivityResult {
+    const row = this.db.prepare("SELECT * FROM activities WHERE operation_id=?").get(id);
+    if (!row) throw new WorkerError("operation_not_found");
+    if (row.account_id !== accountId || Boolean(row.simulation) !== this.simulation) throw new WorkerError("operation_conflict");
+    return {
+      operation_id: String(row.operation_id), account_id: String(row.account_id), state: row.state as ActivityState,
+      code: row.code as string | null, updated_at_ms: Number(row.updated_at_ms), simulation: Boolean(row.simulation),
+      granted_app_ids: JSON.parse(String(row.granted_app_ids)),
+    };
+  }
+  reserveActivity(request: Request): { row: ActivityResult; created: boolean } {
+    const p = request.params;
+    const fingerprint = createHash("sha256").update(JSON.stringify([
+      p.account_id, p.credentials!.account_name.toLowerCase(), [...new Set(p.app_ids)].sort((a,b) => a-b),
+      p.duration_ms, p.machine_name, this.simulation,
+    ])).digest("hex");
+    const result = this.db.prepare(`INSERT OR IGNORE INTO activities VALUES
+      (?,?,?,'not_started',NULL,?,?,'[]')`).run(p.operation_id!,p.account_id!,fingerprint,Date.now(),Number(this.simulation));
+    const stored = this.db.prepare("SELECT fingerprint FROM activities WHERE operation_id=?").get(p.operation_id!);
+    if (!stored) throw new WorkerError("unresolved_operation");
+    if (stored.fingerprint !== fingerprint) throw new WorkerError("operation_conflict");
+    return { row: this.getActivity(p.operation_id!,p.account_id!), created: result.changes === 1 };
+  }
+  updateActivity(id: string, accountId: string, state: ActivityState, code: string | null = null,
+                 granted?: number[]): ActivityResult {
+    this.getActivity(id, accountId);
+    this.db.prepare(`UPDATE activities SET state=?,code=?,updated_at_ms=?,
+      granted_app_ids=COALESCE(?,granted_app_ids) WHERE operation_id=?`).run(
+      state,code,Date.now(),granted ? JSON.stringify(granted) : null,id);
+    return this.getActivity(id,accountId);
   }
   close(): void {
     this.db.prepare("DELETE FROM worker_owner WHERE nonce=?").run(this.owner);

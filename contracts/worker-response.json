@@ -72,11 +72,42 @@
               ]
             },
             "code": {
-              "type": [
-                "string",
-                "null"
-              ],
-              "description": "Fixed public worker code; arbitrary text is rejected."
+              "enum": [
+                null,
+                "admission_expired",
+                "admission_required",
+                "auth_failed",
+                "cancelled",
+                "confirmation_unavailable",
+                "confirmation_unknown",
+                "cookies_failed",
+                "deadline_exceeded",
+                "duplicate_request",
+                "frame_too_large",
+                "interactive_auth_required",
+                "internal_error",
+                "invalid_inventory",
+                "invalid_json",
+                "invalid_request",
+                "inventory_failed",
+                "inventory_limit",
+                "journal_error",
+                "live_stand_required",
+                "no_items",
+                "operation_conflict",
+                "operation_not_found",
+                "pagination_loop",
+                "partial_inventory",
+                "protocol_version",
+                "rate_limited",
+                "recovered_after_restart",
+                "request_limit",
+                "send_unknown",
+                "status_unavailable",
+                "transport_lost",
+                "unresolved_operation",
+                "worker_busy"
+              ]
             },
             "updated_at_ms": {
               "type": "integer",
@@ -152,7 +183,41 @@
                     "pattern": "^[1-9][0-9]{0,19}$"
                   },
                   "code": {
-                    "type": "string"
+                    "enum": [
+                      "admission_expired",
+                      "admission_required",
+                      "auth_failed",
+                      "cancelled",
+                      "confirmation_unavailable",
+                      "confirmation_unknown",
+                      "cookies_failed",
+                      "deadline_exceeded",
+                      "duplicate_request",
+                      "frame_too_large",
+                      "interactive_auth_required",
+                      "internal_error",
+                      "invalid_inventory",
+                      "invalid_json",
+                      "invalid_request",
+                      "inventory_failed",
+                      "inventory_limit",
+                      "journal_error",
+                      "live_stand_required",
+                      "no_items",
+                      "operation_conflict",
+                      "operation_not_found",
+                      "pagination_loop",
+                      "partial_inventory",
+                      "protocol_version",
+                      "rate_limited",
+                      "recovered_after_restart",
+                      "request_limit",
+                      "send_unknown",
+                      "status_unavailable",
+                      "transport_lost",
+                      "unresolved_operation",
+                      "worker_busy"
+                    ]
                   }
                 }
               }
@@ -173,6 +238,106 @@
               "type": "boolean"
             }
           }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "operation_id",
+            "account_id",
+            "state",
+            "code",
+            "updated_at_ms",
+            "simulation",
+            "granted_app_ids"
+          ],
+          "properties": {
+            "operation_id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_.:-]{1,128}$"
+            },
+            "account_id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_.:-]{1,128}$"
+            },
+            "state": {
+              "enum": [
+                "not_started",
+                "warming_up",
+                "playing",
+                "completed",
+                "cancelled",
+                "failed",
+                "unknown_outcome"
+              ]
+            },
+            "code": {
+              "enum": [
+                null,
+                "admission_expired",
+                "admission_required",
+                "auth_failed",
+                "cancelled",
+                "confirmation_unavailable",
+                "confirmation_unknown",
+                "cookies_failed",
+                "deadline_exceeded",
+                "duplicate_request",
+                "frame_too_large",
+                "interactive_auth_required",
+                "internal_error",
+                "invalid_inventory",
+                "invalid_json",
+                "invalid_request",
+                "inventory_failed",
+                "inventory_limit",
+                "journal_error",
+                "live_stand_required",
+                "no_items",
+                "operation_conflict",
+                "operation_not_found",
+                "pagination_loop",
+                "partial_inventory",
+                "protocol_version",
+                "rate_limited",
+                "recovered_after_restart",
+                "request_limit",
+                "send_unknown",
+                "status_unavailable",
+                "transport_lost",
+                "unresolved_operation",
+                "worker_busy"
+              ]
+            },
+            "updated_at_ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "simulation": {
+              "type": "boolean"
+            },
+            "granted_app_ids": {
+              "type": "array",
+              "maxItems": 50,
+              "items": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 2147483647
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "renewed"
+          ],
+          "properties": {
+            "renewed": {
+              "type": "boolean"
+            }
+          }
         }
       ]
     },
@@ -184,7 +349,41 @@
       ],
       "properties": {
         "code": {
-          "type": "string"
+          "enum": [
+            "admission_expired",
+            "admission_required",
+            "auth_failed",
+            "cancelled",
+            "confirmation_unavailable",
+            "confirmation_unknown",
+            "cookies_failed",
+            "deadline_exceeded",
+            "duplicate_request",
+            "frame_too_large",
+            "interactive_auth_required",
+            "internal_error",
+            "invalid_inventory",
+            "invalid_json",
+            "invalid_request",
+            "inventory_failed",
+            "inventory_limit",
+            "journal_error",
+            "live_stand_required",
+            "no_items",
+            "operation_conflict",
+            "operation_not_found",
+            "pagination_loop",
+            "partial_inventory",
+            "protocol_version",
+            "rate_limited",
+            "recovered_after_restart",
+            "request_limit",
+            "send_unknown",
+            "status_unavailable",
+            "transport_lost",
+            "unresolved_operation",
+            "worker_busy"
+          ]
         }
       }
     }

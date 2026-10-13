@@ -15,9 +15,16 @@ from pathlib import Path
 
 
 def run(command: list[str], cwd: Path, *, data: str | None = None) -> str:
-    result = subprocess.run(command, cwd=cwd, input=data, text=True, capture_output=True,
-                            timeout=300, check=False,
-                            creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0)
+    result = subprocess.run(
+        command,
+        cwd=cwd,
+        input=data,
+        text=True,
+        capture_output=True,
+        timeout=300,
+        check=False,
+        creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0,
+    )
     if result.returncode:
         raise RuntimeError("worker_staging_command_failed")
     return result.stdout
@@ -41,7 +48,8 @@ def stage(output: Path, *, skip_build: bool = False, node_path: str | None = Non
     for name in ("package.json", "pnpm-lock.yaml"):
         shutil.copy2(source / name, output / name)
     (output / "pnpm-workspace.yaml").write_text(
-        (source / "pnpm-workspace.yaml").read_text() + "\nnodeLinker: hoisted\n", encoding="utf8")
+        (source / "pnpm-workspace.yaml").read_text() + "\nnodeLinker: hoisted\n", encoding="utf8"
+    )
     shutil.copytree(source / "dist", output / "dist")
     shutil.copytree(source / "audit", output / "audit")
     run([pnpm, "--dir", str(output), "install", "--prod", "--frozen-lockfile"], source)
@@ -50,20 +58,40 @@ def stage(output: Path, *, skip_build: bool = False, node_path: str | None = Non
             raise RuntimeError("nonportable_dependency_link")
     runtime = output / ("node.exe" if sys.platform == "win32" else "node")
     shutil.copy2(node, runtime)
-    run([str(runtime), "--input-type=module", "-e",
-         "import {loadSdk} from './dist/live.js'; loadSdk();"], output)
+    run(
+        [
+            str(runtime),
+            "--input-type=module",
+            "-e",
+            "import {loadSdk} from './dist/live.js'; loadSdk();",
+        ],
+        output,
+    )
     with tempfile.TemporaryDirectory(prefix="fsm-worker-staging-") as temporary:
-        request = {"version": 1, "request_id": "staging-smoke", "method": "status",
-                   "timeout_ms": 1000, "params": {"account_id": "synthetic", "operation_id": "missing"}}
-        response = run([str(runtime), "dist/main.js", "--state", str(Path(temporary) / "worker.sqlite")],
-                       output, data=json.dumps(request) + "\n")
+        request = {
+            "version": 1,
+            "request_id": "staging-smoke",
+            "method": "status",
+            "timeout_ms": 1000,
+            "params": {"account_id": "synthetic", "operation_id": "missing"},
+        }
+        response = run(
+            [str(runtime), "dist/main.js", "--state", str(Path(temporary) / "worker.sqlite")],
+            output,
+            data=json.dumps(request) + "\n",
+        )
         if json.loads(response).get("error", {}).get("code") != "operation_not_found":
             raise RuntimeError("staged_worker_smoke_failed")
-    manifest = {"node_version": version, "node_sha256": hashlib.sha256(runtime.read_bytes()).hexdigest(),
-                "worker_version": json.loads((source / "package.json").read_text())["version"],
-                "dependency_layout": "hoisted_no_links", "sdk_import_smoke": "passed",
-                "simulation_ipc_smoke": "passed", "live_stand": "not_run",
-                "dependency_audit": "audit/dependency-audit.json"}
+    manifest = {
+        "node_version": version,
+        "node_sha256": hashlib.sha256(runtime.read_bytes()).hexdigest(),
+        "worker_version": json.loads((source / "package.json").read_text())["version"],
+        "dependency_layout": "hoisted_no_links",
+        "sdk_import_smoke": "passed",
+        "simulation_ipc_smoke": "passed",
+        "live_stand": "not_run",
+        "dependency_audit": "audit/dependency-audit.json",
+    }
     (output / "audit/runtime-manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     return manifest
 

@@ -1,4 +1,4 @@
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 import { EventEmitter } from "node:events";
 import { LiveTransport, loadSdk } from "../src/live.ts";
 import type { Sdk } from "../src/live.ts";
@@ -27,7 +27,7 @@ function fakeSdk() {
   });
   const sdk = { user: () => user, community: () => community,
     manager: () => manager, authCode: () => "SYNTHETIC" } as Sdk;
-  return { sdk, user, manager, offer, counts: () => ({ cookieCalls, sendCalls, loginCalls }) };
+  return { sdk, user, manager, community, offer, counts: () => ({ cookieCalls, sendCalls, loginCalls }) };
 }
 const credentials = { account_name: "synthetic", password: "private-pass", shared_secret: "private-shared" };
 it("loads the clean pinned SDK modules without constructing/authenticating a Steam client", () => {
@@ -66,5 +66,60 @@ it("reconciliation validates outgoing ownership and partner before trusting Stea
     fake.offer.state = state;
     expect(await transport.reconcile("12345", "123", signal)).toBe(expected);
   }
+  transport.close();
+});
+it("refresh-token failure falls back to password once and never exposes token events", async () => {
+  const fake=fakeSdk(); const calls:object[]=[];
+  fake.user.logOn=(options?:object) => { calls.push(options!); queueMicrotask(()=>{
+    if(calls.length===1) fake.user.emit("error",new Error("private-token"));
+    else fake.user.emit("webSession","session",["synthetic-cookie"]);
+  }); };
+  const transport=new LiveTransport(fake.sdk);
+  await transport.connect({...credentials,refresh_token:"private-token"},new AbortController().signal);
+  fake.user.emit("loginKey","private-generated-token");
+  expect(calls[0]).toEqual({refreshToken:"private-token"});
+  expect(calls[1]).toMatchObject({accountName:"synthetic",password:"private-pass",rememberPassword:false});
+  fake.user.emit("error",new Error("private-token"));
+  expect(calls).toHaveLength(2);
+  transport.close();
+});
+it("connection switches to WebSocket after ten seconds and stops twenty seconds later", async () => {
+  vi.useFakeTimers();
+  const fake=fakeSdk(); fake.user.logOn=()=>{};
+  const switched:unknown[][]=[];
+  Object.assign(fake.user,{setOption:(...args:unknown[])=>switched.push(args)});
+  const transport=new LiveTransport(fake.sdk);
+  try {
+    const pending=transport.connect(credentials,new AbortController().signal).catch(error=>error);
+    await vi.advanceTimersByTimeAsync(10_000);
+    expect(switched).toEqual([["protocol",2]]);
+    await vi.advanceTimersByTimeAsync(20_000);
+    expect(await pending).toMatchObject({code:"deadline_exceeded"});
+  } finally { transport.close(); vi.useRealTimers(); }
+});
+it("proxy configuration reaches both CM and community transports without network access", async () => {
+  const fake=fakeSdk(); const options:object[]=[];
+  fake.sdk.user=(config)=>{ options.push(config); return fake.user as ReturnType<Sdk["user"]>; };
+  fake.sdk.proxyRequest=(proxy)=>({syntheticProxy:proxy});
+  fake.sdk.community=(config)=>{ options.push(config!); return fake.community as ReturnType<Sdk["community"]>; };
+  const transport=new LiveTransport(fake.sdk);
+  await transport.connect({...credentials,proxy_url:"socks5://synthetic:private@127.0.0.1:1080"},new AbortController().signal);
+  expect(options[0]).toMatchObject({socksProxy:"socks5://synthetic:private@127.0.0.1:1080"});
+  expect(options[1]).toEqual({request:{syntheticProxy:"socks5://synthetic:private@127.0.0.1:1080"}});
+  transport.close();
+});
+it("known confirmation acknowledgement workaround retries exactly once", async () => {
+  const fake=fakeSdk(); let confirmations=0,acknowledgements=0;
+  fake.community.acceptConfirmationForObject=(_secret,_id,done)=>{
+    confirmations++; done(confirmations===1?new Error("Could not act on confirmation"):undefined);
+  };
+  Object.assign(fake.community,{getSessionID:()=>"private-session",
+    httpRequestPost:(_url:string,_options:object,done:(error:unknown,response:object)=>void)=>{
+      acknowledgements++; done(null,{statusCode:200});
+    }});
+  const transport=new LiveTransport(fake.sdk); const signal=new AbortController().signal;
+  await transport.connect(credentials,signal);
+  await transport.confirm("12345","private-identity",signal);
+  expect({confirmations,acknowledgements}).toEqual({confirmations:2,acknowledgements:1});
   transport.close();
 });

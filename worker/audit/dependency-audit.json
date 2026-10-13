@@ -28,6 +28,7 @@
         {
           "version": "2.88.2",
           "paths": [
+            ".>request",
             ".>steam-tradeoffer-manager>steamcommunity>request",
             ".>steamcommunity>request"
           ],
@@ -52,6 +53,7 @@
         {
           "version": "2.5.0",
           "paths": [
+            ".>request>tough-cookie",
             ".>steam-tradeoffer-manager>steamcommunity>request>tough-cookie",
             ".>steamcommunity>request>tough-cookie"
           ],
@@ -99,6 +101,7 @@
         {
           "version": "2.3.3",
           "paths": [
+            ".>request>form-data",
             ".>steam-tradeoffer-manager>steamcommunity>request>form-data",
             ".>steamcommunity>request>form-data"
           ],
@@ -122,6 +125,7 @@
         {
           "version": "6.5.5",
           "paths": [
+            ".>request>qs",
             ".>steam-tradeoffer-manager>steamcommunity>request>qs",
             ".>steamcommunity>request>qs"
           ],
@@ -343,6 +347,7 @@
         {
           "version": "3.4.0",
           "paths": [
+            ".>request>uuid",
             ".>steam-tradeoffer-manager>steamcommunity>request>uuid",
             ".>steamcommunity>request>uuid"
           ],
@@ -366,6 +371,7 @@
         {
           "version": "2.3.3",
           "paths": [
+            ".>request>form-data",
             ".>steam-tradeoffer-manager>steamcommunity>request>form-data",
             ".>steamcommunity>request>form-data"
           ],
@@ -455,6 +461,7 @@
         {
           "version": "6.5.5",
           "paths": [
+            ".>request>qs",
             ".>steam-tradeoffer-manager>steamcommunity>request>qs",
             ".>steamcommunity>request>qs"
           ],
@@ -659,9 +666,9 @@
       "high": 14,
       "critical": 2
     },
-    "dependencies": 140,
+    "dependencies": 142,
     "devDependencies": 0,
     "optionalDependencies": 0,
-    "totalDependencies": 140
+    "totalDependencies": 142
   }
 }

@@ -1,4 +1,5 @@
 import { createRequire } from "node:module";
+import { setTimeout as delay } from "node:timers/promises";
 import type { EventEmitter } from "node:events";
 import { checkpoint, WorkerError } from "./types.ts";
 import type { Asset, Credentials, InventorySpec, Transport } from "./types.ts";
@@ -7,16 +8,24 @@ type Callback<T> = (error: unknown, value: T) => void;
 interface User extends EventEmitter {
   logOn(options: object): void;
   logOff(): void;
+  setOption(name: string, value: unknown): void;
+  requestFreeLicense(appIds: number[], callback: (error: unknown, packages: number[], apps: number[]) => void): void;
+  gamesPlayed(appIds: number[], force?: boolean): void;
+  setPersona(state: number): void;
 }
 interface Item { appid: number; contextid: string; assetid: string; amount: number }
 interface Offer {
   id?: string; state?: number; isOurOffer?: boolean; partner?: { accountid: number };
   addMyItems(items: Item[]): number;
   send(callback: Callback<string>): void;
+  setMessage(message: string): void;
 }
 interface Community extends EventEmitter {
   setCookies(cookies: string[]): void;
   acceptConfirmationForObject(secret: string, id: string, callback: (error?: unknown) => void): void;
+  getSessionID(): string;
+  httpRequestPost(url: string, options: object,
+                  callback: (error: unknown, response?: { statusCode: number }) => void): void;
 }
 interface Manager extends EventEmitter {
   setCookies(cookies: string[], callback: (error?: unknown) => void): void;
@@ -28,19 +37,28 @@ interface Manager extends EventEmitter {
 }
 export interface Sdk {
   user(options: object): User;
-  community(): Community;
+  community(options?: object): Community;
   manager(options: object): Manager;
   authCode(secret: string): string;
+  proxyRequest?(proxy: string): unknown;
 }
 export function loadSdk(): Sdk {
   const require = createRequire(import.meta.url);
   const UserClass = require("steam-user") as new(options: object) => User;
-  const CommunityClass = require("steamcommunity") as new() => Community;
+  const CommunityClass = require("steamcommunity") as new(options?: object) => Community;
   const ManagerClass = require("steam-tradeoffer-manager") as new(options: object) => Manager;
   const totp = require("steam-totp") as { getAuthCode(secret: string): string };
   return {
-    user: options => new UserClass(options), community: () => new CommunityClass(),
+    user: options => new UserClass(options), community: options => new CommunityClass(options),
     manager: options => new ManagerClass(options), authCode: secret => totp.getAuthCode(secret),
+    proxyRequest: proxy => {
+      const request = require("request") as { defaults(options: object): unknown };
+      if (new URL(proxy).protocol.startsWith("socks")) {
+        const { SocksProxyAgent } = require("socks-proxy-agent") as { SocksProxyAgent: new(proxy: string) => unknown };
+        return request.defaults({ agent: new SocksProxyAgent(proxy), forever: true });
+      }
+      return request.defaults({ proxy, forever: true });
+    },
   };
 }
 function failure(error: unknown, fallback: string): WorkerError {
@@ -58,6 +76,7 @@ export class LiveTransport implements Transport {
   private community?: Community;
   private manager?: Manager;
   private dead = new AbortController();
+  private timers: ReturnType<typeof setTimeout>[] = [];
   constructor(sdk = loadSdk()) { this.sdk = sdk; }
   private call<T>(signal: AbortSignal, fallback: string,
                   start: (done: Callback<T>) => void): Promise<T> {
@@ -77,36 +96,58 @@ export class LiveTransport implements Transport {
       try { start(finish); } catch (error) { finish(failure(error, fallback)); }
     });
   }
-  async connect(credentials: Credentials, signal: AbortSignal): Promise<void> {
+  async connect(credentials: Credentials, signal: AbortSignal, machineName?: string): Promise<void> {
     checkpoint(signal);
     this.user = this.sdk.user({
       dataDirectory: null, autoRelogin: false, renewRefreshTokens: false, enablePicsCache: false,
+      ...(credentials.proxy_url ? {
+        [new URL(credentials.proxy_url).protocol.startsWith("socks") ? "socksProxy" : "httpProxy"]: credentials.proxy_url,
+      } : {}),
     });
-    this.community = this.sdk.community();
+    this.community = this.sdk.community(credentials.proxy_url ? {
+      request: this.sdk.proxyRequest!(credentials.proxy_url),
+    } : {});
     // No steam integration, periodic polling, persistence, or automatic offer cancellation.
     this.manager = this.sdk.manager({
       community: this.community, language: "en", pollInterval: -1,
       dataDirectory: null, savePollData: false, useAccessToken: true,
     });
     const die = (code: string) => this.dead.abort(new WorkerError(code));
-    this.user.on("error", () => die("auth_failed"));
+    let ready = false, retriedPassword = false;
+    const passwordLogon = () => ({ accountName: credentials.account_name, password: credentials.password,
+      twoFactorCode: this.sdk.authCode(credentials.shared_secret), rememberPassword: false,
+      ...(machineName ? { machineName } : {}) });
+    this.user.on("error", () => {
+      if (!ready && credentials.refresh_token && !retriedPassword && !signal.aborted && !this.dead.signal.aborted) {
+        retriedPassword = true;
+        try { this.user!.logOn(passwordLogon()); } catch { die("auth_failed"); }
+      } else die("auth_failed");
+    });
     this.user.on("disconnected", () => die("transport_lost"));
     this.user.on("steamGuard", () => die("interactive_auth_required"));
     this.community.on("sessionExpired", () => die("transport_lost"));
     this.manager.on("sessionExpired", () => die("transport_lost"));
     this.manager.on("error", () => die("transport_lost"));
+    const clearTimers = () => { for (const timer of this.timers) clearTimeout(timer); this.timers = []; };
+    this.user.once("loggedOn", clearTimers);
+    this.timers.push(setTimeout(() => {
+      if (ready || signal.aborted || this.dead.signal.aborted) return;
+      try { this.user!.setOption("protocol", 2); } catch { die("transport_lost"); return; }
+      this.timers.push(setTimeout(() => die("deadline_exceeded"), 20_000));
+    }, 10_000));
     await this.call<void>(signal, "auth_failed", done => {
       // once is registered before logOn; repeated webSession cannot re-enter send.
       this.user!.once("webSession", (_sessionId: string, cookies: string[]) => {
         if (signal.aborted || this.dead.signal.aborted) return;
+        ready = true;
+        clearTimers();
         try {
           this.community!.setCookies(cookies);
           this.manager!.setCookies(cookies, error => done(
             error ? failure(error, "cookies_failed") : null, undefined));
         } catch (error) { done(failure(error, "cookies_failed"), undefined); }
       });
-      this.user!.logOn({ accountName: credentials.account_name, password: credentials.password,
-        twoFactorCode: this.sdk.authCode(credentials.shared_secret) });
+      this.user!.logOn(credentials.refresh_token ? { refreshToken: credentials.refresh_token } : passwordLogon());
     });
   }
   async inventory(spec: InventorySpec, _cursor: string | undefined, signal: AbortSignal) {
@@ -119,9 +160,10 @@ export class LiveTransport implements Transport {
       asset_id: String(item.assetid), amount: Number(item.amount),
     })) };
   }
-  async send(url: string, assets: Asset[], signal: AbortSignal):
+  async send(url: string, assets: Asset[], signal: AbortSignal, comment = ""):
     Promise<{ offer_id: string; status: "sent" | "pending" }> {
     const offer = this.manager!.createOffer(url);
+    if (comment) offer.setMessage(comment);
     const count = offer.addMyItems(assets.map(item => ({ appid: item.app_id,
       contextid: item.context_id, assetid: item.asset_id, amount: item.amount })));
     if (count !== assets.length) throw new WorkerError("send_unknown");
@@ -132,8 +174,23 @@ export class LiveTransport implements Transport {
     return { offer_id: String(offer.id), status };
   }
   async confirm(id: string, secret: string, signal: AbortSignal): Promise<void> {
-    await this.call<void>(signal, "confirmation_unknown", done =>
-      this.community!.acceptConfirmationForObject(secret, id, error => done(error, undefined)));
+    await this.call<void>(signal, "confirmation_unknown", done => {
+      this.community!.acceptConfirmationForObject(secret, id, error => {
+        if (!(error instanceof Error) || error.message !== "Could not act on confirmation" ||
+            signal.aborted || this.dead.signal.aborted) { done(error, undefined); return; }
+        // Recovered embedded source workaround, bounded to this exact failure and one retry.
+        this.community!.httpRequestPost("https://steamcommunity.com//trade/new/acknowledge", {
+          headers: { referer: "https://steamcommunity.com" }, json: true,
+          form: { sessionid: this.community!.getSessionID(), message: 1 },
+          checkJsonError: false, checkHttpError: false,
+        }, (ackError, response) => {
+          if (ackError || response?.statusCode !== 200 || signal.aborted || this.dead.signal.aborted) {
+            done(new WorkerError("confirmation_unknown"), undefined); return;
+          }
+          this.community!.acceptConfirmationForObject(secret, id, retryError => done(retryError, undefined));
+        });
+      });
+    });
   }
   async reconcile(id: string, partnerId: string, signal: AbortSignal) {
     const offer = await this.call<Offer>(signal, "status_unavailable", done =>
@@ -147,10 +204,32 @@ export class LiveTransport implements Transport {
     return "unknown_outcome" as const;
   }
   close(): void {
+    for (const timer of this.timers) clearTimeout(timer);
+    this.timers = [];
     this.dead.abort(new WorkerError("transport_lost"));
     try { this.manager?.shutdown(); } catch { /* best effort */ }
     try { this.user?.logOff(); } catch { /* best effort */ }
     this.user?.removeAllListeners("webSession");
     this.user = undefined; this.community = undefined; this.manager = undefined;
+  }
+  async freeLicenses(appIds: number[], signal: AbortSignal): Promise<number[]> {
+    const apps = await this.call<number[]>(signal, "transport_lost", done =>
+      this.user!.requestFreeLicense(appIds, (error, _packages, apps) => done(error, apps)));
+    if (!Array.isArray(apps) || apps.some(id => !Number.isSafeInteger(id) || !appIds.includes(id))) {
+      throw new WorkerError("internal_error");
+    }
+    return [...new Set(apps)];
+  }
+  startActivity(appIds: number[]): void {
+    checkpoint(this.dead.signal);
+    this.user!.setPersona(1);
+    this.user!.gamesPlayed(appIds, true);
+  }
+  stopActivity(): void { this.user?.gamesPlayed([]); }
+  async activityDelay(ms: number, signal: AbortSignal): Promise<void> {
+    const combined = AbortSignal.any([signal, this.dead.signal]);
+    try { await delay(ms, undefined, { signal: combined }); }
+    catch { checkpoint(combined); }
+    checkpoint(combined);
   }
 }

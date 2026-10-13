@@ -2,6 +2,7 @@
 
 from .ipc import NodeWorkerClient, WorkerClient
 from .models import (
+    ActivityResult,
     Asset,
     InventoryFailure,
     InventoryResult,
@@ -11,9 +12,11 @@ from .models import (
     TradeResult,
     TradeState,
 )
+from .selection import load_selected_assets, normalize_selected_assets
 from .service import AdmissionProvider, TradeService
 
 __all__ = [
+    "ActivityResult",
     "AdmissionProvider",
     "Asset",
     "InventoryFailure",
@@ -26,4 +29,6 @@ __all__ = [
     "TradeService",
     "TradeState",
     "WorkerClient",
+    "load_selected_assets",
+    "normalize_selected_assets",
 ]

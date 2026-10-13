@@ -7,11 +7,14 @@ export type Scenario = {
   auth_error?: boolean; send_error?: boolean; confirm_error?: boolean;
   delay_ms?: number; send_delay_ms?: number; send_status?: "pending" | "sent";
   reconcile_state?: "sent" | "created_pending_confirmation" | "failed" | "unknown_outcome";
+  activity_delay_ms?: number; free_license_error?: boolean;
 };
 export class SimulationTransport implements Transport {
   readonly simulation = true;
   sendCount = 0;
   confirmCount = 0;
+  freeLicenseCount = 0;
+  played: number[][] = [];
   private scenario: Scenario;
   constructor(scenario: Scenario = {}) { this.scenario = scenario; }
   private async pause(signal: AbortSignal, ms = this.scenario.delay_ms ?? 0) {
@@ -51,4 +54,15 @@ export class SimulationTransport implements Transport {
     return this.scenario.reconcile_state ?? "unknown_outcome" as const;
   }
   close(): void { /* no network or persistent resources */ }
+  async freeLicenses(appIds: number[], signal: AbortSignal): Promise<number[]> {
+    this.freeLicenseCount++;
+    await this.pause(signal);
+    if (this.scenario.free_license_error) throw new WorkerError("transport_lost");
+    return [...new Set(appIds)];
+  }
+  startActivity(appIds: number[]): void { this.played.push([...appIds]); }
+  stopActivity(): void { this.played.push([]); }
+  async activityDelay(ms: number, signal: AbortSignal): Promise<void> {
+    await this.pause(signal, this.scenario.activity_delay_ms ?? ms);
+  }
 }

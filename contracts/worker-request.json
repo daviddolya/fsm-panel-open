@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:fsm-panel:worker-request:v1",
   "title": "Private Steam worker JSON Lines request",
-  "description": "Only stdin to an owned process. Admission is a deadline derived by the trusted Python caller from a verified lease. Runtime additionally validates Steam trade URL origin/query and checks deadline immediately before sending.",
+  "description": "Private stdin to an owned process. Admission is a renewable deadline derived from a verified lease. Runtime additionally validates URLs, safe integers, semantic identity and dispatch deadlines.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -27,13 +27,16 @@
         "confirm",
         "reconcile",
         "status",
-        "cancel"
+        "cancel",
+        "renew",
+        "activity",
+        "activity_status"
       ]
     },
     "timeout_ms": {
       "type": "integer",
       "minimum": 10,
-      "maximum": 300000
+      "maximum": 86510000
     },
     "admission": {
       "type": "object",
@@ -126,6 +129,19 @@
               "minLength": 1,
               "maxLength": 1024,
               "pattern": "^[^\\u0000-\\u001f]+$"
+            },
+            "refresh_token": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 8192,
+              "pattern": "^[^\\u0000-\\u001f]+$"
+            },
+            "proxy_url": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048,
+              "pattern": "^[^\\u0000-\\u001f]+$",
+              "description": "Runtime permits http, https, socks, socks4, socks4a, socks5 and socks5h URLs with a host and no query, fragment or path."
             }
           }
         },
@@ -136,6 +152,68 @@
         "target_request_id": {
           "type": "string",
           "pattern": "^[a-zA-Z0-9_.:-]{1,128}$"
+        },
+        "selected_assets": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 500,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "app_id",
+              "context_id",
+              "asset_id",
+              "amount"
+            ],
+            "properties": {
+              "app_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 2147483647
+              },
+              "context_id": {
+                "type": "string",
+                "pattern": "^[1-9][0-9]{0,19}$"
+              },
+              "asset_id": {
+                "type": "string",
+                "pattern": "^[1-9][0-9]{0,19}$"
+              },
+              "amount": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              }
+            }
+          }
+        },
+        "comment": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u001f]*$",
+          "default": ""
+        },
+        "app_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 50,
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          }
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 60000,
+          "maximum": 86400000
+        },
+        "machine_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u001f]+$"
         }
       }
     }
@@ -146,7 +224,8 @@
         "properties": {
           "method": {
             "enum": [
-              "cancel"
+              "cancel",
+              "renew"
             ]
           }
         }
@@ -170,7 +249,9 @@
               "send",
               "confirm",
               "reconcile",
-              "status"
+              "status",
+              "activity",
+              "activity_status"
             ]
           }
         }
@@ -193,7 +274,9 @@
               "send",
               "confirm",
               "reconcile",
-              "status"
+              "status",
+              "activity",
+              "activity_status"
             ]
           }
         }
@@ -216,7 +299,8 @@
               "inventory",
               "send",
               "confirm",
-              "reconcile"
+              "reconcile",
+              "activity"
             ]
           }
         }
@@ -247,6 +331,33 @@
             "required": [
               "trade_url"
             ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "method": {
+            "const": "activity"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "params": {
+            "required": [
+              "app_ids",
+              "duration_ms",
+              "machine_name"
+            ]
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "timeout_ms": {
+            "maximum": 300000
           }
         }
       }

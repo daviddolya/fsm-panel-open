@@ -1,0 +1,44 @@
+{
+  "format_version": 1,
+  "observed_on": "2026-10-13",
+  "scope": "Derived contracts from complete recovered embedded JavaScript; source is retained only in private research storage. Neither original script was executed. Static evidence does not establish live Steam compatibility.",
+  "parent_evidence_id": "ev_599df6450cc5cd6c72ad0efaa93a69c49f1558ba19c4b9ead7a6dd5f7e5d0b62",
+  "view_evidence_id": "ev_8405e8b812cb7254ff52045854e6323bc0626ec2a024a42b510995c11659d519",
+  "scripts": [
+    {
+      "role": "activity",
+      "module": "__main__",
+      "offset": 1082470,
+      "bytes": 2050,
+      "sha256": "3349e3c1232551beb4f90f1849c39f289c84e014df0e0cbce07e948f70964f8c",
+      "confirmed_contracts": [
+        {"lines": [13, 23], "behavior": "argv login/password/shared secret, machine name, comma-separated app IDs and duration in minutes; SteamUser logon"},
+        {"lines": [29, 37], "behavior": "requestFreeLicense before setting online persona and gamesPlayed(appIds, true)"},
+        {"lines": [37, 59], "behavior": "80-second warmup, elapsed-duration and connection checks, clear gamesPlayed and log off at completion"}
+      ],
+      "implementation": "Explicit admitted activity IPC, bounded 1-1440 minutes, durable licence-request boundary, renewable lease, cancellation and restart status. Steam activity reporting does not launch a game."
+    },
+    {
+      "role": "trading-v9",
+      "module": "__main__",
+      "offset": 1084545,
+      "bytes": 17823,
+      "sha256": "d010c676ce33adaee529a79fafc9501fd2ca39c3ca0794e90680ff7cb681302c",
+      "confirmed_contracts": [
+        {"lines": [29, 48], "behavior": "selected:<path> JSON items, app/context/asset normalization, CS2 versus other-app split"},
+        {"lines": [65, 99], "behavior": "Optional HTTP/SOCKS proxy applies to both SteamUser and Community requests"},
+        {"lines": [115, 161], "behavior": "Optional refresh-token authentication; one password fallback, 10-second WebSocket fallback and additional 20-second connection bound"},
+        {"lines": [207, 223], "behavior": "CS2 trade comment and confirmation acknowledgement workaround"},
+        {"lines": [300, 339], "behavior": "Inventory item conversion, CS2 comment and acknowledgement path also apply in inventory mode"}
+      ],
+      "implementation": "Private credential stdin, strict selected-item importer, bounded comments, durable sequential child offers under one batch ID, proxy/refresh-token SDK adapter and one bounded confirmation workaround.",
+      "intentional_changes": [
+        "Never log refresh tokens, proxy URLs, raw SDK errors or secrets.",
+        "Do not silently discard malformed selected assets or accept partial integer strings.",
+        "Serialize child offers and stop at pending/unknown; do not automatically resume an interrupted batch.",
+        "Do not persist or return rotated refresh tokens; caller-owned secret storage integration remains a separate contract.",
+        "Do not infer safe resend from missing offer IDs or from unknown free-licence requests."
+      ]
+    }
+  ]
+}

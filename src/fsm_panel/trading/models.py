@@ -4,6 +4,7 @@ import re
 from dataclasses import dataclass, field
 from enum import StrEnum
 from typing import Any
+from urllib.parse import urlsplit
 
 PUBLIC_CODES = frozenset(
     {
@@ -85,13 +86,17 @@ class SteamCredentials:
     password: str = field(repr=False)
     shared_secret: str = field(repr=False)
     identity_secret: str | None = field(default=None, repr=False)
+    refresh_token: str | None = field(default=None, repr=False)
+    proxy_url: str | None = field(default=None, repr=False)
 
     def __post_init__(self) -> None:
         for value, limit in (
             (self.account_name, 128),
             (self.password, 1024),
             (self.shared_secret, 1024),
-            (self.identity_secret or "unused", 1024),
+            (self.identity_secret if self.identity_secret is not None else "unused", 1024),
+            (self.refresh_token if self.refresh_token is not None else "unused", 8192),
+            (self.proxy_url if self.proxy_url is not None else "unused", 2048),
         ):
             if (
                 not isinstance(value, str)
@@ -99,6 +104,21 @@ class SteamCredentials:
                 or any(ord(char) < 32 for char in value)
             ):
                 raise TradeError("invalid_request")
+        if self.proxy_url is not None:
+            try:
+                proxy = urlsplit(self.proxy_url)
+                if (
+                    proxy.scheme
+                    not in {"http", "https", "socks", "socks4", "socks4a", "socks5", "socks5h"}
+                    or not proxy.hostname
+                    or proxy.path not in {"", "/"}
+                    or proxy.query
+                    or proxy.fragment
+                ):
+                    raise ValueError
+                _ = proxy.port
+            except ValueError:
+                raise TradeError("invalid_request") from None
 
     def payload(self) -> dict[str, str]:
         result = {
@@ -108,6 +128,10 @@ class SteamCredentials:
         }
         if self.identity_secret is not None:
             result["identity_secret"] = self.identity_secret
+        if self.refresh_token is not None:
+            result["refresh_token"] = self.refresh_token
+        if self.proxy_url is not None:
+            result["proxy_url"] = self.proxy_url
         return result
 
 
@@ -135,6 +159,14 @@ class Asset:
         InventorySpec(self.app_id, self.context_id)
         if not valid_decimal(self.asset_id) or not _integer(self.amount, 2**53 - 1):
             raise TradeError("invalid_worker_response")
+
+    def payload(self) -> dict[str, int | str]:
+        return {
+            "app_id": self.app_id,
+            "context_id": self.context_id,
+            "asset_id": self.asset_id,
+            "amount": self.amount,
+        }
 
 
 @dataclass(frozen=True)
@@ -197,6 +229,51 @@ class TradeResult:
                 or not valid_id(result.account_id)
                 or not valid_id(result.operation_id)
                 or (result.offer_id is not None and not valid_decimal(result.offer_id))
+                or (
+                    result.code is not None
+                    and (not isinstance(result.code, str) or result.code not in PUBLIC_CODES)
+                )
+            ):
+                raise ValueError
+            return result
+        except KeyError, TypeError, ValueError:
+            raise TradeError("invalid_worker_response") from None
+
+
+@dataclass(frozen=True)
+class ActivityResult:
+    operation_id: str
+    account_id: str
+    state: str
+    granted_app_ids: tuple[int, ...]
+    code: str | None
+    updated_at_ms: int
+    simulation: bool
+
+    @classmethod
+    def from_payload(cls, value: dict[str, Any]) -> ActivityResult:
+        try:
+            if not isinstance(value["granted_app_ids"], list):
+                raise ValueError
+            result = cls(**{**value, "granted_app_ids": tuple(value["granted_app_ids"])})
+            if (
+                not valid_id(result.operation_id)
+                or not valid_id(result.account_id)
+                or result.state
+                not in {
+                    "not_started",
+                    "warming_up",
+                    "playing",
+                    "completed",
+                    "cancelled",
+                    "failed",
+                    "unknown_outcome",
+                }
+                or type(result.simulation) is not bool
+                or type(result.updated_at_ms) is not int
+                or not 0 <= result.updated_at_ms <= 2**53 - 1
+                or len(result.granted_app_ids) > 50
+                or any(not _integer(app, 2147483647) for app in result.granted_app_ids)
                 or (
                     result.code is not None
                     and (not isinstance(result.code, str) or result.code not in PUBLIC_CODES)

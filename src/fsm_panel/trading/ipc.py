@@ -4,6 +4,7 @@ import asyncio
 import json
 import subprocess
 import sys
+import time
 import uuid
 from collections.abc import Sequence
 from contextlib import suppress
@@ -44,6 +45,8 @@ class NodeWorkerClient:
         self._starts = asyncio.Lock()
         self._broken = False
         self.diagnostic_bytes = 0
+        self._admitted_requests: set[str] = set()
+        self._last_renewal = 0.0
 
     async def __aenter__(self) -> NodeWorkerClient:
         await self.start()
@@ -154,6 +157,8 @@ class NodeWorkerClient:
             raise TradeError("frame_too_large")
         future = asyncio.get_running_loop().create_future()
         self._pending[request_id] = future
+        if admitted_until_ms is not None and method in {"send", "inventory", "activity"}:
+            self._admitted_requests.add(request_id)
         assert self._process.stdin
         try:
             async with self._writes:
@@ -180,8 +185,23 @@ class NodeWorkerClient:
             raise TradeError("worker_disconnected") from None
         finally:
             self._pending.pop(request_id, None)
+            self._admitted_requests.discard(request_id)
             if future.done() and not future.cancelled():
                 future.exception()  # consume an abandoned response exception
+
+    async def renew_admission(self, deadline: int) -> None:
+        # Local admission is checked every 250ms; a 5s IPC cadence bounds request-ID
+        # history during 24h activity while staying below the 60s worker lease bound.
+        if time.monotonic() - self._last_renewal < 5:
+            return
+        self._last_renewal = time.monotonic()
+        for request_id in tuple(self._admitted_requests):
+            await self.request(
+                "renew",
+                {"target_request_id": request_id},
+                timeout_ms=1000,
+                admitted_until_ms=deadline,
+            )
 
     async def _cancel_and_drain(self, request_id: str, future: asyncio.Future) -> None:
         try:
