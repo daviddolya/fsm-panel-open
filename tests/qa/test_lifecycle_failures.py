@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 
-from fsm_panel.adapters.fakes import FakeGame, FakeLease
+from fsm_panel.adapters.fakes import FakeClock, FakeGame, FakeLease
 from fsm_panel.core import (
     AccountRepository,
     AccountState,
@@ -188,6 +188,51 @@ async def test_caller_cancellation_during_retry_cleanup_is_not_an_adapter_self_c
             assert account.id not in game.running
             assert repository.get(account.id).state == AccountState.STOPPED
         finally:
+            await coordinator.close()
+
+
+async def test_concurrent_lease_sweep_waits_for_an_existing_revocation_cleanup():
+    class DelayedStop(FakeGame):
+        def __init__(self):
+            super().__init__(launch_delay=0)
+            self.cleaning = asyncio.Event()
+            self.release = asyncio.Event()
+
+        async def stop(self, account):
+            self.cleaning.set()
+            await self.release.wait()
+            await super().stop(account)
+
+    with AccountRepository() as repository:
+        account = repository.add_account("synthetic_concurrent_lease_sweeps")
+        game, lease = DelayedStop(), FakeLease()
+        # Keep the periodic timer parked so both explicit sweeps are deterministic.
+        coordinator = Coordinator(repository, game=game, lease=lease, clock=FakeClock())
+        await coordinator.start(account.id)
+        lease.allowed = False
+        first = asyncio.create_task(coordinator.check_leases())
+        second = None
+        try:
+            await asyncio.wait_for(game.cleaning.wait(), timeout=2)
+            assert repository.get(account.id).state == AccountState.STOPPING
+            entered = asyncio.Event()
+
+            async def another_sweep():
+                entered.set()
+                return await coordinator.check_leases()
+
+            second = asyncio.create_task(another_sweep())
+            await asyncio.wait_for(entered.wait(), timeout=2)
+            assert not second.done(), "Lease sweep returned while revoked session was still live"
+            assert account.id in game.running
+            game.release.set()
+            await asyncio.wait_for(asyncio.gather(first, second), timeout=2)
+            assert not game.running
+            assert repository.get(account.id).state == AccountState.STOPPED
+            assert repository.get(account.id).error_code == "lease_lost"
+        finally:
+            game.release.set()
+            await asyncio.gather(first, *([second] if second is not None else []))
             await coordinator.close()
 
 
