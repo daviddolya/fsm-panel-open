@@ -120,6 +120,10 @@ class Coordinator:
                 action(self.repository.get(account_id)), timeout=self.retry.cleanup_timeout
             )
             return not self.repository.owned_processes(account_id)
+        except asyncio.CancelledError:
+            # An adapter may cancel its own cleanup. Persist an uncertain outcome;
+            # a shield loop must never repeatedly await an already-cancelled task.
+            return False
         except Exception:
             return False
 
@@ -254,14 +258,25 @@ class Coordinator:
                 self._sessions.discard(account_id)
                 return account
             self._state(account_id, AccountState.STOPPING)
-            cleaned = await self._cleanup(account_id)
+            cleanup = asyncio.create_task(self._cleanup(account_id))
+            cancelled = False
+            while True:
+                try:
+                    cleaned = await asyncio.shield(cleanup)
+                    break
+                except asyncio.CancelledError:
+                    # A caller disappearing must not abandon an owned process in STOPPING.
+                    cancelled = True
             if cleaned:
                 self._sessions.discard(account_id)
-            return self._state(
+            result = self._state(
                 account_id,
                 AccountState.STOPPED if cleaned else AccountState.FAILED,
                 None if cleaned else "cleanup_required",
             )
+            if cancelled:
+                raise asyncio.CancelledError
+            return result
 
     async def cancel(self, account_id: str) -> Account:
         return await self.stop(account_id)

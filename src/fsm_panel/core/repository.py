@@ -231,10 +231,13 @@ class AccountRepository:
                 raise KeyError("account_not_found")
             if expected_revision is not None and row["revision"] != expected_revision:
                 raise StateConflict("stale_account_revision")
-            db.execute(
-                "UPDATE accounts SET state=?,error_code=?,revision=revision+1 WHERE id=?",
-                (state.value, code, account_id),
+            updated = db.execute(
+                "UPDATE accounts SET state=?,error_code=?,revision=revision+1 WHERE id=? "
+                "AND (? IS NULL OR revision=?)",
+                (state.value, code, account_id, expected_revision, expected_revision),
             )
+            if updated.rowcount != 1:
+                raise StateConflict("stale_account_revision")
             cursor = db.execute(
                 "INSERT INTO events(account_id,kind,state,code,created_at) VALUES (?,?,?,?,?)",
                 (account_id, "state_changed", state.value, code, utc_now()),

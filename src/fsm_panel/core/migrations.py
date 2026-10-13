@@ -26,7 +26,46 @@ _COLUMNS = {
 }
 
 
-def admit_schema(connection: sqlite3.Connection) -> bool:
+def _index_shapes(connection: sqlite3.Connection, table: str) -> set[tuple]:
+    shapes = set()
+    for index in connection.execute(f"PRAGMA index_list({table})"):
+        # Index identifiers come from the database; quote them as identifiers.
+        name = str(index[1]).replace('"', '""')
+        columns = tuple(
+            tuple(row)[2:] for row in connection.execute(f'PRAGMA index_xinfo("{name}")')
+        )
+        shapes.add((index[2], index[4], columns))
+    return shapes
+
+
+def _validate_structure(
+    connection: sqlite3.Connection, expected_sql: str, tables: set[str]
+) -> None:
+    """Match the actual constraints, not merely names that happen to look familiar."""
+    with closing(sqlite3.connect(":memory:")) as reference:
+        reference.executescript(expected_sql)
+        for table in tables:
+            columns = [tuple(row) for row in connection.execute(f"PRAGMA table_info({table})")]
+            expected = [tuple(row) for row in reference.execute(f"PRAGMA table_info({table})")]
+            foreign = {
+                tuple(row)[2:] for row in connection.execute(f"PRAGMA foreign_key_list({table})")
+            }
+            expected_foreign = {
+                tuple(row)[2:] for row in reference.execute(f"PRAGMA foreign_key_list({table})")
+            }
+            if (
+                columns != expected
+                or foreign != expected_foreign
+                or _index_shapes(connection, table) != _index_shapes(reference, table)
+            ):
+                raise ValidationError("unrecognized_database_schema")
+    if connection.execute("SELECT 1 FROM sqlite_master WHERE type='trigger' LIMIT 1").fetchone():
+        raise ValidationError("unrecognized_database_schema")
+    if connection.execute("PRAGMA foreign_key_check").fetchone():
+        raise ValidationError("database_integrity_failed")
+
+
+def admit_schema(connection: sqlite3.Connection, expected_sql: str) -> bool:
     """Return whether an existing recognized v0 database needs a backup.
 
     Never downgrade a future version or guess how to migrate an unknown schema.
@@ -46,6 +85,8 @@ def admit_schema(connection: sqlite3.Connection) -> bool:
         return False
     if version == SCHEMA_VERSION and not _COLUMNS.keys() <= existing:
         raise ValidationError("database_schema_incomplete")
+    if not existing <= _COLUMNS.keys():
+        raise ValidationError("unrecognized_database_schema")
     if version == 0 and ("accounts" not in existing or not existing <= _COLUMNS.keys()):
         raise ValidationError("unrecognized_database_schema")
     for table in existing & _COLUMNS.keys():
@@ -54,6 +95,7 @@ def admit_schema(connection: sqlite3.Connection) -> bool:
             raise ValidationError("unrecognized_database_schema")
     if connection.execute("PRAGMA quick_check").fetchone()[0] != "ok":
         raise ValidationError("database_integrity_failed")
+    _validate_structure(connection, expected_sql, existing)
     return version == 0
 
 
@@ -79,7 +121,7 @@ def backup_database(connection: sqlite3.Connection, path: str) -> None:
 
 def initialize_schema(connection: sqlite3.Connection, path: str, sql: str) -> None:
     try:
-        if admit_schema(connection):
+        if admit_schema(connection, sql):
             backup_database(connection, path)
         connection.execute("PRAGMA foreign_keys=ON")
         connection.execute("PRAGMA journal_mode=WAL")

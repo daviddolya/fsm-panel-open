@@ -6,11 +6,11 @@ import os
 import sys
 from pathlib import Path
 
-from fsm_license.crypto import b64decode
 from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QApplication
 
-from fsm_panel.adapters.fakes import FakeGame, FakeLease, MemorySecretStore
+from fsm_license.crypto import b64decode
+from fsm_panel.adapters.fakes import FakeGame, FakeLease
 from fsm_panel.adapters.secrets import DPAPISecretStore
 from fsm_panel.application import LicenseAdmission
 from fsm_panel.core import AccountRepository, Coordinator
@@ -57,7 +57,7 @@ def main() -> int:
             allow_insecure_http=config.get("allow_local_http", False),
         )
     repository = AccountRepository(data_dir / "accounts.sqlite")
-    secrets = MemorySecretStore() if args.simulate else DPAPISecretStore(data_dir / "secrets")
+    secrets = DPAPISecretStore(data_dir / "secrets")
     coordinator = Coordinator(
         repository,
         game=FakeGame() if args.simulate else None,

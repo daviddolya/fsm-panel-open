@@ -1,0 +1,638 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FSM License Service",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/healthz": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_healthz_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Healthz Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/internal/v1/entitlements/{external_id}": {
+      "put": {
+        "summary": "Put Entitlement",
+        "operationId": "put_entitlement_internal_v1_entitlements__external_id__put",
+        "parameters": [
+          {
+            "name": "external_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "title": "External Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntitlementPut"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntitlementView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ServiceBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/activations": {
+      "post": {
+        "summary": "Activate",
+        "operationId": "activate_v1_activations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LicenseView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "DeviceTimestamp": [],
+            "DeviceNonce": [],
+            "DeviceSignature": []
+          }
+        ]
+      }
+    },
+    "/internal/v1/entitlements/{external_id}/activations": {
+      "get": {
+        "summary": "List Devices",
+        "operationId": "list_devices_internal_v1_entitlements__external_id__activations_get",
+        "parameters": [
+          {
+            "name": "external_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "External Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ServiceBearer": []
+          }
+        ]
+      }
+    },
+    "/internal/v1/entitlements/{external_id}/activations/{activation_id}": {
+      "delete": {
+        "summary": "Admin Release",
+        "operationId": "admin_release_internal_v1_entitlements__external_id__activations__activation_id__delete",
+        "parameters": [
+          {
+            "name": "external_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "External Id"
+            }
+          },
+          {
+            "name": "activation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Activation Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ServiceBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/leases/renew": {
+      "post": {
+        "summary": "Renew",
+        "operationId": "renew_v1_leases_renew_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LicenseView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "DeviceTimestamp": [],
+            "DeviceNonce": [],
+            "DeviceSignature": []
+          }
+        ]
+      }
+    },
+    "/v1/license/current": {
+      "get": {
+        "summary": "Current",
+        "operationId": "current_v1_license_current_get",
+        "parameters": [
+          {
+            "name": "activation_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Activation Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LicenseView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "DeviceTimestamp": [],
+            "DeviceNonce": [],
+            "DeviceSignature": []
+          }
+        ]
+      }
+    },
+    "/v1/activations/{activation_id}": {
+      "delete": {
+        "summary": "Deactivate",
+        "operationId": "deactivate_v1_activations__activation_id__delete",
+        "parameters": [
+          {
+            "name": "activation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Activation Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "DeviceTimestamp": [],
+            "DeviceNonce": [],
+            "DeviceSignature": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ActivationRequest": {
+        "properties": {
+          "activation_key": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 32,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "title": "Activation Key"
+          },
+          "installation_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Installation Id"
+          },
+          "device_public_key": {
+            "type": "string",
+            "maxLength": 44,
+            "minLength": 43,
+            "title": "Device Public Key"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "activation_key",
+          "installation_id",
+          "device_public_key"
+        ],
+        "title": "ActivationRequest"
+      },
+      "EntitlementPut": {
+        "properties": {
+          "external_customer_id": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "External Customer Id"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expires At"
+          },
+          "device_limit": {
+            "type": "integer",
+            "maximum": 10000.0,
+            "minimum": 1.0,
+            "title": "Device Limit"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "suspended",
+              "revoked"
+            ],
+            "title": "Status"
+          },
+          "revision": {
+            "type": "integer",
+            "maximum": 2147483647.0,
+            "minimum": 1.0,
+            "title": "Revision"
+          },
+          "rotate_activation_key": {
+            "type": "boolean",
+            "title": "Rotate Activation Key",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "external_customer_id",
+          "expires_at",
+          "device_limit",
+          "status",
+          "revision"
+        ],
+        "title": "EntitlementPut"
+      },
+      "EntitlementView": {
+        "properties": {
+          "external_id": {
+            "type": "string",
+            "title": "External Id"
+          },
+          "external_customer_id": {
+            "type": "string",
+            "title": "External Customer Id"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expires At"
+          },
+          "device_limit": {
+            "type": "integer",
+            "title": "Device Limit"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "revision": {
+            "type": "integer",
+            "title": "Revision"
+          },
+          "active_devices": {
+            "type": "integer",
+            "title": "Active Devices"
+          },
+          "activation_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activation Key"
+          },
+          "changed": {
+            "type": "boolean",
+            "title": "Changed"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "external_id",
+          "external_customer_id",
+          "expires_at",
+          "device_limit",
+          "status",
+          "revision",
+          "active_devices",
+          "changed"
+        ],
+        "title": "EntitlementView"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "LicenseView": {
+        "properties": {
+          "activation_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Activation Id"
+          },
+          "external_id": {
+            "type": "string",
+            "title": "External Id"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expires At"
+          },
+          "device_limit": {
+            "type": "integer",
+            "title": "Device Limit"
+          },
+          "revision": {
+            "type": "integer",
+            "title": "Revision"
+          },
+          "lease": {
+            "type": "string",
+            "title": "Lease"
+          },
+          "renew_after_seconds": {
+            "type": "integer",
+            "title": "Renew After Seconds",
+            "default": 30
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "activation_id",
+          "external_id",
+          "expires_at",
+          "device_limit",
+          "revision",
+          "lease"
+        ],
+        "title": "LicenseView"
+      },
+      "RenewRequest": {
+        "properties": {
+          "activation_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Activation Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "activation_id"
+        ],
+        "title": "RenewRequest"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "ServiceBearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Separate service credential; never distributed to desktops."
+      },
+      "DeviceTimestamp": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Device-Timestamp",
+        "description": "Unix seconds; must be within 30 seconds of server time."
+      },
+      "DeviceNonce": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Device-Nonce",
+        "description": "Fresh 32-100 character base64url nonce for each request."
+      },
+      "DeviceSignature": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Device-Signature",
+        "description": "Base64url Ed25519 signature over UTF-8 FSM-PROOF-1, method, path plus raw query, timestamp, nonce, and hex SHA-256 of exact request bytes, separated by newline characters, with no trailing newline."
+      }
+    }
+  }
+}

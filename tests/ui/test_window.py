@@ -6,7 +6,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLineEdit
 
 from fsm_panel.adapters.fakes import FakeGame, FakeLease, MemorySecretStore, RealClock
-from fsm_panel.core import AccountRepository, Coordinator, SettingsStore
+from fsm_panel.core import AccountRepository, Coordinator
 from fsm_panel.ui.window import MainWindow
 
 
@@ -53,10 +53,11 @@ def test_settings_roundtrip_preserves_unknown_and_masks_secrets(window):
     assert secret.echoMode() == QLineEdit.EchoMode.Password
     secret.setText("synthetic-test-token")
     window.save_settings()
-    loaded = SettingsStore.load(window.settings_path)
+    loaded = window.settings_vault.load(window.settings_path)
     assert loaded.get("TG_BOT_API_KEY") == "synthetic-test-token"
     assert loaded.get("new_extension") == {"flag": True}
     assert "synthetic-test-token" not in window.log.toPlainText()
+    assert "synthetic-test-token" not in window.settings_path.read_text(encoding="utf-8")
 
 
 def test_invalid_field_does_not_replace_saved_settings(window):

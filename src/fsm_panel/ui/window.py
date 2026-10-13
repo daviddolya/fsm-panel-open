@@ -24,6 +24,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from fsm_panel.adapters.settings_vault import SettingsVault
 from fsm_panel.core import AccountRepository, Coordinator, SettingsStore, import_accounts
 from fsm_panel.core.contracts import SecretStore
 from fsm_panel.core.settings import SECRET_KEYS, SETTINGS_TYPES, SettingsDocument
@@ -51,9 +52,10 @@ class MainWindow(QMainWindow):
         self._closing = False
         self._closed = False
         self.license_runtime = None
-        self.settings_path = data_dir / "settings.json"
+        self.settings_vault = SettingsVault(secrets)
+        self.settings_path = data_dir / "settings.vault.json"
         self.settings = (
-            SettingsStore.load(self.settings_path)
+            self.settings_vault.load(self.settings_path)
             if self.settings_path.exists()
             else SettingsStore.defaults()
         )
@@ -309,7 +311,7 @@ class MainWindow(QMainWindow):
                     else SETTINGS_TYPES[key](field.text())
                 )
                 candidate.set(key, value)
-            candidate.save(self.settings_path)
+            self.settings_vault.save(candidate, self.settings_path)
         except Exception:
             self._failed("Настройки не сохранены: проверьте типы и доступ к файлу")
             return

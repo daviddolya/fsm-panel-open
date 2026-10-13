@@ -14,7 +14,7 @@ class EntitlementPut(StrictModel):
     expires_at: datetime
     device_limit: int = Field(ge=1, le=10000, strict=True)
     status: Literal["active", "suspended", "revoked"]
-    revision: int = Field(ge=1, strict=True)
+    revision: int = Field(ge=1, le=2_147_483_647, strict=True)
     rotate_activation_key: bool = False
 
     @field_validator("expires_at")
