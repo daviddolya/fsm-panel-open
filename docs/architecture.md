@@ -18,5 +18,21 @@ Steam jobs use versioned JSON Lines over inherited private pipes, not secret-bea
 command lines. An external-operation journal must persist send intent before sending.
 Lost responses are `unknown_outcome`; retry cannot silently send another offer.
 
+Local maintenance uses the same Qt-to-asyncio bridge. Video proposals contain
+immutable file snapshots; apply runs off the UI thread, revalidates both inputs,
+retains a backup and replaces only the panel's working template. Shutdown joins
+in-flight file work before stopping the bridge.
+
+`CpuLimitRuntime` adds lease/state admission and a serialized CPU command queue.
+Its `CpuManagedGame` decorator attempts addressed BES cleanup before game stop
+and recovery. BES instances have a separate durable journal and must never enter
+the generic process termination list. A failed BES cleanup remains actionable
+even if target cleanup succeeds; no command acknowledgement proves throttling.
+
+`launch_plan` is pure preparation data. Its injected environment, existence
+facts, timestamp and random suffix make the recovered transformations testable
+without calling Steam, a shell, registry APIs or the filesystem. The proposal
+CLI performs only explicit input/output file access; it has no executor.
+
 Original architecture and new design are deliberately documented separately. The legacy
 source establishes an event/callback looter, but does not establish Panel.exe's module graph.
