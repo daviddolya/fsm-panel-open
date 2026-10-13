@@ -135,6 +135,27 @@ async def test_failed_cancel_cleanup_blocks_new_launch_and_recovery_does_not_res
         await coordinator.close()
 
 
+async def test_persisted_paused_session_cannot_resume_before_recovery():
+    with AccountRepository() as repository:
+        account = repository.add_account("synthetic_unrecovered_resume")
+        repository.update_state(account.id, AccountState.PAUSED)
+        game = FakeGame(launch_delay=0)
+        # Model a resource that survived the previous coordinator's crash.
+        game.running.add(account.id)
+        game.paused.add(account.id)
+        coordinator = Coordinator(repository, game=game, lease=FakeLease())
+        try:
+            with pytest.raises(StateConflict, match="recovery_required"):
+                await coordinator.resume(account.id)
+            assert game.paused == {account.id}
+            assert ("resume", account.id) not in game.operations
+            await coordinator.recover()
+            assert not game.running
+            assert repository.get(account.id).state == AccountState.INTERRUPTED
+        finally:
+            await coordinator.close()
+
+
 def test_effect_claim_race_and_unknown_reopen_never_repeat_submission(tmp_path):
     path = tmp_path / "effects.sqlite"
     with AccountRepository(path) as first, AccountRepository(path) as second:
