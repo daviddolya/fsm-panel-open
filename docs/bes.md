@@ -42,6 +42,19 @@ Use a reviewed deployment copy in a writable directory, separate from the immuta
 original evidence. BES reads and writes `bes.ini` beside its executable; changing
 the working directory alone does not isolate its settings (`ini.cpp:30–107`).
 The repository distributes neither BES executable nor C++ source.
+The verifier rejects hardlinked images and paths whose resolved ancestors contain
+`Panel.exe`, including links into the original distribution. A renamed evidence
+tree without that marker must still be kept separate by the operator; this is not
+a defense against hostile concurrent filesystem changes.
+
+The desktop CPU tab uses `CpuLimitRuntime` to serialize commands, check account
+state and the online lease before/after delivery, and compose recovery with game
+cleanup. Startup must finish recovery before enabling commands; the recovery
+button can retry a failed startup. Simulation disables new real CPU limits even
+if a process record exists. Stop/recovery remain available without a lease.
+No real game processes are registered by the currently unavailable GameAdapter.
+`BES_REDUCTION_PERCENT` is not automatically applied: its original consumer and
+scale remain unproven. The new CPU tab takes an explicit 1..99 percent reduction.
 
 `sessions(account_id=None)` returns immutable `BesSession` objects with `session_id`,
 `target`, `instance`, `state`, `reduction_percent`, and `error_code`. Paths and process
@@ -51,8 +64,13 @@ is not exposed. Input validation uses the existing `ValidationError` codes.
 
 The caller must serialize CPU commands with account lifecycle operations and call
 `bes.stop(account_id)` **before** terminating that account's target processes.
-Call `bes.recover()` before generic process recovery. If BES cleanup fails, retain
-the account and present recovery; do not blindly continue with generic cleanup.
+Call `bes.recover()` before generic process recovery. Desktop composition attempts
+BES cleanup first, then still allows cleanup of the **owned game target** if BES
+fails (including license loss). The BES error propagates: the account is marked
+`cleanup_required`, and the separate BES journal is retained for retry. Never pass
+the BES instance to generic process termination. Target termination does not count
+as a successful BES recovery; the next attempt must still verify the instance and
+target identities and complete addressed cleanup.
 Admission and licence checks belong to the caller. Cleanup does not require a lease.
 
 ## Ownership and recovery

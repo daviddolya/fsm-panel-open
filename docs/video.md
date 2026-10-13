@@ -104,7 +104,9 @@ An uncertain replacement failure is checked, and if the template contains this
 operation's rendered bytes, an atomic restoration of the original is attempted.
 A concurrent third value is never overwritten by rollback. A fully written
 backup is retained on I/O failure, including when automatic restoration fails.
-Incomplete staging files are removed during ordinary exception handling.
+Incomplete staging files are removed during ordinary exception handling. If the
+OS refuses removal, a temporary file may remain; that secondary failure cannot
+hide the primary error, backup path, or rollback result.
 
 The process-local lock serializes this module's applies. It does not prevent
 external writes in the final verification/replacement interval, and this is not

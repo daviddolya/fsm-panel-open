@@ -1218,9 +1218,13 @@
       "action": "CPU limiter process",
       "evidence": "BES/src/hack.cpp",
       "confidence": "observed-source",
-      "implementation": "not_implemented",
+      "implementation": "owned_adapter_and_gui_implemented_stand_pending",
       "runtime_parity": "not_verified",
-      "tests": [],
+      "tests": [
+        "tests/adapters/test_bes.py",
+        "tests/test_cpu.py",
+        "tests/ui/test_cpu_panel.py"
+      ],
       "preconditions": "See linked subsystem contract; original unresolved where not documented",
       "input": "See linked contract",
       "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
@@ -1375,6 +1379,26 @@
       "implementation": "blocked_specification",
       "runtime_parity": "blocked_original_license",
       "tests": [],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
+    },
+    {
+      "feature_id": "VIDEO.PREPARE",
+      "action": "Preview and update a separate panel video template from Steam GPU IDs",
+      "evidence": "Panel.exe 0x1406787d0; docs/video.md",
+      "confidence": "static_contract",
+      "implementation": "implemented_fields_default_and_explicit_legacy_mode",
+      "runtime_parity": "not_verified",
+      "tests": [
+        "tests/adapters/test_video.py",
+        "tests/ui/test_video_panel.py",
+        "tests/test_maintenance.py",
+        "tests/qa/test_offline_video.py"
+      ],
       "preconditions": "See linked subsystem contract; original unresolved where not documented",
       "input": "See linked contract",
       "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",

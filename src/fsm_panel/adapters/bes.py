@@ -69,6 +69,13 @@ def verify_executable(executable: ReviewedBesExecutable) -> Path:
     ):
         raise BesError("bes_reviewed_executable_required")
     try:
+        # BES writes bes.ini beside its image. Never run an immutable evidence
+        # copy (including a resolved symlink/junction into that distribution).
+        resolved = path.resolve(strict=True)
+        if any((parent / "Panel.exe").exists() for parent in resolved.parents):
+            raise BesError("bes_deployment_copy_required")
+        if path.stat().st_nlink != 1:
+            raise BesError("bes_deployment_copy_required")
         with path.open("rb") as stream:
             digest = hashlib.file_digest(stream, "sha256").hexdigest()
     except OSError:

@@ -42,16 +42,22 @@ class CpuLimitRuntime:
         self.coordinator.game = CpuManagedGame(self.coordinator.game, self)
 
     async def _allowed(self, account_id: str) -> bool:
-        if not self.enabled or self._closing or not self._recovered:
-            return False
-        if self.coordinator.repository.get(account_id).state not in {
-            AccountState.RUNNING,
-            AccountState.PAUSED,
-        }:
+        def still_allowed() -> bool:
+            return (
+                self.enabled
+                and not self._closing
+                and self._recovered
+                and self.coordinator.repository.get(account_id).state
+                in {AccountState.RUNNING, AccountState.PAUSED}
+            )
+
+        if not still_allowed():
             return False
         try:
             admission = await asyncio.wait_for(self.coordinator.lease.admit(account_id), 10)
-            return isinstance(admission, Admission) and admission.allowed is True
+            return (
+                isinstance(admission, Admission) and admission.allowed is True and still_allowed()
+            )
         except Exception:
             return False
 

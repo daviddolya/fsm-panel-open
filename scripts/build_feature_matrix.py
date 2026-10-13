@@ -57,11 +57,15 @@ def main() -> None:
                 "action": action,
                 "evidence": evidence,
                 "confidence": "observed-source",
-                "implementation": "not_implemented"
+                "implementation": "owned_adapter_and_gui_implemented_stand_pending"
                 if identifier == "CPU.BES"
                 else "worker_implemented_stand_pending",
                 "runtime_parity": "not_verified",
-                "tests": []
+                "tests": [
+                    "tests/adapters/test_bes.py",
+                    "tests/test_cpu.py",
+                    "tests/ui/test_cpu_panel.py",
+                ]
                 if identifier == "CPU.BES"
                 else ["worker/tests", "tests/trading", "tests/qa"],
             }
@@ -90,6 +94,18 @@ def main() -> None:
             }
         )
     for identifier, action, status, evidence, tests in [
+        (
+            "VIDEO.PREPARE",
+            "Preview and update a separate panel video template from Steam GPU IDs",
+            "implemented_fields_default_and_explicit_legacy_mode",
+            "Panel.exe 0x1406787d0; docs/video.md",
+            [
+                "tests/adapters/test_video.py",
+                "tests/ui/test_video_panel.py",
+                "tests/test_maintenance.py",
+                "tests/qa/test_offline_video.py",
+            ],
+        ),
         (
             "NEW.CORE",
             "Account lifecycle, cancellation, recovery and 50-session limit",
