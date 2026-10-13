@@ -266,6 +266,15 @@ def _verify(preview: VideoPreview) -> None:
         raise VideoStalePreviewError()
 
 
+def _discard_staging(path: Path) -> None:
+    # A leftover staging file must not replace the primary failure or conceal
+    # the retained backup/rollback result. Locked temporary files may remain.
+    try:
+        path.unlink(missing_ok=True)
+    except OSError:
+        pass
+
+
 def _stage(path: Path, raw: bytes, mode: int, suffix: str) -> Path:
     descriptor, name = tempfile.mkstemp(
         prefix="." + path.name + ".", suffix=suffix, dir=path.parent
@@ -279,7 +288,7 @@ def _stage(path: Path, raw: bytes, mode: int, suffix: str) -> Path:
         staged.chmod(mode)
         return staged
     except BaseException:
-        staged.unlink(missing_ok=True)
+        _discard_staging(staged)
         raise
 
 
@@ -302,7 +311,7 @@ def _restore(preview: VideoPreview, rendered: bytes) -> bool:
         return False
     finally:
         if staged is not None:
-            staged.unlink(missing_ok=True)
+            _discard_staging(staged)
 
 
 def apply_video_template(preview: VideoPreview) -> VideoApplyResult:
@@ -334,12 +343,12 @@ def apply_video_template(preview: VideoPreview) -> VideoApplyResult:
             os.replace(staged, preview.template_path)
         except VideoStalePreviewError:
             if backup is not None:
-                backup.unlink(missing_ok=True)
+                _discard_staging(backup)
             raise
         except OSError:
             restored = not attempted_replace or _restore(preview, rendered)
             raise VideoApplyError(backup, rollback_succeeded=restored) from None
         finally:
             if staged is not None:
-                staged.unlink(missing_ok=True)
+                _discard_staging(staged)
         return VideoApplyResult(True, preview.template_path, backup)

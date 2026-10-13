@@ -24,12 +24,15 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from fsm_panel.adapters.bes import BesJournal, OwnedBesService
 from fsm_panel.adapters.settings_vault import SettingsVault
 from fsm_panel.core import AccountRepository, Coordinator, SettingsStore, import_accounts
 from fsm_panel.core.contracts import SecretStore
 from fsm_panel.core.settings import SECRET_KEYS, SETTINGS_TYPES, SettingsDocument
+from fsm_panel.cpu import CpuLimitRuntime
 
 from .bridge import AsyncBridge
+from .cpu import CpuPanel
 from .trades import TradePanel
 from .video import VideoPanel
 
@@ -61,6 +64,13 @@ class MainWindow(QMainWindow):
             if self.settings_path.exists()
             else SettingsStore.defaults()
         )
+        self.bes_journal = BesJournal(data_dir / "bes.sqlite")
+        self.cpu_runtime = CpuLimitRuntime(
+            coordinator,
+            OwnedBesService(repository, None, self.bes_journal),
+            enabled=not simulate,
+        )
+        self.cpu_runtime.bind_game()
         self.bridge = AsyncBridge()
         self.bridge.failed.connect(self._failed)
         self.bridge.completed.connect(self._completed, Qt.ConnectionType.QueuedConnection)
@@ -87,6 +97,8 @@ class MainWindow(QMainWindow):
         self._build_settings()
         self.video = VideoPanel(self)
         self.tabs.addTab(self.video, "Видео-конфиг")
+        self.cpu = CpuPanel(self)
+        self.tabs.addTab(self.cpu, "Ограничение CPU")
         self.trades = TradePanel(self)
         self.tabs.addTab(self.trades, "Предметы и обмены")
         self._build_license()
@@ -101,7 +113,12 @@ class MainWindow(QMainWindow):
         self.start_button.setEnabled(False)
         self.pause_button.setEnabled(False)
         self.resume_button.setEnabled(False)
-        self._startup = self.bridge.submit(self.coordinator.recover())
+        self._startup = self.bridge.submit(self.recover_startup())
+
+    async def recover_startup(self) -> dict:
+        await self.cpu_runtime.recover()
+        await self.coordinator.recover()
+        return {"startup_ready": id(self)}
 
     def _build_accounts(self) -> None:
         page = QWidget()
@@ -358,16 +375,23 @@ class MainWindow(QMainWindow):
 
     @Slot(object)
     def _completed(self, result: object) -> None:
-        if not self.ready and self._startup.done() and self._startup.exception() is None:
+        if (
+            not self.ready
+            and not self._closing
+            and isinstance(result, dict)
+            and result.get("startup_ready") == id(self)
+        ):
             self.ready = True
             self.start_button.setEnabled(True)
             self.pause_button.setEnabled(True)
             self.resume_button.setEnabled(True)
         self.refresh_accounts()
+        self.cpu.refresh()
 
     @Slot(object)
     def _event(self, event: object) -> None:
         self.refresh_accounts()
+        self.cpu.refresh()
         self.log.appendPlainText(
             f"{getattr(event, 'sequence', '')} {getattr(event, 'kind', '')} {getattr(event, 'code', '') or ''}"
         )
@@ -384,21 +408,29 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage("Остановка задач и сохранение состояния…")
 
         async def cleanup() -> None:
+            self.cpu_runtime.begin_close()
             try:
                 if self.license_runtime:
                     await self.license_runtime.close()
             finally:
                 try:
                     try:
-                        await self.video.aclose()
+                        try:
+                            await self.video.aclose()
+                        finally:
+                            await self.cpu.aclose()
                     finally:
                         await self.trades.aclose()
                 finally:
-                    await self.coordinator.close()
+                    try:
+                        await self.cpu_runtime.close()
+                    finally:
+                        await self.coordinator.close()
 
         self.bridge.request_shutdown(cleanup())
 
     @Slot()
     def _finish_close(self) -> None:
+        self.bes_journal.close()
         self._closed = True
         self.close()
