@@ -107,6 +107,7 @@ uv run python scripts/verify_desktop.py dist/FSMPanelOpen/FSMPanelOpen.exe --out
 - `docs/architecture.md` — границы компонентов.
 - `docs/core.md`, `docs/licensing.md` — контракты и эксплуатация подсистем.
 - `docs/steam.md`, `docs/gsi.md` — интеграции и их границы доказательств.
+- `docs/video.md`, `docs/bes.md`, `docs/launch-plan.md` — восстановленные локальные контракты.
 - `docs/operations.md`, `docs/development.md` — работа, резервные копии и передача команды.
 - `docs/stand-acceptance.md` — отложенные реальные проверки.
 - `.codex/agents/` — полные инструкции ролей, `.github/workflows/` — CI.

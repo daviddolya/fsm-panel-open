@@ -1,0 +1,24 @@
+{
+  "settings": {
+    "steam_path": "C:\\synthetic\\steam.exe",
+    "steam_launch_options": "",
+    "additional_launch_options": "",
+    "cs_width": 640,
+    "cs_height": 480,
+    "no_avast_mode": true,
+    "steam_launch_only": false,
+    "ancient_map_preload": false,
+    "running_2vs2": false,
+    "user_profile_new_link": "C:\\synthetic-profiles",
+    "enable_shaders_caching": true
+  },
+  "login": "synthetic_account",
+  "update_mode": false,
+  "environment": {"USERPROFILE": "C:\\synthetic-user"},
+  "facts": {
+    "launch_dota2_exists": false,
+    "shader_link_exists": false,
+    "shader_link_is_symlink": false
+  },
+  "ipc_random": 42
+}

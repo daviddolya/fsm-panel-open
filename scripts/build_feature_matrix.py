@@ -95,6 +95,20 @@ def main() -> None:
         )
     for identifier, action, status, evidence, tests in [
         (
+            "GAME.LAUNCH.PREPARE",
+            "Pure argv, profile/shader, conditional environment, loginusers and registry proposals",
+            "implemented_offline_planner_no_executor",
+            "Panel.exe 0x14067ae90; docs/launch-plan.md",
+            ["tests/adapters/test_launch_plan.py", "tests/test_launch_preview.py"],
+        ),
+        (
+            "ACCOUNT.USERDATA_ID",
+            "Exact integer SteamID minus 76561197960265728",
+            "implemented_pure_helper",
+            "Panel.exe 0x140bfb190 and 0x142d0d7b0; docs/launch-plan.md",
+            ["tests/adapters/test_launch_plan.py"],
+        ),
+        (
             "VIDEO.PREPARE",
             "Preview and update a separate panel video template from Steam GPU IDs",
             "implemented_fields_default_and_explicit_legacy_mode",
@@ -115,7 +129,7 @@ def main() -> None:
         ),
         (
             "NEW.GUI",
-            "Accounts, settings, simulation trades, license, compatibility and journal tabs",
+            "Accounts, settings, video preview/apply, owned CPU controls, simulation trades, license and journal",
             "implemented_partial_ui",
             "Approved new UI; legacy screen catalogue incomplete",
             ["tests/ui", "tests/qa"],

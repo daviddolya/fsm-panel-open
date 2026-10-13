@@ -1387,6 +1387,41 @@
       "verification": "stand_not_run"
     },
     {
+      "feature_id": "GAME.LAUNCH.PREPARE",
+      "action": "Pure argv, profile/shader, conditional environment, loginusers and registry proposals",
+      "evidence": "Panel.exe 0x14067ae90; docs/launch-plan.md",
+      "confidence": "static_contract",
+      "implementation": "implemented_offline_planner_no_executor",
+      "runtime_parity": "not_verified",
+      "tests": [
+        "tests/adapters/test_launch_plan.py",
+        "tests/test_launch_preview.py"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
+    },
+    {
+      "feature_id": "ACCOUNT.USERDATA_ID",
+      "action": "Exact integer SteamID minus 76561197960265728",
+      "evidence": "Panel.exe 0x140bfb190 and 0x142d0d7b0; docs/launch-plan.md",
+      "confidence": "static_contract",
+      "implementation": "implemented_pure_helper",
+      "runtime_parity": "not_verified",
+      "tests": [
+        "tests/adapters/test_launch_plan.py"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
+    },
+    {
       "feature_id": "VIDEO.PREPARE",
       "action": "Preview and update a separate panel video template from Steam GPU IDs",
       "evidence": "Panel.exe 0x1406787d0; docs/video.md",
@@ -1426,7 +1461,7 @@
     },
     {
       "feature_id": "NEW.GUI",
-      "action": "Accounts, settings, simulation trades, license, compatibility and journal tabs",
+      "action": "Accounts, settings, video preview/apply, owned CPU controls, simulation trades, license and journal",
       "evidence": "Approved new UI; legacy screen catalogue incomplete",
       "confidence": "new_contract",
       "implementation": "implemented_partial_ui",

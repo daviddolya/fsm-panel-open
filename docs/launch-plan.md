@@ -256,3 +256,23 @@ integer arithmetic, immutable snapshots, and forbidden host dependencies. They
 validate this local implementation against the static contract. They do not
 establish original runtime parity, Steam compatibility, Windows privilege effects,
 or complete launch behavior. Private dumps and original files are not distributed.
+
+## Offline command
+
+Copy `docs/examples/launch-input.json` to private working data and replace its
+synthetic values. Every planner setting and existence fact is explicit; values are
+not silently inferred from the host or the 49-key settings file. In particular,
+dimension derivation and extra runtime flags are outside that schema.
+
+```powershell
+uv run python -m fsm_panel.launch_preview --input C:\private\launch-input.json --output C:\private\launch-proposal.json
+```
+
+The command exclusively creates a new output file, never overwrites an existing
+file, and has no apply/execute mode. Stdout contains only a summary or content-free
+error code. The JSON proposal includes argv and profile/shader actions with their
+exception policy. It exports only the three legacy environment overrides, never
+the entire inherited environment. Arguments can still contain caller-provided
+credentials, so keep input/output in private data, outside Git and public logs.
+The CLI does not render or apply loginusers/registry actions; those pure helpers
+are available through the Python API for separate review.
