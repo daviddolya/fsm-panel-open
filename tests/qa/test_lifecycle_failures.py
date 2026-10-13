@@ -17,6 +17,7 @@ from fsm_panel.core import (
     ExternalEffectsLedger,
     RetryPolicy,
     StateConflict,
+    TransientError,
 )
 
 
@@ -152,6 +153,40 @@ async def test_persisted_paused_session_cannot_resume_before_recovery():
             await coordinator.recover()
             assert not game.running
             assert repository.get(account.id).state == AccountState.INTERRUPTED
+        finally:
+            await coordinator.close()
+
+
+async def test_caller_cancellation_during_retry_cleanup_is_not_an_adapter_self_cancel():
+    class RetryCleanup(FakeGame):
+        def __init__(self):
+            super().__init__(launch_delay=0)
+            self.cleaning = asyncio.Event()
+            self.release = asyncio.Event()
+
+        async def launch(self, account):
+            self.running.add(account.id)
+            raise TransientError("synthetic_retry")
+
+        async def stop(self, account):
+            self.cleaning.set()
+            await self.release.wait()
+            await super().stop(account)
+
+    with AccountRepository() as repository:
+        account = repository.add_account("synthetic_cancel_retry_cleanup")
+        game = RetryCleanup()
+        coordinator = Coordinator(repository, game=game, lease=FakeLease())
+        launching = asyncio.create_task(coordinator.start(account.id))
+        await asyncio.wait_for(game.cleaning.wait(), timeout=2)
+        launching.cancel()
+        await asyncio.sleep(0)
+        game.release.set()
+        try:
+            with pytest.raises(asyncio.CancelledError):
+                await launching
+            assert account.id not in game.running
+            assert repository.get(account.id).state == AccountState.STOPPED
         finally:
             await coordinator.close()
 
