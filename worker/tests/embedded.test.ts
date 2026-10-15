@@ -54,6 +54,11 @@ function gate() {
     }),
   };
 }
+async function reached(phase:Promise<void>, running:Promise<unknown>):Promise<void> {
+  await Promise.race([phase,running.then(()=>{
+    throw new Error("operation_finished_before_expected_phase");
+  })]);
+}
 it("selected assets bypass inventory fetch, deduplicate, and carry comment only as send input", async () => {
   const {engine,transport}=fixture({ pages:{"730/2":[{error:true}]} });
   const calls:{assets:Asset[];comment:string|undefined}[]=[];
@@ -90,7 +95,7 @@ it("admission expiration during warmup prevents gamesPlayed and cleans up", asyn
   };
   const running=engine.handle(request("activity",{}, {admission:{expires_at_ms:Date.now()+50}}));
   try {
-    await warmup.entered;
+    await reached(warmup.entered,running);
     expect(journal.getActivity("intent-a","account-a").state).toBe("warming_up");
     expect(transport.freeLicenseCount).toBe(1);
     await vi.advanceTimersByTimeAsync(49);
@@ -114,7 +119,7 @@ it("admission expiration before a free-licence receipt preserves unknown outcome
   const warmup=vi.spyOn(transport,"activityDelay");
   const running=engine.handle(request("activity",{}, {admission:{expires_at_ms:Date.now()+50}}));
   try {
-    await pending.entered;
+    await reached(pending.entered,running);
     expect(journal.getActivity("intent-a","account-a").state).toBe("unknown_outcome");
     await vi.advanceTimersByTimeAsync(50);
     expect((await running).result).toMatchObject({state:"unknown_outcome",code:"admission_expired"});
@@ -137,7 +142,7 @@ it("renewal keeps admitted activity alive, cancellation clears a running presenc
   const initial=request("activity",{}, {admission:{expires_at_ms:Date.now()+80}});
   const running=engine.handle(initial);
   try {
-    await warmup.entered;
+    await reached(warmup.entered,running);
     await vi.advanceTimersByTimeAsync(15);
     expect((await engine.handle(parseRequest({version:1,request_id:randomUUID(),method:"renew",timeout_ms:1000,
       params:{target_request_id:initial.request_id},admission:{expires_at_ms:Date.now()+2000}}))).result).toEqual({renewed:true});
@@ -145,7 +150,7 @@ it("renewal keeps admitted activity alive, cancellation clears a running presenc
     expect(journal.getActivity("intent-a","account-a").state).toBe("warming_up");
     expect(transport.played).toEqual([]);
     warmup.release();
-    await presence.entered;
+    await reached(presence.entered,running);
     expect(transport.played).toEqual([[730,440]]);
     await engine.handle(parseRequest({version:1,request_id:randomUUID(),method:"cancel",timeout_ms:1000,
       params:{target_request_id:initial.request_id}}));
