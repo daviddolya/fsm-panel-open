@@ -234,8 +234,12 @@ The imported proxy is retained verbatim. Unsupported legacy syntax or a malforme
 value fails before transmission instead of silently selecting a direct connection.
 Use the conventional HTTP(S) URL format described above. `PROXY_FOR_TG` is now
 redacted in ordinary settings exports and sealed by the application settings
-vault, including case variants. Previously retained plaintext source files and
-backup copies are not rewritten by this change.
+vault, including case variants. The v1 application vault remains readable under
+its original sensitivity rules; loading it is read-only. The next save upgrades
+to v2 and creates a sealed v2 backup of the previous settings. A v2 envelope
+rejects unprotected sensitive fields. Version labels are compatibility metadata,
+not authenticated downgrade protection. Previously retained external plaintext
+source files and backup copies are not rewritten by this change.
 
 These UI workflows are tested with synthetic MockTransport requests only. They
 are new operator controls over recovered send/edit contracts, not proof of the

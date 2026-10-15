@@ -22,8 +22,16 @@ from fsm_panel.core.settings import (
     atomic_write,
 )
 
-_FORMAT = "fsm-panel-settings-v1"
+_FORMAT = "fsm-panel-settings-v2"
+_LEGACY_FORMAT = "fsm-panel-settings-v1"
 _VAULT_LOCK = threading.RLock()
+
+
+def _was_sensitive_v1(key: str) -> bool:
+    """Frozen historical policy for a read-only v1 compatibility import."""
+    return key in {"TG_BOT_API_KEY", "TG_BOT_CHAT_ID", "TRADEOFFER_LINK"} or any(
+        word in key.upper() for word in ("PASSWORD", "SECRET", "TOKEN", "API_KEY", "CREDENTIAL")
+    )
 
 
 class SettingsVault:
@@ -40,7 +48,7 @@ class SettingsVault:
     def __repr__(self) -> str:
         return "SettingsVault(protected=True)"
 
-    def save(self, document: SettingsDocument, path: str | Path, *, backup: bool = True) -> None:
+    def _encode(self, document: SettingsDocument) -> bytes:
         references: list[dict[str, Any]] = []
 
         def seal(value: Any, location: list[str | int]) -> Any:
@@ -69,13 +77,26 @@ class SettingsVault:
             ).encode("utf-8")
             if len(raw) > MAX_SETTINGS_BYTES:
                 raise ValidationError("settings_vault_too_large")
+            return raw
+        except Exception:
+            raise ValidationError("settings_vault_save_failed") from None
+
+    def save(self, document: SettingsDocument, path: str | Path, *, backup: bool = True) -> None:
+        try:
+            raw = self._encode(document)
             target = Path(path)
             with _VAULT_LOCK:
                 if backup and target.exists():
                     # Only vault envelopes can be backed up here; importing a legacy
                     # plaintext file must save to a distinct application destination.
-                    self.load(target)
-                    atomic_write(target.with_suffix(target.suffix + ".bak"), target.read_bytes())
+                    previous = self.load(target)
+                    previous_format = self._read_envelope(target)["format"]
+                    backup_raw = (
+                        self._encode(previous)
+                        if previous_format == _LEGACY_FORMAT
+                        else target.read_bytes()
+                    )
+                    atomic_write(target.with_suffix(target.suffix + ".bak"), backup_raw)
                 atomic_write(target, raw)
         except Exception:
             raise ValidationError("settings_vault_save_failed") from None
@@ -92,7 +113,7 @@ class SettingsVault:
             if (
                 type(envelope) is not dict
                 or set(envelope) != {"format", "values", "secrets"}
-                or envelope["format"] != _FORMAT
+                or envelope["format"] not in {_FORMAT, _LEGACY_FORMAT}
                 or type(envelope["values"]) is not dict
                 or type(envelope["secrets"]) is not list
             ):
@@ -106,6 +127,7 @@ class SettingsVault:
             with _VAULT_LOCK:
                 envelope = self._read_envelope(Path(path))
             values = envelope["values"]
+            legacy = envelope["format"] == _LEGACY_FORMAT
             seen: set[tuple[str | int, ...]] = set()
             for entry in envelope["secrets"]:
                 if (
@@ -148,7 +170,7 @@ class SettingsVault:
                     for key, item in value.items():
                         child = [*location, key]
                         if _is_sensitive(key):
-                            if tuple(child) not in seen:
+                            if tuple(child) not in seen and (not legacy or _was_sensitive_v1(key)):
                                 raise ValidationError("unprotected_settings_secret")
                         else:
                             check(item, child)

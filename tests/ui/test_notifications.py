@@ -43,7 +43,7 @@ def panel(qtbot, qapp):
         return client
 
     widget = NotificationPanel(owner, client_factory=factory)
-    qtbot.addWidget(widget)
+    # Own widget teardown until its asynchronous bridge cleanup has finished.
     widget.show()
     widget.token.setText(TOKEN)
     widget.destination.setText("-100123:4")
@@ -54,6 +54,8 @@ def panel(qtbot, qapp):
     qtbot.waitUntil(lambda: not owner.bridge._thread.is_alive(), timeout=10000)
     assert owner.bridge.shutdown_error is None
     assert all(client.is_closed for client in clients)
+    widget.close()
+    widget.deleteLater()
 
 
 def done(qtbot, widget):

@@ -109,3 +109,84 @@ def test_tampered_vault_fails_closed(tmp_path, tamper):
     path.write_text(json.dumps(envelope))
     with pytest.raises(ValidationError, match="settings_vault_load_failed"):
         vault.load(path)
+
+
+@pytest.mark.parametrize(
+    "key", ["PROXY_FOR_TG", "proxy_for_tg", "tg_bot_chat_id", "tradeoffer_link"]
+)
+def test_v1_new_sensitive_fields_load_readonly_then_upgrade_with_sealed_backup(tmp_path, key):
+    vault = SettingsVault(MemorySecretStore())
+    path = tmp_path / "old.vault.json"
+    old = {
+        "format": "fsm-panel-settings-v1",
+        "values": {key: "synthetic_old_private", "ordinary": 1},
+        "secrets": [],
+    }
+    path.write_text(json.dumps(old))
+    before = path.read_bytes()
+    document = vault.load(path)
+    assert path.read_bytes() == before
+    assert document.get(key) == "synthetic_old_private"
+    assert document.to_dict()[key] == "[redacted]"
+    document.set("ordinary", 2)
+    vault.save(document, path)
+    backup = path.with_suffix(".json.bak")
+    for candidate in (path, backup):
+        raw = candidate.read_text()
+        assert "synthetic_old_private" not in raw
+        assert json.loads(raw)["format"] == "fsm-panel-settings-v2"
+        assert vault.load(candidate).get(key) == "synthetic_old_private"
+    assert vault.load(backup).get("ordinary") == 1
+    assert vault.load(path).get("ordinary") == 2
+
+
+@pytest.mark.parametrize(
+    "version,key",
+    [
+        ("v1", "TG_BOT_API_KEY"),
+        ("v1", "TRADEOFFER_LINK"),
+        ("v1", "nested_password"),
+        ("v2", "PROXY_FOR_TG"),
+    ],
+)
+def test_version_policy_rejects_unprotected_previously_sensitive_fields(tmp_path, version, key):
+    path = tmp_path / "tampered.json"
+    path.write_text(
+        json.dumps(
+            {
+                "format": f"fsm-panel-settings-{version}",
+                "values": {key: "synthetic_private"},
+                "secrets": [],
+            }
+        )
+    )
+    with pytest.raises(ValidationError, match="settings_vault_load_failed"):
+        SettingsVault(MemorySecretStore()).load(path)
+
+
+def test_failed_v1_upgrade_retains_original_and_readable_sealed_backup(tmp_path, monkeypatch):
+    from fsm_panel.adapters import settings_vault as module
+
+    path = tmp_path / "old.json"
+    old = {
+        "format": "fsm-panel-settings-v1",
+        "values": {"PROXY_FOR_TG": "synthetic_private"},
+        "secrets": [],
+    }
+    path.write_text(json.dumps(old))
+    before = path.read_bytes()
+    vault = SettingsVault(MemorySecretStore())
+    real_write = module.atomic_write
+
+    def fail_target(target, raw):
+        if target == path:
+            raise OSError("synthetic_write_failure")
+        return real_write(target, raw)
+
+    monkeypatch.setattr(module, "atomic_write", fail_target)
+    with pytest.raises(ValidationError):
+        vault.save(vault.load(path), path)
+    assert path.read_bytes() == before
+    backup = path.with_suffix(".json.bak")
+    assert "synthetic_private" not in backup.read_text()
+    assert vault.load(backup).get("PROXY_FOR_TG") == "synthetic_private"
