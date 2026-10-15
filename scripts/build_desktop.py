@@ -102,6 +102,10 @@ def main() -> None:
         "fsm_panel.config_templates",
         "--hidden-import",
         "fsm_panel.config_templates",
+        "--collect-data",
+        "fsm_panel.gsi_templates",
+        "--hidden-import",
+        "fsm_panel.gsi_templates",
     ]
     subprocess.run(options + [str(root / "src/fsm_panel/__main__.py")], cwd=root, check=True)
     target = root / "dist/FSMPanelOpen"

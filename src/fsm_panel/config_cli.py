@@ -23,6 +23,7 @@ from fsm_panel.adapters.account_config import (
     read_config_input,
 )
 from fsm_panel.adapters.autoexec import AutoexecPreview, apply_autoexec, preview_autoexec
+from fsm_panel.adapters.gsi_config import GsiConfigPreview, apply_gsi_config, preview_gsi_config
 from fsm_panel.core import SettingsStore
 from fsm_panel.core.models import ValidationError
 
@@ -96,7 +97,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     autoexec = commands.add_parser("autoexec", help="Synchronize only the copied game cfg tree")
     autoexec.add_argument("--source", type=Path, required=True)
     autoexec.add_argument("--config-file-name", required=True, help="Explicit recovered input")
-    for command in (account, autoexec):
+    gsi = commands.add_parser("gsi", help="Prepare an indexed GSI config in the copied cfg tree")
+    gsi.add_argument("--token-source", type=Path, required=True, help="Private new token file")
+    gsi.add_argument("--port", type=int, required=True)
+    gsi.add_argument("--index", type=int, required=True)
+    for command in (account, autoexec, gsi):
         command.add_argument("--workspace", type=Path, required=True)
         command.add_argument("--encoding", default="utf-8")
         command.add_argument("--apply", action="store_true")
@@ -110,7 +115,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         else:
             workspace = open_config_workspace(args.workspace)
             input_snapshots = []
-            preview: AccountConfigPreview | AutoexecPreview
+            preview: AccountConfigPreview | AutoexecPreview | GsiConfigPreview
             if args.command == "account":
                 settings_text, settings_snapshot = _input(args.settings, workspace)
                 settings = SettingsStore.loads(settings_text)
@@ -137,7 +142,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     auxiliary_sources=tuple(snapshot for _, _, snapshot in input_snapshots),
                 )
                 changed = True  # Legacy writer rewrites even equal account configs.
-            else:
+            elif args.command == "autoexec":
                 preview = preview_autoexec(
                     workspace,
                     source_path=args.source,
@@ -145,6 +150,15 @@ def main(argv: Sequence[str] | None = None) -> int:
                     encoding=args.encoding,
                 )
                 changed = preview.plan.changed
+            else:
+                preview = preview_gsi_config(
+                    workspace,
+                    running_on_port=args.port,
+                    gsi_file_index=args.index,
+                    token_source=args.token_source,
+                    encoding=args.encoding,
+                )
+                changed = True
             fingerprint = preview_fingerprint((preview, input_snapshots))
             if args.expect_fingerprint is not None and args.expect_fingerprint != fingerprint:
                 raise ConfigStalePreviewError()
@@ -161,11 +175,12 @@ def main(argv: Sequence[str] | None = None) -> int:
                 for path, encoding, snapshot in input_snapshots:
                     if _input(path, workspace, encoding)[1] != snapshot:
                         raise ConfigStalePreviewError()
-                applied = (
-                    apply_account_config(preview)
-                    if isinstance(preview, AccountConfigPreview)
-                    else apply_autoexec(preview)
-                )
+                if isinstance(preview, AccountConfigPreview):
+                    applied = apply_account_config(preview)
+                elif isinstance(preview, AutoexecPreview):
+                    applied = apply_autoexec(preview)
+                else:
+                    applied = apply_gsi_config(preview)
                 result["changed"] = applied.changed
                 result["backup_path"] = str(applied.backup_path) if applied.backup_path else None
     except ConfigApplyError as error:

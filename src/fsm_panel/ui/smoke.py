@@ -7,6 +7,7 @@ from pathlib import Path
 from PySide6.QtCore import QTimer
 
 from fsm_panel.adapters.account_config import load_config_templates
+from fsm_panel.adapters.gsi_config import load_gsi_template
 
 from .window import MainWindow
 
@@ -53,6 +54,7 @@ class DesktopSmoke:
                     "live_steam": "not_run",
                     "shutdown_verified": clean,
                     "config_templates_verified": self.step > 0,
+                    "gsi_template_verified": self.step > 0,
                 },
                 indent=2,
             )
@@ -75,6 +77,7 @@ class DesktopSmoke:
             # Exercise resource lookup/hash verification from the frozen package,
             # not merely the build machine's source checkout.
             load_config_templates()
+            load_gsi_template()
             if window.repository.list_accounts():
                 self.finish(False, "smoke_requires_empty_data_directory")
                 return
