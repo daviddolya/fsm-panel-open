@@ -1,8 +1,9 @@
 # Independent offline reconstruction QA
 
-Date: 2026-10-13. Review started at `791cd8a`; fixes were independently checked
-through CLI integration `44c79da` and BES planner `3caf37c` in a separate QA
-worktree. The reviewer owns the tests and this report, not the implementation.
+Updated: 2026-10-15. Review started at `791cd8a`; fixes were independently checked
+through CLI integration `44c79da`, BES planner `3caf37c`, launch-settings derivation
+`c78fd79` and desktop config integration `11ac614` in a separate QA worktree.
+The reviewer owns the tests and this report, not the implementation.
 
 The video, BES and launch checks found five issues: lost recovery metadata, a
 delayed admission race, an unguarded original-distribution path, missing exported
@@ -325,6 +326,59 @@ successful backups; and rollback success/failure responses. Failed apply returns
 no success fields and reports the usable retained backup when rollback fails.
 All commands operate only on synthetic files, and no proposed command is executed.
 
+## Config controls in the shared desktop
+
+[The independent desktop tests](../tests/qa/test_offline_config_ui.py) add 19 cases
+against the integrated `MainWindow` at `11ac614`. They instantiate the real Qt
+controls and async bridge, use temporary account/config trees, and inject failures
+at filesystem or unrelated-cleanup boundaries. The coordinator is a simulator;
+these checks do not launch Steam or the original application.
+
+| Requirement | Independent check | Result |
+| --- | --- | --- |
+| Keep explicit import ownership | The page shares the window's bridge, requires its own settings import, uses that import even when main-window settings disagree, and leaves both settings sources unchanged | Pass |
+| Revoke obsolete previews | Editing account, autoexec, settings or workspace input after both previews disables both applies and leaves the tree unchanged | Four cases pass |
+| Bind pending imports to their selected input | Change the selection after an actual read but before completion; the old snapshot cannot enable preview, and a new import determines the later localconfig behavior | Pass |
+| Isolate shared-bridge errors | An unrelated failed operation cannot release the config page's pending-work lock, and its private exception text is absent from the window log and status | Pass |
+| Recheck source identity | Replace settings, localconfig, video or machine input with identical bytes and timestamps but a new file identity; all four old previews are rejected | Pass |
+| Preserve a concurrent target edit | Change the account tree after its staging copy; apply is rejected, the external edit survives, and no backup or stage remains | Pass |
+| Report actual recovery state | Deny the stage-to-target rename with successful or denied rollback; UI reports the correct status and retained exact backup without private exception text or success wording | Two cases pass |
+| Finish file work before window shutdown | Pause actual tree staging, close twice and check a queued Qt timer still runs; release with unchanged or edited source, with and without an earlier license-cleanup error | Four cases pass |
+| Preserve shared bridge ownership | Closing just the config page leaves another simulated account operation usable; closing MainWindow then stops the account and joins its bridge | Pass |
+
+The shutdown cases check the coordinator thread and the recorded executor thread
+have both exited after their real file operation finishes. Successful staging
+retains the exact previous tree; a stale source leaves the target unchanged. A
+license-cleanup error remains a content-free shutdown diagnostic and does not
+skip config cleanup. No additional production defect was reproduced in this pass.
+
+## Recovered launch-setting derivation
+
+[The independent derivation tests](../tests/qa/test_offline_launch_settings.py) add
+44 cases against `c78fd79`, reviewed with the sanitized native derivation
+specification dated 2026-10-13. The bounded initializer is at `0x1406b0d40`;
+resolution loading, split, conversions and fallback are anchored at
+`0x1406bb662`, `0x1406bba60`, `0x1406bbc8d`/`0x1406bbcfc` and `0x1406bc0b6`.
+Steam-only and shader fallbacks are at `0x1406bd337` and `0x1406c2f63`; BES's
+integer 25 fallback is at `0x1406b2e28`.
+
+The checks cover all 16 combinations of missing keys, preserving explicit false
+values and producing updates only for absent keys. They independently cover
+partial dimension failures resetting both values, preservation of malformed
+source values, the active Python digit-conversion bound, nested value ownership,
+and rejection of selected non-JSON values. The proposal integration checks the
+effects of raw JSON truthiness on game arguments and the inverted shader branch,
+including accepted negative/zero dimensions and the missing-key defaults. Each
+derived field is rejected when also supplied explicitly, even if its value is
+false. Invalid legacy objects produce a content-free error and no output file.
+
+Input bytes stay unchanged; private settings and inherited environment sentinels
+are absent from public summaries and the derived-settings metadata. Nested
+results are detached copies, not immutable containers. The bounded loader is
+pure and does not persist default updates. No additional production defect was
+reproduced. These tests do not establish the full initializer, original runtime
+parity, real launch behavior, or downstream acceptance of dimensions by a game.
+
 ## Reproduction environment and results
 
 Windows, Python 3.14.6, PySide6 6.12.0, pytest 9.1.1. Dependencies were installed
@@ -340,12 +394,15 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_configs.py tests/adapters/test_account_config.py tests/adapters/test_autoexec.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_config_cli.py tests/test_config_cli.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_bes.py tests/adapters/test_bes.py tests/adapters/test_bes_plan.py tests/test_cpu.py tests/ui/test_cpu_panel.py -q
+.venv/Scripts/python.exe -m pytest tests/qa/test_offline_config_ui.py tests/qa/test_offline_launch_settings.py tests/ui/test_config_files.py tests/ui/test_window.py tests/qa/test_gui_shutdown.py tests/adapters/test_launch_settings.py tests/test_launch_preview.py -q
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_configs.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_configs.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_config_cli.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_config_cli.py
+.venv/Scripts/python.exe -m ruff check tests/qa/test_offline_config_ui.py tests/qa/test_offline_launch_settings.py
+.venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_config_ui.py tests/qa/test_offline_launch_settings.py
 ```
 
 - Existing video suite: **81 passed, 4 skipped**. The skipped cases require
@@ -375,6 +432,10 @@ $env:QT_QPA_PLATFORM = 'offscreen'
   passed after `64582b4`; two added staging-edit cases then exposed C7.
   After `44c79da` and five further identity/help cases: **27 passed**.
   Config API and CLI suites together: **153 passed**.
+- Desktop config integration and launch-settings derivation: **63 new independent
+  cases passed** at `11ac614`, and **152 passed** when combined with author config
+  UI, MainWindow, GUI shutdown, derivation and proposal tests. No skips or expected
+  failures occurred in this focused run.
 - Ruff checks and formatting: **pass**.
 - Pytest emitted an existing Starlette/httpx deprecation warning through the
   shared QA fixture imports; it did not affect the file or UI results.
