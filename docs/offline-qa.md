@@ -3,8 +3,9 @@
 Updated: 2026-10-15. Review started at `791cd8a`; fixes were independently checked
 through CLI integration `44c79da`, BES planner `3caf37c`, launch-settings derivation
 `c78fd79`, desktop config integration `11ac614`, GSI adapter `bdeedba` and GSI CLI
-`3199344`, GSI desktop integration `90f9763`, Telegram transport `50c29ee`, and
-inert autoaccept generators `0d7f2d1`, in a separate QA worktree.
+`3199344`, GSI desktop integration `90f9763`, Telegram transport `50c29ee`, inert
+autoaccept generators `0d7f2d1`, and co-op accept caller `8585dae`, in a separate
+QA worktree.
 The reviewer owns the tests and this report, not the implementation.
 
 The video, BES and launch checks found five issues: lost recovery metadata, a
@@ -509,6 +510,40 @@ boundaries. The generators do not prove window ownership, successful focus,
 library conversion of None wParam, actual game input, scheduler cadence or
 original runtime parity. No executor or GUI connection is covered by this slice.
 
+## Inert co-op accept caller boundaries
+
+[The independent co-op caller tests](../tests/qa/test_coop_accept_boundaries.py)
+add 64 cases against author commit `8585dae`, locally applied as `0fbbf81` after
+updating the QA tree to `origin/main` checkpoint `8218cbc`. The review used the
+sanitized input-automation checkpoint 03, dated 2026-10-15, and the
+[public caller contract](coop-accept-plan.md). This slice describes the caller at
+`0x140b43580`; dependency implementations and native address review remain
+separate. The test-owned observation source and completion ledger represent
+acknowledged effects without executing any co-op, logging, input or thread API.
+
+| Requirement | Independent check | Result |
+| --- | --- | --- |
+| Defer ticket inspection until co-op exists | None returns before an unreadable ticket container is inspected or server state is replaced; a non-None token, including an empty one, remains the captured receiver after the supplied global changes | Pass |
+| Preserve normalization order and defaults | Eight false-valued server forms skip malformed login/timestamp fields; twelve account forms distinguish the outer empty fallback from stringifying stored None/False/zero; excluded IDs leave malformed timestamps unread | Pass |
+| Preserve duplicates and late account reads | Repeated login lookups return changing IDs, while normalized pairs retain input order and duplicates; short IDs are requested for every pair before TICKETS deduplication | Pass |
+| Keep reporting before acceptance gates | Empty input still replaces the server set, observes menu/regions, reports and consumes; a nonempty original with zero included rows still logs; only the log substitutes `any` for false-valued regions | Pass |
+| Keep the gate order | Consumed None skips both gates; disabled AUTOACCEPTGAME skips membership; existing membership skips later work; an empty consumed string proceeds beyond the None gate | Pass |
+| Preserve refusal ordering | A set containing the requested server plus another refuses; short-ID lookup precedes the fresh set read; duplicate converted IDs remain in the sorted refusal log, which precedes leave_match | Pass |
+| Preserve seen timestamps and age rules | Included timestamps use a maximum starting at zero; negative and false-valued timestamps omit the age clock and produce positive float zero; later/older duplicates, negative ages and the four-second boundary retain unrounded delay values | Six cases pass |
+| Keep both global-delay reads | Four changing outer/inner values prove evaluation order after the age clock and before append, including a negative outer result; the captured dispatcher default is not substituted | Pass |
+| Keep independent enabled reads and state writes | All four Boolean log/gate combinations retain the accepted marker and two separate timestamps; the second read alone controls notice/thread requests; truthy builtin strings/tuples and false all-in-menu still reach the thread boundary | Pass |
+| Preserve repeated invocation semantics | A second call still reports and consumes, then stops at membership without another thread or accepted marker | Pass |
+| Preserve partial completion on failure | Inject failure at every request on accepting and refusing paths; the exact prior completion ledger and state prefix remain, with no retry or cleanup; a mutation followed by a dependency error is not rolled back | Pass |
+| Keep the trace inert and protocol errors terminal | Forbid actual file open, clock, sleep, socket and thread entry points; close at every yield without further effects; a late invalid acknowledgement returns only the fixed protocol error and preserves earlier writes | Pass |
+
+No production defect was reproduced. The report/consume/leave receiver is the
+captured co-op token, and thread construction retains the explicit unrounded
+delay/server pair and daemon flag before a distinct start request. No scheduler,
+network policy, helper success, runtime parity, real state persistence, concurrent
+mutation or actual input is established by these synthetic traces. The strict
+builtin-value protocol and content-free validation failures are reconstruction
+choices, not evidence of restrictions in the original Python caller.
+
 ## Reproduction environment and results
 
 Windows, Python 3.14.6, PySide6 6.12.0, pytest 9.1.1. Dependencies were installed
@@ -529,6 +564,7 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_gsi_ui.py tests/ui/test_gsi_config_panel.py tests/qa/test_offline_config_ui.py tests/ui/test_window.py tests/qa/test_gui_shutdown.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_telegram_boundaries.py tests/notifications -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_autoaccept_boundaries.py tests/adapters/test_autoaccept_plan.py tests/adapters/test_input_plan.py -q
+.venv/Scripts/python.exe -m pytest tests/qa/test_coop_accept_boundaries.py tests/adapters/test_coop_accept_plan.py -q
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_configs.py
@@ -545,6 +581,8 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_telegram_boundaries.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_autoaccept_boundaries.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_autoaccept_boundaries.py
+.venv/Scripts/python.exe -m ruff check tests/qa/test_coop_accept_boundaries.py
+.venv/Scripts/python.exe -m ruff format --check tests/qa/test_coop_accept_boundaries.py
 ```
 
 - Existing video suite: **81 passed, 4 skipped**. The skipped cases require
@@ -604,6 +642,9 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 - Integrated autoaccept run at `a8f4561`: **1481 passed, 6 skipped,
   6 PostgreSQL deselected**. The six OS symlink cases still require additional
   Windows privileges; the core branch coverage remains 219/240 (91.25%).
+- Inert co-op accept caller: **64 new independent cases passed** at `8585dae`;
+  **163 passed** together with the 99 author cases. No skips or expected failures;
+  all observations and effects stayed synthetic.
 - Ruff checks and formatting: **pass**.
 - Pytest emitted an existing Starlette/httpx deprecation warning through the
   shared QA fixture imports; it did not affect these results.
