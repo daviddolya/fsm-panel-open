@@ -2,7 +2,8 @@
 
 Updated: 2026-10-15. Review started at `791cd8a`; fixes were independently checked
 through CLI integration `44c79da`, BES planner `3caf37c`, launch-settings derivation
-`c78fd79` and desktop config integration `11ac614` in a separate QA worktree.
+`c78fd79`, desktop config integration `11ac614`, GSI adapter `bdeedba` and GSI CLI
+`3199344` in a separate QA worktree.
 The reviewer owns the tests and this report, not the implementation.
 
 The video, BES and launch checks found five issues: lost recovery metadata, a
@@ -379,6 +380,37 @@ pure and does not persist default updates. No additional production defect was
 reproduced. These tests do not establish the full initializer, original runtime
 parity, real launch behavior, or downstream acceptance of dimensions by a game.
 
+## GSI writer, selector and offline CLI
+
+[The independent GSI tests](../tests/qa/test_offline_gsi_config.py) add 39 cases.
+The review compared `bdeedba` and its `3199344` CLI integration with the sanitized
+GSI writer specification dated 2026-10-13. The native writer slice is
+`0x14097da31..0x14097e519`; the selector/server helper spans
+`[0x140a024c0, 0x140a041aa)`. Only the sanitized template and specification were
+used. No authentication literal from the original was read or committed.
+
+| Requirement | Independent check | Result |
+| --- | --- | --- |
+| Preserve the exception-based selector | Enumerate all 1,024 ten-boolean sequences; choose the first exception outcome or retain 6969/1 after ten completed expressions; ignore the eleventh outcome | Pass |
+| Do not reinterpret HTTP status | Reject supplied numeric statuses 200/404/500 when consumed; ignore them after an earlier exception outcome; no port or socket is allocated | Pass |
+| Preserve literal rendering | Replacement is all-occurrence and nonrecursive; token markers remain inert in the legacy plan; port and filename index stay independent; Windows path text retains `..` | Pass |
+| Preserve evidence identity | Packaged sanitized template matches the independently recorded 1268-byte export and fixed SHA-256, with one marker of each kind | Pass |
+| Reject VDF structure injection | Multi-line quote/brace/control payloads never create output or disclose the caller token in errors; allowed placeholder text inside a caller token is retained literally | Pass |
+| Preserve previous indices | Two applies with different indices and tokens keep the previous indexed file and exact complete backups; unrelated bytes survive | Pass |
+| Bind hash and identity snapshots | Same-size edits with preserved timestamps/inodes, identical replacements of target files or the cfg directory, a source hardlink added after preview and a token identity replacement during staging all reject the old preview | Pass |
+| Recover a late stale error | A stale error after moving the original tree either restores it exactly or returns its exact retained backup and failed-rollback metadata | Two cases pass |
+| Serialize overlapping writers | Pause a real GSI staging copy, submit an autoexec apply from the same old snapshot, then release; GSI commits once and the waiting autoexec fails stale without overwriting it | Pass |
+| Bind CLI review fingerprints | Changed token, raw line ending, source/target identity, unrelated tree bytes, port, index or encoding rejects the reviewed digest without a write | Eight cases pass |
+| Keep CLI diagnostics private | Actual module-entry numeric parse errors, structural token errors, source/output overlap and both rollback outcomes return content-free errors and no success fields | Pass |
+| Recheck after fingerprinting | Replace the token immediately after computing the CLI fingerprint; adapter validation still rejects before staging | Pass |
+
+No additional production defect was reproduced. The selector tests establish
+the pure supplied-outcome transformation, not availability of any port or live
+listener behavior. The filesystem tests use synthetic temporary trees and local
+Python only. They do not validate the original GSI HTTP handler, live game ingest,
+writer/listener ordering, full GUI entry conditions, cross-process transactions
+or power-loss recovery. The new GSI GUI is outside this checkpoint.
+
 ## Reproduction environment and results
 
 Windows, Python 3.14.6, PySide6 6.12.0, pytest 9.1.1. Dependencies were installed
@@ -395,6 +427,7 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_config_cli.py tests/test_config_cli.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_bes.py tests/adapters/test_bes.py tests/adapters/test_bes_plan.py tests/test_cpu.py tests/ui/test_cpu_panel.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_config_ui.py tests/qa/test_offline_launch_settings.py tests/ui/test_config_files.py tests/ui/test_window.py tests/qa/test_gui_shutdown.py tests/adapters/test_launch_settings.py tests/test_launch_preview.py -q
+.venv/Scripts/python.exe -m pytest tests/qa/test_offline_gsi_config.py tests/adapters/test_gsi_config.py tests/test_gsi_cli.py tests/test_config_cli.py -q
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_configs.py
@@ -403,6 +436,8 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_config_cli.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_config_ui.py tests/qa/test_offline_launch_settings.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_config_ui.py tests/qa/test_offline_launch_settings.py
+.venv/Scripts/python.exe -m ruff check tests/qa/test_offline_gsi_config.py
+.venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_gsi_config.py
 ```
 
 - Existing video suite: **81 passed, 4 skipped**. The skipped cases require
@@ -436,6 +471,10 @@ $env:QT_QPA_PLATFORM = 'offscreen'
   cases passed** at `11ac614`, and **152 passed** when combined with author config
   UI, MainWindow, GUI shutdown, derivation and proposal tests. No skips or expected
   failures occurred in this focused run.
+- GSI adapter and CLI: **39 new independent cases passed** at `3199344`;
+  **158 passed, 2 skipped** together with the author GSI adapter and both config
+  CLI suites. The two author-suite symlink cases require privileges unavailable
+  on this Windows host; they are not counted as verified OS behavior.
 - Ruff checks and formatting: **pass**.
 - Pytest emitted an existing Starlette/httpx deprecation warning through the
   shared QA fixture imports; it did not affect the file or UI results.
