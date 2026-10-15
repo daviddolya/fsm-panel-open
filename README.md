@@ -128,6 +128,7 @@ uv run python scripts/verify_desktop.py dist/FSMPanelOpen/FSMPanelOpen.exe --out
 - `docs/input-plan.md` — восстановленный фрагмент anti-AFK без исполнения ввода.
 - `docs/autoaccept-plan.md` — диспетчер, проверки и планы действий autoaccept.
 - `docs/coop-accept-plan.md` — обработка co-op заявок и частичных изменений без исполнения.
+- `docs/coop-state-plan.md` — проверка состояния меню и запрос обновления кэша регионов.
 - `docs/telegram.md` — транспорт, ручные уведомления и совместимость старых обработчиков.
 - `docs/operations.md`, `docs/development.md` — работа, резервные копии и передача команды.
 - `docs/stand-acceptance.md` — отложенные реальные проверки.

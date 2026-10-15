@@ -114,6 +114,16 @@ def main() -> None:
         )
     for identifier, action, status, evidence, tests in [
         (
+            "GAME.COOP.STATE.TRACE",
+            "Describe global menu predicate and cached-region refresh request with exact error scopes",
+            "implemented_inert_generators_no_region_worker_or_scheduler",
+            "Panel.exe 0x140b70560 and 0x140834450; docs/coop-state-plan.md",
+            [
+                "tests/adapters/test_coop_state_plan.py",
+                "tests/qa/test_coop_state_boundaries.py",
+            ],
+        ),
+        (
             "GAME.COOP.ACCEPT.TRACE",
             "Normalize tickets and describe reporting, late gates, state writes and dispatcher creation",
             "implemented_inert_generator_no_transport_or_scheduler",

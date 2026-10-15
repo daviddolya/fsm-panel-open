@@ -131,6 +131,8 @@ with the implementation contracts:
   abandonment decisions, both click paths and title activation; no input executor.
 - [Co-op accept caller](../docs/coop-accept-plan.md): ticket normalization,
   late gates, delay calculation and partial state effects; no co-op executor.
+- [Co-op state helpers](../docs/coop-state-plan.md): global GSI menu predicate
+  and cached-region refresh request; the actual refresh worker remains opaque.
 - [Telegram](../docs/telegram.md): eight send/edit contracts, selected destination,
   proxy, receipt and fallback behavior; automatic event orchestration remains partial.
 

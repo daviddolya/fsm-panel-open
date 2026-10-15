@@ -196,8 +196,13 @@ Protocol failures raise `CoopAcceptPlanError` with the fixed message
 no rollback is added. Unexpected effect return values require conversion into a
 None acknowledgement by a synthetic driver, since the original discards them.
 
+Checkpoint 04 subsequently recovers the global menu predicate and the regions
+cache helper, including its default `max_age=60.0`. Their separate inert
+implementations are documented in [co-op state helpers](coop-state-plan.md).
+This caller still requests their observations; no automatic executor is added.
+
 Unresolved: the workflow that invokes this caller; other autoaccept callers and
-event readers; helper internals, transport and policies; regions default max_age;
+event readers; co-op transport and policies; the regions refresh worker;
 anti-AFK scheduling; account file queue completion; concurrency, runtime behavior
 and window ownership. These traces do not authorize a network or input executor.
 

@@ -91,7 +91,8 @@ nonempty data with all stale or malformed entries returns True; an iterator that
 becomes empty after the initial length check also returns True. This result is a
 recovered predicate, not a guarantee that any live client is currently in menu.
 
-BaseException subclasses propagate through both handlers. `IterationEnd()` is the
+BaseException subclasses outside Exception propagate through both handlers.
+`IterationEnd()` is the
 protocol's explicit normal exhaustion signal; throwing StopIteration directly at
 `next_game_info_key` also returns True, matching Python for-loop exhaustion.
 StopIteration during iterator creation is an outer failure returning False, while

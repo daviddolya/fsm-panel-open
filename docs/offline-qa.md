@@ -691,6 +691,9 @@ $env:QT_QPA_PLATFORM = 'offscreen'
   **130 passed** together with the 86 author cases. No skips or expected failures;
   no clock, thread, network or other real effect was performed.
 - Ruff checks and formatting: **pass**.
+- Integrated autoaccept/co-op run at `12e8e64`: **1774 passed, 6 skipped,
+  6 PostgreSQL deselected**. Core branches: 219/240 (91.25%). No original/game
+  execution or real input was performed; the six local skips are symlink scenarios.
 - Pytest emitted an existing Starlette/httpx deprecation warning through the
   shared QA fixture imports; it did not affect these results.
 
