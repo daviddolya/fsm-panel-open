@@ -190,3 +190,30 @@ def test_failed_v1_upgrade_retains_original_and_readable_sealed_backup(tmp_path,
     backup = path.with_suffix(".json.bak")
     assert "synthetic_private" not in backup.read_text()
     assert vault.load(backup).get("PROXY_FOR_TG") == "synthetic_private"
+
+
+@pytest.mark.parametrize("protected", [False, True])
+def test_v1_new_sensitive_container_retains_old_nested_reference_checks(tmp_path, protected):
+    secrets = MemorySecretStore()
+    path = tmp_path / "nested.json"
+    envelope = {
+        "format": "fsm-panel-settings-v1",
+        "values": {"PROXY_FOR_TG": {"PASSWORD": None if protected else "synthetic_nested"}},
+        "secrets": [],
+    }
+    if protected:
+        secrets.put("settings-nested", b'"synthetic_nested"')
+        envelope["secrets"].append(
+            {"path": ["PROXY_FOR_TG", "PASSWORD"], "reference": "settings-nested"}
+        )
+    path.write_text(json.dumps(envelope))
+    vault = SettingsVault(secrets)
+    if not protected:
+        with pytest.raises(ValidationError):
+            vault.load(path)
+    else:
+        document = vault.load(path)
+        assert document.get("PROXY_FOR_TG") == {"PASSWORD": "synthetic_nested"}
+        vault.save(document, path)
+        assert "synthetic_nested" not in path.read_text()
+        assert vault.load(path).get("PROXY_FOR_TG") == {"PASSWORD": "synthetic_nested"}

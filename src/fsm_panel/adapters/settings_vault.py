@@ -170,8 +170,12 @@ class SettingsVault:
                     for key, item in value.items():
                         child = [*location, key]
                         if _is_sensitive(key):
-                            if tuple(child) not in seen and (not legacy or _was_sensitive_v1(key)):
-                                raise ValidationError("unprotected_settings_secret")
+                            if tuple(child) not in seen:
+                                if not legacy or _was_sensitive_v1(key):
+                                    raise ValidationError("unprotected_settings_secret")
+                                # V1 treated this newly-sensitive field as an
+                                # ordinary container. Keep its nested checks.
+                                check(item, child)
                         else:
                             check(item, child)
                 elif type(value) is list:
