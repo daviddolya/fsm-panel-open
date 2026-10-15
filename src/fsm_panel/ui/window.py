@@ -32,6 +32,7 @@ from fsm_panel.core.settings import SECRET_KEYS, SETTINGS_TYPES, SettingsDocumen
 from fsm_panel.cpu import CpuLimitRuntime
 
 from .bridge import AsyncBridge
+from .config_files import ConfigFilesWidget
 from .cpu import CpuPanel
 from .trades import TradePanel
 from .video import VideoPanel
@@ -97,6 +98,8 @@ class MainWindow(QMainWindow):
         self._build_settings()
         self.video = VideoPanel(self)
         self.tabs.addTab(self.video, "Видео-конфиг")
+        self.config_files = ConfigFilesWidget(self.bridge)
+        self.tabs.addTab(self.config_files, "Конфиги игры")
         self.cpu = CpuPanel(self)
         self.tabs.addTab(self.cpu, "Ограничение CPU")
         self.trades = TradePanel(self)
@@ -418,7 +421,10 @@ class MainWindow(QMainWindow):
                         try:
                             await self.video.aclose()
                         finally:
-                            await self.cpu.aclose()
+                            try:
+                                await self.config_files.aclose()
+                            finally:
+                                await self.cpu.aclose()
                     finally:
                         await self.trades.aclose()
                 finally:
