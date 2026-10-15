@@ -222,6 +222,26 @@ def main() -> None:
             ["tests/gsi"],
         ),
         (
+            "GSI.CONFIG",
+            "Prepare an indexed GSI file with an explicit token in a marked offline workspace",
+            "implemented_offline_copy_writer_cli_and_gui",
+            "Panel.exe 0x14097da31..0x14097e519; constant 5513; docs/gsi-config.md",
+            [
+                "tests/adapters/test_gsi_config.py",
+                "tests/test_gsi_cli.py",
+                "tests/ui/test_gsi_config_panel.py",
+                "tests/qa/test_offline_gsi_config.py",
+                "tests/qa/test_offline_gsi_ui.py",
+            ],
+        ),
+        (
+            "GSI.PORT.SELECTION",
+            "Select the first exceptional probe among ports 6969..6978, or default 6969",
+            "implemented_pure_selector_no_network_or_allocation",
+            "Panel.exe 0x140976d80 and 0x140a024c0 bounded slices; docs/gsi-config.md",
+            ["tests/adapters/test_gsi_config.py", "tests/qa/test_offline_gsi_config.py"],
+        ),
+        (
             "TRADE.SELECTED",
             "Selected assets, comments, refresh token, proxy and grouped offers",
             "worker_implemented_stand_pending",

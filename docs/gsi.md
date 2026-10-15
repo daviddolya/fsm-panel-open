@@ -137,8 +137,10 @@ it is not successful native REA analysis, original source recovery, or runtime p
 
 Loopback binding, token authentication, token uniqueness, redaction, limits, arrival timestamps,
 explicit shutdown, and registration lifecycle are new defensive design decisions. The recovered
-handlers establish none of those policies. Their surrounding listener allocation and lifetime,
-launch orchestration, field-to-UI mapping, and game actions remain unresolved.
+handlers establish none of those policies. Later bounded analysis recovered the original
+probe-based port selection and indexed configuration writer; see [GSI configuration](gsi-config.md).
+The new pure selector consumes supplied probe results and allocates no port. Complete launch
+orchestration, listener ownership, field-to-UI mapping, and game actions remain unresolved.
 
 ## Verification
 

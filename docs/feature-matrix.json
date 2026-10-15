@@ -1700,6 +1700,45 @@
       "verification": "stand_not_run"
     },
     {
+      "feature_id": "GSI.CONFIG",
+      "action": "Prepare an indexed GSI file with an explicit token in a marked offline workspace",
+      "evidence": "Panel.exe 0x14097da31..0x14097e519; constant 5513; docs/gsi-config.md",
+      "confidence": "static_contract",
+      "implementation": "implemented_offline_copy_writer_cli_and_gui",
+      "runtime_parity": "not_verified",
+      "tests": [
+        "tests/adapters/test_gsi_config.py",
+        "tests/test_gsi_cli.py",
+        "tests/ui/test_gsi_config_panel.py",
+        "tests/qa/test_offline_gsi_config.py",
+        "tests/qa/test_offline_gsi_ui.py"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
+    },
+    {
+      "feature_id": "GSI.PORT.SELECTION",
+      "action": "Select the first exceptional probe among ports 6969..6978, or default 6969",
+      "evidence": "Panel.exe 0x140976d80 and 0x140a024c0 bounded slices; docs/gsi-config.md",
+      "confidence": "static_contract",
+      "implementation": "implemented_pure_selector_no_network_or_allocation",
+      "runtime_parity": "not_verified",
+      "tests": [
+        "tests/adapters/test_gsi_config.py",
+        "tests/qa/test_offline_gsi_config.py"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
+    },
+    {
       "feature_id": "TRADE.SELECTED",
       "action": "Selected assets, comments, refresh token, proxy and grouped offers",
       "evidence": "Embedded script SHA256 d010c676ce33adaee529a79fafc9501fd2ca39c3ca0794e90680ff7cb681302c",
