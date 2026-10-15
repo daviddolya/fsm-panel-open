@@ -1,0 +1,12 @@
+{
+  "file": "gsi.sanitized.template",
+  "sha256": "6b02e3f2bdc3afef44437795cb36ea5c1096e1ec980b91f3d55ab2e40f84ed8f",
+  "utf8_bytes": 1268,
+  "source_sha256": "3731a48590e3169071b81aab9338a36b38a788133adfd43fada99ad3add1f308",
+  "constant_index": 5513,
+  "slot_va": "0x142deb3e8",
+  "literal_load_va": "0x14097da3f",
+  "writer_slice_va": ["0x14097da31", "0x14097e519"],
+  "sanitization": "Only the shipped authentication literal is replaced with TOKEN_PLACEHOLDER. The original writer replaces PORT_PLACEHOLDER only.",
+  "byte_policy": "UTF-8 export of the sanitized decoded string, preserving whitespace and no final newline; not an assertion of legacy on-disk encoding."
+}
