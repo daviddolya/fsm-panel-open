@@ -66,14 +66,14 @@ SETTINGS_TYPES: dict[str, type] = {
     "TG_BOT_CHAT_ID": str,
     "TRADEOFFER_LINK": str,
 }
-SECRET_KEYS = frozenset({"TG_BOT_API_KEY", "TG_BOT_CHAT_ID", "TRADEOFFER_LINK"})
+SECRET_KEYS = frozenset({"TG_BOT_API_KEY", "TG_BOT_CHAT_ID", "TRADEOFFER_LINK", "PROXY_FOR_TG"})
 MAX_SETTINGS_BYTES = 2 * 1024 * 1024
 _SAVE_LOCK = threading.RLock()
 
 
 def _is_sensitive(key: str) -> bool:
     upper = key.upper()
-    return key in SECRET_KEYS or any(
+    return upper in SECRET_KEYS or any(
         word in upper for word in ("PASSWORD", "SECRET", "TOKEN", "API_KEY", "CREDENTIAL")
     )
 
