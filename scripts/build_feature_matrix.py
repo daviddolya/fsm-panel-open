@@ -17,6 +17,18 @@ def main() -> None:
     root = Path(__file__).resolve().parents[1]
     catalogue = json.loads((root / "research/feature-catalogue.json").read_text(encoding="utf-8"))
     features = []
+    offline_consumers = {
+        "BES_REDUCTION_PERCENT": ["CPU.BES", "CPU.BES.PREPARE"],
+        "STEAM_PATH": ["GAME.LAUNCH.PREPARE", "CONFIG.ACCOUNT"],
+        "CSGO_PATH": ["CPU.BES.PREPARE"],
+        "CS_RESOLUTION": ["GAME.LAUNCH.SETTINGS"],
+        "DISABLE_STEAM_OVERLAY": ["CONFIG.ACCOUNT"],
+        "NO_AVAST_MODE": ["GAME.LAUNCH.PREPARE", "CONFIG.ACCOUNT"],
+        "STEAM_LAUNCH_OPTIONS": ["GAME.LAUNCH.PREPARE"],
+        "ADDITIONAL_LAUNCH_OPTIONS": ["GAME.LAUNCH.PREPARE"],
+        "ANCIENT_MAP_PRELOAD": ["GAME.LAUNCH.PREPARE"],
+        "RUNNING2VS2": ["GAME.LAUNCH.PREPARE"],
+    }
     for key, value_type in inventory["settings_types"].items():
         features.append(
             {
@@ -35,7 +47,10 @@ def main() -> None:
                 "preconditions": "User explicitly imports a legacy JSON copy",
                 "state_changes": "Versioned DPAPI-backed settings vault",
                 "external_effects": "Encrypted file and backup; no game configuration writes",
-                "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+                "implementation": "schema_import_export_and_partial_offline_consumers_implemented"
+                if key in offline_consumers
+                else "schema_import_export_implemented; game_consumer_not_implemented",
+                "implemented_offline_consumers": offline_consumers.get(key, []),
                 "runtime_parity": "not_verified",
                 "tests": ["tests/core/test_settings.py", "tests/adapters/test_settings_vault.py"],
             }
@@ -95,25 +110,43 @@ def main() -> None:
         )
     for identifier, action, status, evidence, tests in [
         (
+            "CPU.BES.PREPARE",
+            "Pure exact original BES -J command, separate debug output and fallback25",
+            "implemented_pure_planner_no_executor",
+            "Panel.exe 0x1409572d0, 0x140956f50, 0x1406b2e28; docs/bes.md",
+            ["tests/adapters/test_bes_plan.py", "tests/qa/test_offline_bes.py"],
+        ),
+        (
+            "GAME.LAUNCH.SETTINGS",
+            "Resolution split/int/fallback; STEAM_LAUNCH_ONLY_MODE and ENABLE_SHADERS_CACHING truthiness",
+            "implemented_pure_derivation_and_proposal_cli",
+            "Panel.exe 0x1406b0d40 bounded settings slices; docs/launch-plan.md",
+            ["tests/adapters/test_launch_settings.py", "tests/test_launch_preview.py"],
+        ),
+        (
             "CONFIG.ACCOUNT",
             "Prepare copied userdata configs, generic VDF templates and optional localconfig restore",
-            "implemented_offline_copy_writer_and_cli",
+            "implemented_offline_copy_writer_cli_and_gui",
             "Panel.exe 0x140bfb3d0, 0x140bfc590, 0x140b71430; docs/account-config.md",
             [
                 "tests/adapters/test_account_config.py",
                 "tests/test_config_cli.py",
                 "tests/qa/test_offline_configs.py",
+                "tests/qa/test_offline_config_cli.py",
+                "tests/ui/test_config_files.py",
             ],
         ),
         (
             "CONFIG.AUTOEXEC",
             "Synchronize autoexec in a copied game cfg tree; preserve equal file and timestamps",
-            "implemented_offline_copy_writer_and_cli",
+            "implemented_offline_copy_writer_cli_and_gui",
             "Panel.exe 0x140bf9e40; docs/account-config.md",
             [
                 "tests/adapters/test_autoexec.py",
                 "tests/test_config_cli.py",
                 "tests/qa/test_offline_configs.py",
+                "tests/qa/test_offline_config_cli.py",
+                "tests/ui/test_config_files.py",
             ],
         ),
         (

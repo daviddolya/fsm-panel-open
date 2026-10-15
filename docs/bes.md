@@ -182,7 +182,7 @@ The following source table refers to the supplied `BES/src` tree. These are stat
 source observations; the SHA-256 values identify the exact inspected files.
 
 The Panel consumer is separately recovered at `0x1409572d0..0x140958353`,
-source line23516, in Panel.exe SHA256
+source line 23516, in Panel.exe SHA-256
 `3731a48590e3169071b81aab9338a36b38a788133adfd43fada99ad3add1f308`.
 `build_legacy_bes_plan` in `adapters/bes_plan.py` reproduces its inert command:
 
@@ -195,14 +195,14 @@ It passes one positional string to synchronous `subprocess.call`, with no keywor
 arguments, no application exception handler, and no use of the return code. A
 wrapper at `0x140956f50` starts it on a daemon thread. The BES image path is unquoted;
 both target paths are quoted. The printed debug list instead contains a shorter
-CS2 path, GameOverlayUI and hardcoded50; it is never passed to the subprocess.
-Actual percent values are formatted unchanged twice. The settings fallback25
+CS2 path, GameOverlayUI and hardcoded 50; it is never passed to the subprocess.
+Actual percent values are formatted unchanged twice. The settings fallback 25
 is assigned at `0x1406b2e28`; present values are not cast by the original loader.
 
 The pure planner accepts only typed string/integer inputs, but preserves out-of-range
 integers for characterization. It has no executor. The owned live adapter deliberately
 replaces path-wide `-J` discovery with registered PIDs, addressed commands, lifetime
-handles and a1..99 range. Full UI routing/launch gating remains unresolved; this
+handles and a 1..99 range. Full UI routing/launch gating remains unresolved; this
 finding does not prove automatic BES activation on every game launch.
 
 | Source | Observation used by the adapter |

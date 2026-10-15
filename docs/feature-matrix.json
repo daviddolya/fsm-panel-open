@@ -32,7 +32,11 @@
       "preconditions": "User explicitly imports a legacy JSON copy",
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
-      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implementation": "schema_import_export_and_partial_offline_consumers_implemented",
+      "implemented_offline_consumers": [
+        "GAME.LAUNCH.PREPARE",
+        "CONFIG.ACCOUNT"
+      ],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -62,7 +66,10 @@
       "preconditions": "User explicitly imports a legacy JSON copy",
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
-      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implementation": "schema_import_export_and_partial_offline_consumers_implemented",
+      "implemented_offline_consumers": [
+        "CPU.BES.PREPARE"
+      ],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -83,7 +90,10 @@
       "preconditions": "User explicitly imports a legacy JSON copy",
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
-      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implementation": "schema_import_export_and_partial_offline_consumers_implemented",
+      "implemented_offline_consumers": [
+        "GAME.LAUNCH.PREPARE"
+      ],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -104,7 +114,10 @@
       "preconditions": "User explicitly imports a legacy JSON copy",
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
-      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implementation": "schema_import_export_and_partial_offline_consumers_implemented",
+      "implemented_offline_consumers": [
+        "CONFIG.ACCOUNT"
+      ],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -126,6 +139,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -147,6 +161,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -167,7 +182,11 @@
       "preconditions": "User explicitly imports a legacy JSON copy",
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
-      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implementation": "schema_import_export_and_partial_offline_consumers_implemented",
+      "implemented_offline_consumers": [
+        "CPU.BES",
+        "CPU.BES.PREPARE"
+      ],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -189,6 +208,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -210,6 +230,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -231,6 +252,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -252,6 +274,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -273,6 +296,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -302,7 +326,10 @@
       "preconditions": "User explicitly imports a legacy JSON copy",
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
-      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implementation": "schema_import_export_and_partial_offline_consumers_implemented",
+      "implemented_offline_consumers": [
+        "GAME.LAUNCH.PREPARE"
+      ],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -324,6 +351,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -350,6 +378,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -371,6 +400,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -392,6 +422,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -413,6 +444,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -434,6 +466,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -455,6 +488,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -476,6 +510,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -497,6 +532,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -517,7 +553,10 @@
       "preconditions": "User explicitly imports a legacy JSON copy",
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
-      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implementation": "schema_import_export_and_partial_offline_consumers_implemented",
+      "implemented_offline_consumers": [
+        "GAME.LAUNCH.SETTINGS"
+      ],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -539,6 +578,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -560,6 +600,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -581,6 +622,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -602,6 +644,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -623,6 +666,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -644,6 +688,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -665,6 +710,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -686,6 +732,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -716,6 +763,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -737,6 +785,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -758,6 +807,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -792,6 +842,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -813,6 +864,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -834,6 +886,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -872,6 +925,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -902,6 +956,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -922,7 +977,10 @@
       "preconditions": "User explicitly imports a legacy JSON copy",
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
-      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implementation": "schema_import_export_and_partial_offline_consumers_implemented",
+      "implemented_offline_consumers": [
+        "GAME.LAUNCH.PREPARE"
+      ],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -944,6 +1002,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -965,6 +1024,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -986,6 +1046,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -1007,6 +1068,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -1028,6 +1090,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -1048,7 +1111,10 @@
       "preconditions": "User explicitly imports a legacy JSON copy",
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
-      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implementation": "schema_import_export_and_partial_offline_consumers_implemented",
+      "implemented_offline_consumers": [
+        "GAME.LAUNCH.PREPARE"
+      ],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -1070,6 +1136,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -1107,7 +1174,11 @@
       "preconditions": "User explicitly imports a legacy JSON copy",
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
-      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implementation": "schema_import_export_and_partial_offline_consumers_implemented",
+      "implemented_offline_consumers": [
+        "GAME.LAUNCH.PREPARE",
+        "CONFIG.ACCOUNT"
+      ],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -1129,6 +1200,7 @@
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
+      "implemented_offline_consumers": [],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -1387,16 +1459,54 @@
       "verification": "stand_not_run"
     },
     {
+      "feature_id": "CPU.BES.PREPARE",
+      "action": "Pure exact original BES -J command, separate debug output and fallback25",
+      "evidence": "Panel.exe 0x1409572d0, 0x140956f50, 0x1406b2e28; docs/bes.md",
+      "confidence": "static_contract",
+      "implementation": "implemented_pure_planner_no_executor",
+      "runtime_parity": "not_verified",
+      "tests": [
+        "tests/adapters/test_bes_plan.py",
+        "tests/qa/test_offline_bes.py"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
+    },
+    {
+      "feature_id": "GAME.LAUNCH.SETTINGS",
+      "action": "Resolution split/int/fallback; STEAM_LAUNCH_ONLY_MODE and ENABLE_SHADERS_CACHING truthiness",
+      "evidence": "Panel.exe 0x1406b0d40 bounded settings slices; docs/launch-plan.md",
+      "confidence": "static_contract",
+      "implementation": "implemented_pure_derivation_and_proposal_cli",
+      "runtime_parity": "not_verified",
+      "tests": [
+        "tests/adapters/test_launch_settings.py",
+        "tests/test_launch_preview.py"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
+    },
+    {
       "feature_id": "CONFIG.ACCOUNT",
       "action": "Prepare copied userdata configs, generic VDF templates and optional localconfig restore",
       "evidence": "Panel.exe 0x140bfb3d0, 0x140bfc590, 0x140b71430; docs/account-config.md",
       "confidence": "static_contract",
-      "implementation": "implemented_offline_copy_writer_and_cli",
+      "implementation": "implemented_offline_copy_writer_cli_and_gui",
       "runtime_parity": "not_verified",
       "tests": [
         "tests/adapters/test_account_config.py",
         "tests/test_config_cli.py",
-        "tests/qa/test_offline_configs.py"
+        "tests/qa/test_offline_configs.py",
+        "tests/qa/test_offline_config_cli.py",
+        "tests/ui/test_config_files.py"
       ],
       "preconditions": "See linked subsystem contract; original unresolved where not documented",
       "input": "See linked contract",
@@ -1410,12 +1520,14 @@
       "action": "Synchronize autoexec in a copied game cfg tree; preserve equal file and timestamps",
       "evidence": "Panel.exe 0x140bf9e40; docs/account-config.md",
       "confidence": "static_contract",
-      "implementation": "implemented_offline_copy_writer_and_cli",
+      "implementation": "implemented_offline_copy_writer_cli_and_gui",
       "runtime_parity": "not_verified",
       "tests": [
         "tests/adapters/test_autoexec.py",
         "tests/test_config_cli.py",
-        "tests/qa/test_offline_configs.py"
+        "tests/qa/test_offline_configs.py",
+        "tests/qa/test_offline_config_cli.py",
+        "tests/ui/test_config_files.py"
       ],
       "preconditions": "See linked subsystem contract; original unresolved where not documented",
       "input": "See linked contract",
