@@ -35,6 +35,7 @@ from .bridge import AsyncBridge
 from .config_files import ConfigFilesWidget
 from .cpu import CpuPanel
 from .gsi_config import GsiConfigPanel
+from .notifications import NotificationPanel
 from .trades import TradePanel
 from .video import VideoPanel
 
@@ -107,6 +108,8 @@ class MainWindow(QMainWindow):
         self.tabs.addTab(self.cpu, "Ограничение CPU")
         self.trades = TradePanel(self)
         self.tabs.addTab(self.trades, "Предметы и обмены")
+        self.notifications = NotificationPanel(self)
+        self.tabs.addTab(self.notifications, "Уведомления")
         self._build_license()
         self.bridge.license_state.connect(self.license_status.setText)
         self._build_compatibility()
@@ -432,7 +435,10 @@ class MainWindow(QMainWindow):
                                 finally:
                                     await self.cpu.aclose()
                     finally:
-                        await self.trades.aclose()
+                        try:
+                            await self.trades.aclose()
+                        finally:
+                            await self.notifications.aclose()
                 finally:
                     try:
                         await self.cpu_runtime.close()

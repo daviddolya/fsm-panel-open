@@ -211,6 +211,36 @@ The receipt caller guards falsey configured token/destination before applying
 inactivity state. The pure helpers are components, not a complete fanout engine;
 callers must retain those ordering distinctions if they later reconstruct it.
 
+## Manual desktop commands
+
+The **Уведомления** tab loads `TG_BOT_API_KEY`, `TG_BOT_CHAT_ID`, and
+`PROXY_FOR_TG` only after the operator presses the load button. Token and proxy
+fields are masked; editing this form does not save settings. A comma-separated
+legacy destination must be reduced explicitly to one `chat_id[:thread_id]`.
+The panel offers text, one photo with caption, and editing by message ID.
+Text/captions use HTML. Automatic event delivery and batch fanout are not wired.
+
+Each new command checks the existing online lease before constructing a client.
+The simulator refuses real sends even if the submit method is called directly.
+Cancellation and application shutdown need no lease. Each command owns a fresh
+client, keeps the form busy until request/cleanup completion, and sends at most
+one HTTP request. Closing the window cancels and joins its request; cancelling a
+close waiter does not detach cleanup. A confirmed result survives cancellation
+during client closure. An uncertain result tells the operator to inspect the
+chat before submitting again. No durable notification queue or automatic replay
+exists in this version.
+
+The imported proxy is retained verbatim. Unsupported legacy syntax or a malformed
+value fails before transmission instead of silently selecting a direct connection.
+Use the conventional HTTP(S) URL format described above. `PROXY_FOR_TG` is now
+redacted in ordinary settings exports and sealed by the application settings
+vault, including case variants. Previously retained plaintext source files and
+backup copies are not rewritten by this change.
+
+These UI workflows are tested with synthetic MockTransport requests only. They
+are new operator controls over recovered send/edit contracts, not proof of the
+original screen layout or live Telegram delivery.
+
 ## Evidence and verification limits
 
 The implementation handoff is the sanitized static report
