@@ -278,12 +278,13 @@ The root is `RvorgLqLUOoP`, source descriptor `FSMPANEL_CS2.py:9341`, native ran
 | Userdata helper and exact-int subtraction | `0x140bfb190..0x140bfb3ce`, `0x142d0d7b0..0x142d0d8c6` |
 | Generic subtraction fallback | `0x142d17f20..0x142d17ff7` |
 
-Unimplemented surrounding behavior includes the preceding config helper
-(`0x140bfc590..0x140c045bd`), actual config/GSI writers, layout helper, entry gating,
+Unimplemented launch orchestration includes invoking the preceding config helper
+(`0x140bfc590..0x140c045bd`) and config/GSI writers, layout helper, entry gating,
 launch-locker timing, process/window detection, updater validation, login entry,
 retries, and global exception handling. A nearby missing-autoexec log does not
 prove creation: `0x14067cd39..0x14067d349` checks existence and logs without a
-bounded write. No filesystem, registry or process execution adapter is supplied.
+bounded write. This planner has no filesystem, registry or process executor;
+separate guarded offline config writers are described in `account-config.md`.
 
 Tests use synthetic inputs and expected strings, branch matrices, arbitrary
 integer arithmetic, immutable snapshots, and forbidden host dependencies. They
@@ -295,8 +296,8 @@ or complete launch behavior. Private dumps and original files are not distribute
 
 Copy `docs/examples/launch-input.json` to private working data and replace its
 synthetic values. Every planner setting and existence fact is explicit; values are
-not silently inferred from the host or the 49-key settings file. In particular,
-dimension derivation and extra runtime flags are outside that schema.
+not silently inferred from the host. The optional `legacy_settings` input above
+derives dimensions and extra flags; otherwise supply those planner fields directly.
 
 ```powershell
 uv run python -m fsm_panel.launch_preview --input C:\private\launch-input.json --output C:\private\launch-proposal.json
