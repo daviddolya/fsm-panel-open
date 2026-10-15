@@ -3,7 +3,8 @@
 Updated: 2026-10-15. Review started at `791cd8a`; fixes were independently checked
 through CLI integration `44c79da`, BES planner `3caf37c`, launch-settings derivation
 `c78fd79`, desktop config integration `11ac614`, GSI adapter `bdeedba` and GSI CLI
-`3199344`, then GSI desktop integration `90f9763`, in a separate QA worktree.
+`3199344`, GSI desktop integration `90f9763`, and Telegram transport `50c29ee`,
+in a separate QA worktree.
 The reviewer owns the tests and this report, not the implementation.
 
 The video, BES and launch checks found five issues: lost recovery metadata, a
@@ -21,7 +22,9 @@ The original panel, BES and Steam were not executed. Fixtures contain synthetic
 configuration text in temporary directories. Qt checks run the reconstructed UI
 with a simulated coordinator. Windows checks use read-only handles to inspect the
 test Python process and disposable Python children. No real window receives a message.
-These checks do not establish original runtime parity or live Steam compatibility.
+Telegram requests use synthetic HTTPX MockTransport handlers only; no network
+connection or real message was sent. These checks do not establish original runtime
+parity, live Steam compatibility or Telegram delivery.
 
 ## Evidence and review scope
 
@@ -438,6 +441,42 @@ substituting a preconstructed error result. No additional production defect was
 reproduced. This is behavioral Qt integration evidence, not visual parity,
 original-app execution, a live GSI receiver test or proof of game compatibility.
 
+## Telegram legacy contracts and owned transport
+
+[The independent Telegram tests](../tests/qa/test_telegram_boundaries.py) add 60
+cases against `50c29ee`, the integrated `b296a0a` author checkpoint. The review
+used the sanitized static Telegram specification dated 2026-10-15 and the
+[public contract](telegram.md). It did not read original bot tokens or raw native
+constants. Every HTTP operation uses an owned MockTransport with synthetic data.
+
+| Requirement | Independent check | Result |
+| --- | --- | --- |
+| Preserve literal legacy proxy rules | Seventeen fixtures cover numeric-port precedence around `@`, reversed credentials, ignored third component, colon-containing passwords, empty credentials, raw schemes, unvalidated ports and bracketed address differences | Pass |
+| Preserve split and return differences | Threaded components retain empty/raw entries and require exactly two colon parts; receipt components strip/filter and split once; falsey non-None IDs remain receipts | Pass |
+| Preserve all eight request shapes | Form fields, raw HTML, distinct topic/reply fields, scalar timeouts, disabled legacy TLS flag and repeated path-photo names/MIME are checked with file/socket access forbidden | Pass |
+| Preserve event and fallback quirks as pure data | Inactivity matching is case-sensitive; truthy repeating bypasses suppression; state updates precede delivery; important-filter expansion and empty substrings retain their rules; a normal None fanout return can request a producer repeat | Pass |
+| Retain uncertain delivery outcomes | Malformed replies, non-Boolean success, unusable IDs, wrong edit IDs, redirects, server errors and post-header connection exceptions remain uncertain; explicit rejection stays rejected | Pass |
+| Avoid implicit retries and fallback | Each ambiguous photo operation makes one request, including write/read/protocol failures and deadline expiry; explicit rejection does not send text; two explicit identical calls remain two separate attempts | Pass |
+| Own upload handles | Failure opening a second file closes the first without dispatch; ambiguous multipart sends close both files and expose neither original filename in the multipart body | Pass |
+| Join repeated cancellation | Cancel a request twice during delayed EOF cleanup, then close its client; both await cleanup, transport close follows stream close, and cancellation retains the validated message ID | Pass |
+| Preserve close ownership | Cancel a close waiter twice and verify cleanup still finishes before cancellation propagates; closing one client leaves a second client's pending request usable | Pass |
+| Bound streamed responses | Exactly 64 KiB of valid JSON plus whitespace is accepted; one byte more ends body iteration and closes the response without a second request | Two cases pass |
+| Keep diagnostics private | Sensitive synthetic values remain absent from request/cleanup logs, results, reprs and formatted close-error traceback; unrelated task logs remain observable | Pass |
+
+Pre-commit source review discussed HTTPX EOF auto-close cancellation and
+post-header connection-error classification. Both safeguards were present in the
+first stable snapshot executed by this reviewer; no pre-fix runtime reproduction
+is claimed. No additional production defect was reproduced at that checkpoint.
+An injected response-close failure retains an already validated delivery result;
+an injected transport-close failure remains a content-free configuration error
+and does not falsely report a closed client.
+
+The strict new transport intentionally does not execute the legacy fallback,
+daemon fanout or producer-repeat policies. These tests establish local request,
+result and ownership behavior; they do not establish live Telegram acceptance of
+repeated photo parts, proxy compatibility, original runtime parity or actual
+delivery. GUI integration is outside this backend review.
+
 ## Reproduction environment and results
 
 Windows, Python 3.14.6, PySide6 6.12.0, pytest 9.1.1. Dependencies were installed
@@ -456,6 +495,7 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_config_ui.py tests/qa/test_offline_launch_settings.py tests/ui/test_config_files.py tests/ui/test_window.py tests/qa/test_gui_shutdown.py tests/adapters/test_launch_settings.py tests/test_launch_preview.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_gsi_config.py tests/adapters/test_gsi_config.py tests/test_gsi_cli.py tests/test_config_cli.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_gsi_ui.py tests/ui/test_gsi_config_panel.py tests/qa/test_offline_config_ui.py tests/ui/test_window.py tests/qa/test_gui_shutdown.py -q
+.venv/Scripts/python.exe -m pytest tests/qa/test_telegram_boundaries.py tests/notifications -q
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_configs.py
@@ -468,6 +508,8 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_gsi_config.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_gsi_ui.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_gsi_ui.py
+.venv/Scripts/python.exe -m ruff check tests/qa/test_telegram_boundaries.py
+.venv/Scripts/python.exe -m ruff format --check tests/qa/test_telegram_boundaries.py
 ```
 
 - Existing video suite: **81 passed, 4 skipped**. The skipped cases require
@@ -508,9 +550,12 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 - GSI desktop integration: **21 new independent cases passed** at `90f9763`;
   **74 passed** together with the author GSI GUI suite, independent config-page
   suite, MainWindow and GUI shutdown checks. No skips or expected failures.
+- Telegram backend: **60 new independent cases passed** at `50c29ee`;
+  **173 passed** together with the author's pure legacy and transport suites.
+  No skips or expected failures; every request used MockTransport.
 - Ruff checks and formatting: **pass**.
 - Pytest emitted an existing Starlette/httpx deprecation warning through the
-  shared QA fixture imports; it did not affect the file or UI results.
+  shared QA fixture imports; it did not affect these results.
 
 Unresolved stand work includes original caller timing, launch/account integration,
 real external application behavior, Windows policy variations and cross-process
