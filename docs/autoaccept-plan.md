@@ -10,6 +10,8 @@ The original is Panel.exe SHA-256
 The contract comes from bounded, read-only native analysis. The private sanitized
 checkpoint-02 SHA-256 is
 `f982fd546442e3d61972fa4d75cb50ca2d995793105ed020354caf7f8c7bfbf5`.
+Registration/default observations additionally use checkpoint-03 SHA-256
+`7a181252c803069b4a9ccfb56673cc3e8f5b2ad38476d07ae13a1c8fb7eabb0e`.
 Only behavioral anchors are included here; private dumps remain outside Git.
 Synthetic tests establish the reconstruction contract, not successful CS2 input
 or runtime parity with the original executable.
@@ -54,6 +56,14 @@ The trace does not emit lock-enter/exit calls or emulate lock implementation
 errors. The original context managers exit acquired locks on exceptional paths.
 
 ## Immediate dispatcher
+
+The original function is registered with defaults `(4.0, None)`. The delay
+comes from `MIN_ACCEPT_DELAY`, captured when the function is constructed;
+subsequent global changes do not change that stored default. Initialization is
+at `0x140c212b5..0x140c212ca`, registration at `0x140c2148e..0x140c214dd`.
+The trace API deliberately requires both parameters explicitly. The recovered
+co-op caller supplies an explicitly computed delay and server instead of relying
+on these defaults.
 
 The trace describes printing the accept notice and capturing wall-clock start
 time before the outer lock. It reads `ALTERNATIVE_AUTOACCEPTER` under that lock.
@@ -204,10 +214,12 @@ any request, including the alternative branch; that validation is not legacy
 behavior. Finite delays have no artificial upper bound.
 
 The exact contracts above cover immediate operations. Their descriptive names do
-not establish scheduler cadence, caller defaults, ticket/event selection, account
-file queue completion, or real library behavior. The larger autoaccept event/log
-reader and ticket activation flow remain unresolved. No inferred scheduler or
-ownership policy is implemented here.
+not establish scheduler cadence, account file queue completion, or real library
+behavior. Checkpoint 03 also recovers one co-op caller (`0x140b43580`), including
+ticket normalization, state updates and explicit delay/server arguments. That
+caller is outside these six generators; the larger event/log reader, another
+caller and helper internals remain unresolved. No inferred scheduler or ownership
+policy is implemented here.
 
 A future executor needs a separately specified window ownership and focus
 contract, cancellable waits, and deliberate release/unblock cleanup. These would
@@ -216,7 +228,7 @@ be new behavior. Synthetic traces cannot establish ownership or actual game inpu
 Run the focused checks from the repository root:
 
 ```powershell
-uv run --frozen python -m pytest tests/adapters/test_autoaccept_plan.py
+uv run --frozen python -m pytest tests/adapters/test_autoaccept_plan.py tests/qa/test_autoaccept_boundaries.py
 uv run --frozen ruff check src/fsm_panel/adapters/autoaccept_plan.py tests/adapters/test_autoaccept_plan.py
 uv run --frozen mypy src/fsm_panel/adapters/autoaccept_plan.py tests/adapters/test_autoaccept_plan.py
 ```

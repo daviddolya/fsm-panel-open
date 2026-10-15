@@ -601,6 +601,9 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 - Inert autoaccept generators: **47 new independent cases passed** at `0d7f2d1`;
   **143 passed** together with the author autoaccept and existing input-plan
   suites. No skips or expected failures; all effects remained inert requests.
+- Integrated autoaccept run at `a8f4561`: **1481 passed, 6 skipped,
+  6 PostgreSQL deselected**. The six OS symlink cases still require additional
+  Windows privileges; the core branch coverage remains 219/240 (91.25%).
 - Ruff checks and formatting: **pass**.
 - Pytest emitted an existing Starlette/httpx deprecation warning through the
   shared QA fixture imports; it did not affect these results.

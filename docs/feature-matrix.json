@@ -693,8 +693,10 @@
       "preconditions": "User explicitly imports a legacy JSON copy",
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
-      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
-      "implemented_offline_consumers": [],
+      "implementation": "schema_import_export_and_partial_offline_consumers_implemented",
+      "implemented_offline_consumers": [
+        "GAME.AUTOACCEPT.TRACE"
+      ],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -985,7 +987,8 @@
       "external_effects": "Encrypted file and backup; no game configuration writes",
       "implementation": "schema_import_export_and_partial_offline_consumers_implemented",
       "implemented_offline_consumers": [
-        "GAME.LAUNCH.PREPARE"
+        "GAME.LAUNCH.PREPARE",
+        "GAME.AUTOACCEPT.TRACE"
       ],
       "runtime_parity": "not_verified",
       "tests": [
@@ -1457,6 +1460,42 @@
       "implementation": "blocked_specification",
       "runtime_parity": "blocked_original_license",
       "tests": [],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
+    },
+    {
+      "feature_id": "GAME.AUTOACCEPT.TRACE",
+      "action": "Deferred dispatcher, row count, abandonment, click and pixel-poll traces",
+      "evidence": "Panel.exe 0x140b39620 and bounded helpers; docs/autoaccept-plan.md",
+      "confidence": "static_contract",
+      "implementation": "implemented_inert_generators_no_input_or_scheduler",
+      "runtime_parity": "not_verified",
+      "tests": [
+        "tests/adapters/test_autoaccept_plan.py",
+        "tests/qa/test_autoaccept_boundaries.py"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
+    },
+    {
+      "feature_id": "INPUT.TITLE_ACTIVATION.PLAN",
+      "action": "Describe three title-activation attempts and failure delays without ownership claims",
+      "evidence": "Panel.exe 0x140a1c4e0; docs/autoaccept-plan.md",
+      "confidence": "static_contract",
+      "implementation": "implemented_inert_generator_no_window_execution",
+      "runtime_parity": "not_verified",
+      "tests": [
+        "tests/adapters/test_autoaccept_plan.py",
+        "tests/qa/test_autoaccept_boundaries.py"
+      ],
       "preconditions": "See linked subsystem contract; original unresolved where not documented",
       "input": "See linked contract",
       "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",

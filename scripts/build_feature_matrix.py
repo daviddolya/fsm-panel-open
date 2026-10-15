@@ -27,7 +27,8 @@ def main() -> None:
         "STEAM_LAUNCH_OPTIONS": ["GAME.LAUNCH.PREPARE"],
         "ADDITIONAL_LAUNCH_OPTIONS": ["GAME.LAUNCH.PREPARE"],
         "ANCIENT_MAP_PRELOAD": ["GAME.LAUNCH.PREPARE"],
-        "RUNNING2VS2": ["GAME.LAUNCH.PREPARE"],
+        "RUNNING2VS2": ["GAME.LAUNCH.PREPARE", "GAME.AUTOACCEPT.TRACE"],
+        "ALTERNATIVE_AUTOACCEPTER": ["GAME.AUTOACCEPT.TRACE"],
         "ANTI_AFK_POWER": ["GAME.ANTIAFK.FRAGMENT"],
         "TG_BOT_API_KEY": ["NOTIFY.TELEGRAM"],
         "TG_BOT_CHAT_ID": ["NOTIFY.TELEGRAM"],
@@ -112,6 +113,26 @@ def main() -> None:
             }
         )
     for identifier, action, status, evidence, tests in [
+        (
+            "GAME.AUTOACCEPT.TRACE",
+            "Deferred dispatcher, row count, abandonment, click and pixel-poll traces",
+            "implemented_inert_generators_no_input_or_scheduler",
+            "Panel.exe 0x140b39620 and bounded helpers; docs/autoaccept-plan.md",
+            [
+                "tests/adapters/test_autoaccept_plan.py",
+                "tests/qa/test_autoaccept_boundaries.py",
+            ],
+        ),
+        (
+            "INPUT.TITLE_ACTIVATION.PLAN",
+            "Describe three title-activation attempts and failure delays without ownership claims",
+            "implemented_inert_generator_no_window_execution",
+            "Panel.exe 0x140a1c4e0; docs/autoaccept-plan.md",
+            [
+                "tests/adapters/test_autoaccept_plan.py",
+                "tests/qa/test_autoaccept_boundaries.py",
+            ],
+        ),
         (
             "GAME.ANTIAFK.FRAGMENT",
             "Ordered additional-AFK requests with deferred samples and late power read",

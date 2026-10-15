@@ -126,6 +126,7 @@ uv run python scripts/verify_desktop.py dist/FSMPanelOpen/FSMPanelOpen.exe --out
 - `docs/account-config.md`, `docs/config-tools.md` — запись конфигов в рабочую копию.
 - `docs/gsi-config.md` — подготовка GSI-конфига и восстановленный выбор порта.
 - `docs/input-plan.md` — восстановленный фрагмент anti-AFK без исполнения ввода.
+- `docs/autoaccept-plan.md` — диспетчер, проверки и планы действий autoaccept.
 - `docs/telegram.md` — транспорт, ручные уведомления и совместимость старых обработчиков.
 - `docs/operations.md`, `docs/development.md` — работа, резервные копии и передача команды.
 - `docs/stand-acceptance.md` — отложенные реальные проверки.
