@@ -74,6 +74,29 @@ The selected encoding decodes the token source and encodes the output. UTF-8
 is the default. Output line endings are deterministic CRLF. This encoding policy
 is a reconstruction choice, not a claim about the legacy runtime's default codec.
 
+## Desktop panel
+
+Create a workspace on **Конфиги игры**, then select that existing workspace in
+the GSI panel. Choose a token file outside the workspace, enter the destination
+port and file index, and select an encoding. The default encoding is UTF-8.
+The panel neither generates tokens nor provides a field for pasting token values.
+
+**Предпросмотр** opens and validates the marked workspace in the background.
+The summary shows the indexed filename, write/removal counts, and plan
+fingerprint. It never displays the rendered configuration or token contents.
+Review that summary, then select **Применить к копии**.
+
+Changing any input clears the reviewed preview, including a temporary edit that
+is changed back. Applying checks the reviewed fingerprint and revalidates source
+and destination snapshots. A stale preview must be regenerated. Successful
+writes display the backup path; failures show fixed error codes and available
+recovery paths without arbitrary exception text.
+
+`GsiConfigPanel(owner)` uses `owner.bridge` for all file operations. The owner
+must await `panel.aclose()` before shutting down that shared bridge. Closing
+blocks new requests and waits for pending file work without cancelling a tree
+replacement. Qt remains responsive while the background work finishes.
+
 ## Recovered behavior and evidence
 
 The static source is `FSM_PANEL v.3.1.2/Panel.exe`, SHA-256
