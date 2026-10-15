@@ -3,7 +3,7 @@
 Updated: 2026-10-15. Review started at `791cd8a`; fixes were independently checked
 through CLI integration `44c79da`, BES planner `3caf37c`, launch-settings derivation
 `c78fd79`, desktop config integration `11ac614`, GSI adapter `bdeedba` and GSI CLI
-`3199344` in a separate QA worktree.
+`3199344`, then GSI desktop integration `90f9763`, in a separate QA worktree.
 The reviewer owns the tests and this report, not the implementation.
 
 The video, BES and launch checks found five issues: lost recovery metadata, a
@@ -409,7 +409,34 @@ the pure supplied-outcome transformation, not availability of any port or live
 listener behavior. The filesystem tests use synthetic temporary trees and local
 Python only. They do not validate the original GSI HTTP handler, live game ingest,
 writer/listener ordering, full GUI entry conditions, cross-process transactions
-or power-loss recovery. The new GSI GUI is outside this checkpoint.
+or power-loss recovery. The new GSI GUI is reviewed separately below.
+
+## GSI controls in the shared desktop
+
+[The independent GSI desktop tests](../tests/qa/test_offline_gsi_ui.py) add 21 cases
+against `90f9763`. Unlike the implementation-owner tests' lightweight owner, these
+checks instantiate MainWindow with its shared bridge and both real config panels.
+All filesystem operations use synthetic temporary data; the coordinator is a
+simulator and no network operations are performed.
+
+| Requirement | Independent check | Result |
+| --- | --- | --- |
+| Keep workspace selection explicit | A workspace created on the config page is not silently selected by GSI; the same bridge serves both, and explicit GSI apply ignores a different global game path | Pass |
+| Recheck the reviewed selection | Suppress Qt change signals while editing each of the five inputs; apply still invalidates the review without submitting work or writing files | Five cases pass |
+| Recheck a pending selection | Change the index without an edit signal after reading the real preview but before returning it; completion cannot enable apply | Pass |
+| Isolate shared-bridge errors | An unrelated failed task neither completes the pending GSI operation nor exposes its private exception text in the window log or panel | Pass |
+| Bind file identities | Replace the token or selected target with identical bytes and timestamps; displayed previews are rejected before any write | Two cases pass |
+| Preserve cross-page review safety | Apply GSI then autoexec, or autoexec then GSI; the second page's old preview fails stale and cannot overwrite the first result | Two cases pass |
+| Display actual recovery state | Deny install, optionally deny rollback and stage cleanup; status reports only paths that remain, exact old-tree backup/restoration, no success wording and no token/error contents | Four cases pass |
+| Wait for real GSI staging | Close twice during a real tree copy with unchanged or edited token, and with or without failure of earlier config-page cleanup; Qt remains responsive and both coordinator/executor threads exit | Four cases pass |
+| Drain simultaneous config writers | Start GSI staging and queue an autoexec apply, then close MainWindow; GSI commits once, autoexec reports stale, one exact backup remains and shutdown completes | Pass |
+
+Successful previews and writes expose neither token bytes nor token-source paths
+in summaries, logs or status. Recovery text uses Qt plain text. The four failed
+install cases inspect the actual retained backup and stage trees rather than
+substituting a preconstructed error result. No additional production defect was
+reproduced. This is behavioral Qt integration evidence, not visual parity,
+original-app execution, a live GSI receiver test or proof of game compatibility.
 
 ## Reproduction environment and results
 
@@ -428,6 +455,7 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_bes.py tests/adapters/test_bes.py tests/adapters/test_bes_plan.py tests/test_cpu.py tests/ui/test_cpu_panel.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_config_ui.py tests/qa/test_offline_launch_settings.py tests/ui/test_config_files.py tests/ui/test_window.py tests/qa/test_gui_shutdown.py tests/adapters/test_launch_settings.py tests/test_launch_preview.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_gsi_config.py tests/adapters/test_gsi_config.py tests/test_gsi_cli.py tests/test_config_cli.py -q
+.venv/Scripts/python.exe -m pytest tests/qa/test_offline_gsi_ui.py tests/ui/test_gsi_config_panel.py tests/qa/test_offline_config_ui.py tests/ui/test_window.py tests/qa/test_gui_shutdown.py -q
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_configs.py
@@ -438,6 +466,8 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_config_ui.py tests/qa/test_offline_launch_settings.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_gsi_config.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_gsi_config.py
+.venv/Scripts/python.exe -m ruff check tests/qa/test_offline_gsi_ui.py
+.venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_gsi_ui.py
 ```
 
 - Existing video suite: **81 passed, 4 skipped**. The skipped cases require
@@ -475,6 +505,9 @@ $env:QT_QPA_PLATFORM = 'offscreen'
   **158 passed, 2 skipped** together with the author GSI adapter and both config
   CLI suites. The two author-suite symlink cases require privileges unavailable
   on this Windows host; they are not counted as verified OS behavior.
+- GSI desktop integration: **21 new independent cases passed** at `90f9763`;
+  **74 passed** together with the author GSI GUI suite, independent config-page
+  suite, MainWindow and GUI shutdown checks. No skips or expected failures.
 - Ruff checks and formatting: **pass**.
 - Pytest emitted an existing Starlette/httpx deprecation warning through the
   shared QA fixture imports; it did not affect the file or UI results.
