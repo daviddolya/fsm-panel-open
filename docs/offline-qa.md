@@ -553,6 +553,16 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 - Telegram backend: **60 new independent cases passed** at `50c29ee`;
   **173 passed** together with the author's pure legacy and transport suites.
   No skips or expected failures; every request used MockTransport.
+- Telegram desktop and vault upgrade: **33 independent cases passed** after
+  `9b1f229`. Review found cancellation/known-receipt loss, omitted proxy import,
+  old-vault incompatibility and nested unsealed v1 secret acceptance. Root fixes
+  were independently verified; the latter reproduced as two failures before
+  `9b1f229`. Actual MainWindow shutdown joins notification cleanup even after a
+  trade cleanup failure. All request traffic is synthetic MockTransport.
+- Integrated run at `fe25337`: **1382 passed, 6 skipped, 6 PostgreSQL deselected**.
+  The complete run first exposed Alembic disabling existing HTTP loggers;
+  `ecf5bb9` fixes the logging boundary. Scoped Telegram privacy checks still
+  assert that unrelated logging remains available.
 - Ruff checks and formatting: **pass**.
 - Pytest emitted an existing Starlette/httpx deprecation warning through the
   shared QA fixture imports; it did not affect these results.

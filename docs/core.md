@@ -154,6 +154,11 @@ document = vault.load("private/settings.vault.json")
 
 The versioned vault envelope contains ordinary values and opaque secret references.
 Sensitive fields are encrypted as JSON values, including nested objects and arrays.
+New saves use `fsm-panel-settings-v2`, which also protects `PROXY_FOR_TG` and case
+variants of secret keys. Reading v1 is read-only and retains its historical nested
+secret checks. The next save seals the current document and the previous document's
+backup as v2. Previously retained external copies are unchanged. These format labels
+provide compatibility, not authenticated downgrade protection.
 `save(document, path, backup=True)`, `load(path)`, and `restore_backup(path)` mirror the import APIs.
 Save legacy imports to a distinct vault destination; the vault refuses to back up a plaintext legacy file.
 Fresh references on every save keep earlier backups decryptable. No automatic reference deletion or GC runs,
