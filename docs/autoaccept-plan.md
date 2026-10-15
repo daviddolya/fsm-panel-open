@@ -217,7 +217,8 @@ The exact contracts above cover immediate operations. Their descriptive names do
 not establish scheduler cadence, account file queue completion, or real library
 behavior. Checkpoint 03 also recovers one co-op caller (`0x140b43580`), including
 ticket normalization, state updates and explicit delay/server arguments. That
-caller is outside these six generators; the larger event/log reader, another
+caller is implemented separately in [the co-op trace](coop-accept-plan.md);
+the larger event/log reader, another
 caller and helper internals remain unresolved. No inferred scheduler or ownership
 policy is implemented here.
 
