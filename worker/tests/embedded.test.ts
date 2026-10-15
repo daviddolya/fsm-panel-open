@@ -1,4 +1,4 @@
-import { afterEach, expect, it } from "vitest";
+import { afterEach, expect, it, vi } from "vitest";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -25,7 +25,35 @@ function request(method="activity",params={}, extra={}) {
     admission:{ expires_at_ms:Date.now()+30_000 },params:{ account_id:"account-a",operation_id:"intent-a",
       credentials,app_ids:[730,440,730],duration_ms:60_000,machine_name:"Synthetic",...params },...extra });
 }
-afterEach(() => { for (const close of cleanups.splice(0)) close(); });
+afterEach(() => {
+  vi.useRealTimers();
+  for (const close of cleanups.splice(0)) close();
+});
+
+// Keep real SQLite persistence, but advance admission time only at the observed
+// transport boundary. Host disk latency must not select a different operation phase.
+function controlledTime() {
+  vi.useFakeTimers({toFake:["Date","setTimeout","clearTimeout"]});
+  vi.setSystemTime(new Date("2026-01-01T00:00:00Z"));
+}
+function gate() {
+  const entered=Promise.withResolvers<void>();
+  const released=Promise.withResolvers<void>();
+  return {
+    entered:entered.promise,
+    release:()=>released.resolve(),
+    wait:(signal:AbortSignal)=>new Promise<void>((resolve,reject)=>{
+      const abort=()=>{ signal.removeEventListener("abort",abort); reject(signal.reason); };
+      signal.addEventListener("abort",abort,{once:true});
+      entered.resolve();
+      if(signal.aborted) abort();
+      void released.promise.then(()=>{
+        signal.removeEventListener("abort",abort);
+        if(signal.aborted) reject(signal.reason); else resolve();
+      });
+    }),
+  };
+}
 it("selected assets bypass inventory fetch, deduplicate, and carry comment only as send input", async () => {
   const {engine,transport}=fixture({ pages:{"730/2":[{error:true}]} });
   const calls:{assets:Asset[];comment:string|undefined}[]=[];
@@ -53,22 +81,77 @@ it("unknown free-licence response blocks another activity ID and is not treated 
   expect(transport.freeLicenseCount).toBe(1);
 });
 it("admission expiration during warmup prevents gamesPlayed and cleans up", async () => {
-  const {engine,transport}=fixture({activity_delay_ms:200});
-  expect((await engine.handle(request("activity",{}, {admission:{expires_at_ms:Date.now()+50}}))).result)
-    .toMatchObject({state:"cancelled",code:"admission_expired"});
-  expect(transport.played).toEqual([[]]);
+  controlledTime();
+  const {engine,journal,transport}=fixture();
+  const warmup=gate();
+  transport.activityDelay=async(ms,signal)=>{
+    expect(ms).toBe(80_000);
+    await warmup.wait(signal);
+  };
+  const running=engine.handle(request("activity",{}, {admission:{expires_at_ms:Date.now()+50}}));
+  try {
+    await warmup.entered;
+    expect(journal.getActivity("intent-a","account-a").state).toBe("warming_up");
+    expect(transport.freeLicenseCount).toBe(1);
+    await vi.advanceTimersByTimeAsync(49);
+    expect(transport.played).toEqual([]);
+    expect(journal.getActivity("intent-a","account-a").state).toBe("warming_up");
+    await vi.advanceTimersByTimeAsync(1);
+    expect((await running).result).toMatchObject({state:"cancelled",code:"admission_expired"});
+    expect(transport.played).toEqual([[]]);
+    expect(vi.getTimerCount()).toBe(0);
+  } finally { engine.stop(); await running; }
+});
+it("admission expiration before a free-licence receipt preserves unknown outcome", async () => {
+  controlledTime();
+  const {engine,journal,transport}=fixture();
+  const pending=gate();
+  transport.freeLicenses=async(_ids,signal)=>{
+    transport.freeLicenseCount++;
+    await pending.wait(signal);
+    return [730,440];
+  };
+  const warmup=vi.spyOn(transport,"activityDelay");
+  const running=engine.handle(request("activity",{}, {admission:{expires_at_ms:Date.now()+50}}));
+  try {
+    await pending.entered;
+    expect(journal.getActivity("intent-a","account-a").state).toBe("unknown_outcome");
+    await vi.advanceTimersByTimeAsync(50);
+    expect((await running).result).toMatchObject({state:"unknown_outcome",code:"admission_expired"});
+    expect(warmup).not.toHaveBeenCalled();
+    expect(transport.played).toEqual([[]]);
+    expect(transport.freeLicenseCount).toBe(1);
+    expect(vi.getTimerCount()).toBe(0);
+  } finally { engine.stop(); await running; }
 });
 it("renewal keeps admitted activity alive, cancellation clears a running presence", async () => {
-  const {engine,transport}=fixture({activity_delay_ms:100});
+  controlledTime();
+  const {engine,journal,transport}=fixture();
+  const warmup=gate(), presence=gate();
+  let phases=0;
+  transport.activityDelay=async(ms,signal)=>{
+    phases++;
+    expect(ms).toBe(phases===1 ? 80_000 : 60_000);
+    await (phases===1 ? warmup : presence).wait(signal);
+  };
   const initial=request("activity",{}, {admission:{expires_at_ms:Date.now()+80}});
   const running=engine.handle(initial);
-  await new Promise(resolve=>setTimeout(resolve,15));
-  expect((await engine.handle(parseRequest({version:1,request_id:randomUUID(),method:"renew",timeout_ms:1000,
-    params:{target_request_id:initial.request_id},admission:{expires_at_ms:Date.now()+2000}}))).result).toEqual({renewed:true});
-  for(let attempt=0;attempt<100 && transport.played.length===0;attempt++) await new Promise(resolve=>setTimeout(resolve,5));
-  expect(transport.played[0]).toEqual([730,440]);
-  await engine.handle(parseRequest({version:1,request_id:randomUUID(),method:"cancel",timeout_ms:1000,
-    params:{target_request_id:initial.request_id}}));
-  expect((await running).result).toMatchObject({state:"cancelled",code:"cancelled"});
-  expect(transport.played.at(-1)).toEqual([]);
+  try {
+    await warmup.entered;
+    await vi.advanceTimersByTimeAsync(15);
+    expect((await engine.handle(parseRequest({version:1,request_id:randomUUID(),method:"renew",timeout_ms:1000,
+      params:{target_request_id:initial.request_id},admission:{expires_at_ms:Date.now()+2000}}))).result).toEqual({renewed:true});
+    await vi.advanceTimersByTimeAsync(65); // Cross the superseded original admission deadline.
+    expect(journal.getActivity("intent-a","account-a").state).toBe("warming_up");
+    expect(transport.played).toEqual([]);
+    warmup.release();
+    await presence.entered;
+    expect(transport.played).toEqual([[730,440]]);
+    await engine.handle(parseRequest({version:1,request_id:randomUUID(),method:"cancel",timeout_ms:1000,
+      params:{target_request_id:initial.request_id}}));
+    expect((await running).result).toMatchObject({state:"cancelled",code:"cancelled"});
+    expect(transport.played).toEqual([[730,440],[]]);
+    expect(phases).toBe(2);
+    expect(vi.getTimerCount()).toBe(0);
+  } finally { engine.stop(); await running; }
 });
