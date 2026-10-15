@@ -29,6 +29,8 @@ def main() -> None:
         "ANCIENT_MAP_PRELOAD": ["GAME.LAUNCH.PREPARE"],
         "RUNNING2VS2": ["GAME.LAUNCH.PREPARE"],
         "ANTI_AFK_POWER": ["GAME.ANTIAFK.FRAGMENT"],
+        "TG_BOT_API_KEY": ["NOTIFY.TELEGRAM"],
+        "TG_BOT_CHAT_ID": ["NOTIFY.TELEGRAM"],
     }
     for key, value_type in inventory["settings_types"].items():
         features.append(
@@ -272,10 +274,21 @@ def main() -> None:
         ),
         (
             "NOTIFY.TELEGRAM",
-            "Original text/image notification scenarios",
-            "blocked_specification",
-            "Dependency and settings only; complete scenario contract unresolved",
-            [],
+            "Recovered text/photo/edit contracts and manual desktop commands",
+            "implemented_transport_characterization_and_manual_gui_stand_pending",
+            "Panel.exe eight send/edit bodies and selected callers; docs/telegram.md",
+            [
+                "tests/notifications",
+                "tests/ui/test_notifications.py",
+                "tests/qa/test_telegram_boundaries.py",
+            ],
+        ),
+        (
+            "NOTIFY.TELEGRAM.AUTOMATIC",
+            "Complete event templates, automatic fanout, important-bot routing and icon composition",
+            "partial_static_specification_not_wired",
+            "Panel.exe selected callers 0x1406cdc00, 0x1406d0460, 0x140627380; docs/telegram.md",
+            ["tests/notifications/test_legacy.py"],
         ),
     ]:
         features.append(

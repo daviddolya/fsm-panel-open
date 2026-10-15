@@ -127,5 +127,7 @@ with the implementation contracts:
   and probe-result port selection; real launch/listener integration remains open.
 - [Input fragment](../docs/input-plan.md): additional anti-AFK timing, late power
   read and complete key-hold method; no scheduler or real input implementation.
+- [Telegram](../docs/telegram.md): eight send/edit contracts, selected destination,
+  proxy, receipt and fallback behavior; automatic event orchestration remains partial.
 
 All of these observations are static. None establishes original runtime parity.

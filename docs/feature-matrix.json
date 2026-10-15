@@ -138,8 +138,10 @@
       "preconditions": "User explicitly imports a legacy JSON copy",
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
-      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
-      "implemented_offline_consumers": [],
+      "implementation": "schema_import_export_and_partial_offline_consumers_implemented",
+      "implemented_offline_consumers": [
+        "NOTIFY.TELEGRAM"
+      ],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -160,8 +162,10 @@
       "preconditions": "User explicitly imports a legacy JSON copy",
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
-      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
-      "implemented_offline_consumers": [],
+      "implementation": "schema_import_export_and_partial_offline_consumers_implemented",
+      "implemented_offline_consumers": [
+        "NOTIFY.TELEGRAM"
+      ],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -1812,12 +1816,33 @@
     },
     {
       "feature_id": "NOTIFY.TELEGRAM",
-      "action": "Original text/image notification scenarios",
-      "evidence": "Dependency and settings only; complete scenario contract unresolved",
+      "action": "Recovered text/photo/edit contracts and manual desktop commands",
+      "evidence": "Panel.exe eight send/edit bodies and selected callers; docs/telegram.md",
       "confidence": "static_contract",
-      "implementation": "blocked_specification",
+      "implementation": "implemented_transport_characterization_and_manual_gui_stand_pending",
       "runtime_parity": "not_verified",
-      "tests": [],
+      "tests": [
+        "tests/notifications",
+        "tests/ui/test_notifications.py",
+        "tests/qa/test_telegram_boundaries.py"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
+    },
+    {
+      "feature_id": "NOTIFY.TELEGRAM.AUTOMATIC",
+      "action": "Complete event templates, automatic fanout, important-bot routing and icon composition",
+      "evidence": "Panel.exe selected callers 0x1406cdc00, 0x1406d0460, 0x140627380; docs/telegram.md",
+      "confidence": "static_contract",
+      "implementation": "partial_static_specification_not_wired",
+      "runtime_parity": "not_verified",
+      "tests": [
+        "tests/notifications/test_legacy.py"
+      ],
       "preconditions": "See linked subsystem contract; original unresolved where not documented",
       "input": "See linked contract",
       "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",

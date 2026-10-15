@@ -62,6 +62,7 @@ Windows-профилю: перенос файла сам по себе не пе
 | `src/fsm_panel/ui` | Qt-виджеты и мост в отдельный asyncio-поток |
 | `src/fsm_panel/trading`, `worker` | Python/Node IPC, durable операции и Steam SDK |
 | `src/fsm_panel/gsi` | Аутентифицированный локальный приём телеметрии |
+| `src/fsm_panel/notifications` | Telegram, отмена и восстановленные контракты уведомлений |
 | `src/fsm_panel/licensing`, `src/fsm_license` | Клиент допуска и самостоятельный сервер |
 | `contracts` | Версионные схемы IPC, OpenAPI, наблюдения стенда |
 | `research` | Переносимые обезличенные доказательства; не исходники оригинала |
