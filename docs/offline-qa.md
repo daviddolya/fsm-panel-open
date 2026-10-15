@@ -4,8 +4,8 @@ Updated: 2026-10-15. Review started at `791cd8a`; fixes were independently check
 through CLI integration `44c79da`, BES planner `3caf37c`, launch-settings derivation
 `c78fd79`, desktop config integration `11ac614`, GSI adapter `bdeedba` and GSI CLI
 `3199344`, GSI desktop integration `90f9763`, Telegram transport `50c29ee`, inert
-autoaccept generators `0d7f2d1`, and co-op accept caller `8585dae`, in a separate
-QA worktree.
+autoaccept generators `0d7f2d1`, co-op accept caller `8585dae`, and co-op state
+helpers `3dc13f8`, in a separate QA worktree.
 The reviewer owns the tests and this report, not the implementation.
 
 The video, BES and launch checks found five issues: lost recovery metadata, a
@@ -544,6 +544,45 @@ mutation or actual input is established by these synthetic traces. The strict
 builtin-value protocol and content-free validation failures are reconstruction
 choices, not evidence of restrictions in the original Python caller.
 
+## Inert co-op state helper boundaries
+
+[The independent co-op state tests](../tests/qa/test_coop_state_boundaries.py) add
+44 cases against author commit `3dc13f8`, locally applied as `33ace3e`. Review
+used the complete sanitized input-automation checkpoint 04, dated 2026-10-15,
+and the [public helper contract](coop-state-plan.md). The global menu helper is
+`0x140b70560`; the regions helper is `0x140834450`. The similarly named class
+menu method was not substituted. All observations are supplied and effects are
+acknowledged by a synthetic test driver.
+
+| Requirement | Independent check | Result |
+| --- | --- | --- |
+| Preserve length and live iteration | Zero length avoids iterator/time reads; length failure propagates; an iterator can yield zero or three entries after an initial length of one without a copied snapshot or count limit | Pass |
+| Keep per-entry late observations | Each key gets a separate clock and three distinct entry identities; changing clocks from 100 to 101 changes a timestamp-65 entry from checked to stale | Pass |
+| Preserve the checked predicates | Age strictly above 35 skips remaining fields; equality and future timestamps are checked; underscore or nonexact activity immediately returns false before later entries | Pass |
+| Preserve error scopes | Inject ordinary errors at every request: iterator errors return false, entry errors skip the entry, all-stale/all-failed nonempty input can return true; BaseException propagates at every boundary | Pass |
+| Distinguish StopIteration by location | Iterator creation returns false, advancement ends normally with true, and clock/path exceptions skip the current entry | Four cases pass |
+| Preserve regions age and short circuit | Default age is 60.0; equality skips busy, stale busy reads time but never refreshes, and explicit negative/zero/large ages retain their numeric comparison | Pass |
+| Keep fresh fallback and captured identity | Every cache read gets a fresh default wrapper, including when cache exists; missing uses it, malformed present values fail before time; refresh may replace the cache but returns the exact old region reference | Pass |
+| Restrict getattr defaults to AttributeError | Missing cache and busy observations use their respective defaults; LookupError at either read propagates; AttributeError at write/constructor/start also propagates | Ten cases pass |
+| Preserve completed busy state on failure | Inject failure at every regions request; constructor/start failure retains the earlier busy=True acknowledgement, with no reset, reread, retry or successful return | Pass |
+| Keep traces inert | File, clock, sleep, socket and thread entry points are forbidden; closing at every yield adds no effect; invalid observations remain terminal fixed-message protocol errors | Pass |
+
+No new production defect was reproduced in the stable checkpoint. Explicit
+StopIteration exhaustion and AttributeError fallback handling were already
+present in the first tested snapshot; no pre-fix runtime failure is claimed.
+A true menu result means no checked
+record disqualified the loop; it does not prove any record is fresh or any game
+is in a menu. Regions are opaque identity wrappers under a strict documented
+protocol. The worker body, live cache mutation, scheduling, network policy,
+thread safety and original runtime parity remain unverified.
+
+The separate read-only worker-test review ran all 34 Node tests at `0efd7e4`.
+The new phase gates strengthened expiry/renewal assertions without changing
+production. Source review identified a gate wait that could persist until the
+test timeout when the operation finished before the expected phase. The
+`dad7ec3` follow-up races phase entry against operation completion; that fix was
+checked read-only, without claiming a further local Node run.
+
 ## Reproduction environment and results
 
 Windows, Python 3.14.6, PySide6 6.12.0, pytest 9.1.1. Dependencies were installed
@@ -565,6 +604,7 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m pytest tests/qa/test_telegram_boundaries.py tests/notifications -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_autoaccept_boundaries.py tests/adapters/test_autoaccept_plan.py tests/adapters/test_input_plan.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_coop_accept_boundaries.py tests/adapters/test_coop_accept_plan.py -q
+.venv/Scripts/python.exe -m pytest tests/qa/test_coop_state_boundaries.py tests/adapters/test_coop_state_plan.py -q
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_configs.py
@@ -583,6 +623,8 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_autoaccept_boundaries.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_coop_accept_boundaries.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_coop_accept_boundaries.py
+.venv/Scripts/python.exe -m ruff check tests/qa/test_coop_state_boundaries.py
+.venv/Scripts/python.exe -m ruff format --check tests/qa/test_coop_state_boundaries.py
 ```
 
 - Existing video suite: **81 passed, 4 skipped**. The skipped cases require
@@ -645,6 +687,9 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 - Inert co-op accept caller: **64 new independent cases passed** at `8585dae`;
   **163 passed** together with the 99 author cases. No skips or expected failures;
   all observations and effects stayed synthetic.
+- Inert co-op state helpers: **44 new independent cases passed** at `3dc13f8`;
+  **130 passed** together with the 86 author cases. No skips or expected failures;
+  no clock, thread, network or other real effect was performed.
 - Ruff checks and formatting: **pass**.
 - Pytest emitted an existing Starlette/httpx deprecation warning through the
   shared QA fixture imports; it did not affect these results.
