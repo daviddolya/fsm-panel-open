@@ -621,8 +621,10 @@
       "preconditions": "User explicitly imports a legacy JSON copy",
       "state_changes": "Versioned DPAPI-backed settings vault",
       "external_effects": "Encrypted file and backup; no game configuration writes",
-      "implementation": "schema_import_export_implemented; game_consumer_not_implemented",
-      "implemented_offline_consumers": [],
+      "implementation": "schema_import_export_and_partial_offline_consumers_implemented",
+      "implemented_offline_consumers": [
+        "GAME.ANTIAFK.FRAGMENT"
+      ],
       "runtime_parity": "not_verified",
       "tests": [
         "tests/core/test_settings.py",
@@ -1451,6 +1453,40 @@
       "implementation": "blocked_specification",
       "runtime_parity": "blocked_original_license",
       "tests": [],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
+    },
+    {
+      "feature_id": "GAME.ANTIAFK.FRAGMENT",
+      "action": "Ordered additional-AFK requests with deferred samples and late power read",
+      "evidence": "Panel.exe 0x140a515c0 bounded fragment; docs/input-plan.md",
+      "confidence": "static_contract",
+      "implementation": "implemented_inert_trace_generator_no_input_or_scheduler",
+      "runtime_parity": "not_verified",
+      "tests": [
+        "tests/adapters/test_input_plan.py"
+      ],
+      "preconditions": "See linked subsystem contract; original unresolved where not documented",
+      "input": "See linked contract",
+      "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",
+      "state_changes": "See linked contract",
+      "external_effects": "See linked contract; live effects deferred to the stand",
+      "verification": "stand_not_run"
+    },
+    {
+      "feature_id": "INPUT.KEY_HOLD.PLAN",
+      "action": "Describe nested global-lock key hold and missing key-up on error",
+      "evidence": "Panel.exe 0x140a39c00..0x140a3a6e1; docs/input-plan.md",
+      "confidence": "static_contract",
+      "implementation": "implemented_inert_descriptor_no_input_or_lock_execution",
+      "runtime_parity": "not_verified",
+      "tests": [
+        "tests/adapters/test_input_plan.py"
+      ],
       "preconditions": "See linked subsystem contract; original unresolved where not documented",
       "input": "See linked contract",
       "expected_result": "See linked contract; unresolved original behavior is not an acceptance oracle",

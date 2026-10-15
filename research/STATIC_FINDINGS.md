@@ -110,4 +110,22 @@ The equality, subtraction, absolute-value, and less-than helper meanings were ch
 
 This recovers a cryptographic authorization boundary, but the complete startup denial path, service request encoding, endpoint selection, and feature interpretation remain unresolved. HWID display and signed collector-update metadata are separate observations. Embedded private-key material was discovered in raw constants and remains private; no secret value is included in this folder. No proof was forged, no remote license request was sent, and no original license check was changed.
 
-Before claiming a compatible original-workflow implementation, future authorized stand work must resolve final command arguments and branch predicates, GSI listener allocation and payload handling, child-environment values, lock semantics, process/window timing, batch cancellation/retry behavior, lobby state transitions, persistence formats, and side effects. Static evidence here does not demonstrate full source recovery or runtime parity.
+Before claiming a compatible original-workflow implementation, future authorized stand work must verify the reconstructed contracts and resolve remaining lock semantics, process/window timing, batch cancellation/retry behavior, lobby state transitions, persistence formats, and side effects. Static evidence here does not demonstrate full source recovery or runtime parity.
+
+## Subsequent bounded contracts — October 15
+
+Later reviewed slices supersede some earlier open questions in this report.
+Their precise evidence, new safety decisions, tests and remaining gaps are kept
+with the implementation contracts:
+
+- [Launch preparation and settings](../docs/launch-plan.md): argv/environment,
+  profile/shader proposals, loginusers, resolution and flag derivation; no executor.
+- [Video](../docs/video.md), [BES](../docs/bes.md), and
+  [account configs/autoexec](../docs/account-config.md): recovered file and command
+  semantics, with deliberate ownership/transaction boundaries in the reconstruction.
+- [GSI configuration](../docs/gsi-config.md): indexed writer, sanitized template
+  and probe-result port selection; real launch/listener integration remains open.
+- [Input fragment](../docs/input-plan.md): additional anti-AFK timing, late power
+  read and complete key-hold method; no scheduler or real input implementation.
+
+All of these observations are static. None establishes original runtime parity.

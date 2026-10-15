@@ -28,6 +28,7 @@ def main() -> None:
         "ADDITIONAL_LAUNCH_OPTIONS": ["GAME.LAUNCH.PREPARE"],
         "ANCIENT_MAP_PRELOAD": ["GAME.LAUNCH.PREPARE"],
         "RUNNING2VS2": ["GAME.LAUNCH.PREPARE"],
+        "ANTI_AFK_POWER": ["GAME.ANTIAFK.FRAGMENT"],
     }
     for key, value_type in inventory["settings_types"].items():
         features.append(
@@ -109,6 +110,20 @@ def main() -> None:
             }
         )
     for identifier, action, status, evidence, tests in [
+        (
+            "GAME.ANTIAFK.FRAGMENT",
+            "Ordered additional-AFK requests with deferred samples and late power read",
+            "implemented_inert_trace_generator_no_input_or_scheduler",
+            "Panel.exe 0x140a515c0 bounded fragment; docs/input-plan.md",
+            ["tests/adapters/test_input_plan.py"],
+        ),
+        (
+            "INPUT.KEY_HOLD.PLAN",
+            "Describe nested global-lock key hold and missing key-up on error",
+            "implemented_inert_descriptor_no_input_or_lock_execution",
+            "Panel.exe 0x140a39c00..0x140a3a6e1; docs/input-plan.md",
+            ["tests/adapters/test_input_plan.py"],
+        ),
         (
             "CPU.BES.PREPARE",
             "Pure exact original BES -J command, separate debug output and fallback25",
