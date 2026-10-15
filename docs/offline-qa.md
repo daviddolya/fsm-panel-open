@@ -3,8 +3,8 @@
 Updated: 2026-10-15. Review started at `791cd8a`; fixes were independently checked
 through CLI integration `44c79da`, BES planner `3caf37c`, launch-settings derivation
 `c78fd79`, desktop config integration `11ac614`, GSI adapter `bdeedba` and GSI CLI
-`3199344`, GSI desktop integration `90f9763`, and Telegram transport `50c29ee`,
-in a separate QA worktree.
+`3199344`, GSI desktop integration `90f9763`, Telegram transport `50c29ee`, and
+inert autoaccept generators `0d7f2d1`, in a separate QA worktree.
 The reviewer owns the tests and this report, not the implementation.
 
 The video, BES and launch checks found five issues: lost recovery metadata, a
@@ -477,6 +477,38 @@ result and ownership behavior; they do not establish live Telegram acceptance of
 repeated photo parts, proxy compatibility, original runtime parity or actual
 delivery. GUI integration is outside this backend review.
 
+## Inert autoaccept generator boundaries
+
+[The independent autoaccept tests](../tests/qa/test_autoaccept_boundaries.py) add
+47 cases against author commit `0d7f2d1`, locally applied as `1bcf9f7`. The review
+used sanitized input-automation checkpoint 02, dated 2026-10-15, and the
+[public trace contract](autoaccept-plan.md). Native address comparison is a
+separate review. These tests supply all times, settings, rows, windows, packed
+message values and effect acknowledgements; they execute no input or co-op calls.
+
+| Requirement | Independent check | Result |
+| --- | --- | --- |
+| Preserve the normal dispatcher schedule | Negative/zero delays are omitted; positive subnormal and very large integer delays are retained; four batches, nested lock descriptions and the original pre-lock start time remain ordered | Five cases pass |
+| Preserve late short-circuit decisions | Expand the row helper before batch three or four; a true result ends the dispatcher without any further abandonment reads or side effects | Two cases pass |
+| Preserve alternative behavior | A large initial delay remains unused; only the pixel call's ordinary exception is caught; traceback or unblock errors terminate without invented finally cleanup | Pass |
+| Read all rows at index six | Twelve count/mode combinations distinguish equality, thresholds two/six and deferred mode reads; opaque other columns remain untouched; malformed final rows still fail after six qualifying rows | Pass |
+| Preserve whole-set abandonment | None skips all reads; exact singleton returns false; a superset abandons, optionally leaves, then refreshes the set after requesting the supplied server's short ID | Pass |
+| Preserve abandonment log arguments | Sort the converted short IDs lexically while retaining duplicates; errors at every dependency prevent a true return and all subsequent requests | Pass |
+| Preserve each background message | Duplicate windows and zero/negative handles remain in the supplied shuffle; per-window mode reads choose coordinates; nine separate packed values reach their respective messages, including literal None for button-up | Pass |
+| Preserve the batch exception boundary | Inject an ordinary failure at every yielded request; errors within the batch skip its whole remainder and describe only unblocking, while either block-call failure propagates | Pass |
+| Preserve timeout and already-polled state | Empty early matches do not consume polling; the first window times out and still clicks; duplicate windows and a later account receive clicks without another poll | Pass |
+| Preserve deferred foreground observations | Account title is read only after earlier clicks; activation/delay precede left/top/width/height reads; each click gets fresh mode/CS_HEIGHT, and width remains unused | Pass |
+| Preserve pixel arithmetic and wall-clock decisions | Green 88 does not match and 89 does; other channels are ignored; a backward clock step permits another sample, the found notice can exceed seven seconds, and sample/click heights remain separate | Pass |
+| Preserve terminal failures and activation retries | Foreground dependency errors end remaining windows without release/unblock requests; mixed find/foreground/restore failures retry three times and delay after the last failure | Pass |
+| Keep traces inert when closed or interrupted | Real file open, wall clock, sleep, shuffle and socket entry points are forbidden; closing at every yield emits no cleanup; protocol errors and BaseException bypass ordinary-error handlers | Pass |
+
+No production defect was reproduced. The tests retain the recovered cleanup gaps
+as trace behavior; they do not run those effects. Frozen trace records, strict
+observation types and content-free protocol errors are deliberate reconstruction
+boundaries. The generators do not prove window ownership, successful focus,
+library conversion of None wParam, actual game input, scheduler cadence or
+original runtime parity. No executor or GUI connection is covered by this slice.
+
 ## Reproduction environment and results
 
 Windows, Python 3.14.6, PySide6 6.12.0, pytest 9.1.1. Dependencies were installed
@@ -496,6 +528,7 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_gsi_config.py tests/adapters/test_gsi_config.py tests/test_gsi_cli.py tests/test_config_cli.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_offline_gsi_ui.py tests/ui/test_gsi_config_panel.py tests/qa/test_offline_config_ui.py tests/ui/test_window.py tests/qa/test_gui_shutdown.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_telegram_boundaries.py tests/notifications -q
+.venv/Scripts/python.exe -m pytest tests/qa/test_autoaccept_boundaries.py tests/adapters/test_autoaccept_plan.py tests/adapters/test_input_plan.py -q
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_configs.py
@@ -510,6 +543,8 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_gsi_ui.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_telegram_boundaries.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_telegram_boundaries.py
+.venv/Scripts/python.exe -m ruff check tests/qa/test_autoaccept_boundaries.py
+.venv/Scripts/python.exe -m ruff format --check tests/qa/test_autoaccept_boundaries.py
 ```
 
 - Existing video suite: **81 passed, 4 skipped**. The skipped cases require
@@ -563,6 +598,9 @@ $env:QT_QPA_PLATFORM = 'offscreen'
   The complete run first exposed Alembic disabling existing HTTP loggers;
   `ecf5bb9` fixes the logging boundary. Scoped Telegram privacy checks still
   assert that unrelated logging remains available.
+- Inert autoaccept generators: **47 new independent cases passed** at `0d7f2d1`;
+  **143 passed** together with the author autoaccept and existing input-plan
+  suites. No skips or expected failures; all effects remained inert requests.
 - Ruff checks and formatting: **pass**.
 - Pytest emitted an existing Starlette/httpx deprecation warning through the
   shared QA fixture imports; it did not affect these results.
