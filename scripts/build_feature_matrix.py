@@ -114,6 +114,13 @@ def main() -> None:
         )
     for identifier, action, status, evidence, tests in [
         (
+            "GAME.CONSOLE.DISCOVERY",
+            "Find recent copied console logs using distinct flat and sandbox rules",
+            "implemented_bounded_read_only_api_no_parser_or_scheduler",
+            "Panel.exe 0x140b20930; docs/console-logs.md",
+            ["tests/adapters/test_console_logs.py", "tests/qa/test_console_log_boundaries.py"],
+        ),
+        (
             "GAME.COOP.STATE.TRACE",
             "Describe global menu predicate and cached-region refresh request with exact error scopes",
             "implemented_inert_generators_no_region_worker_or_scheduler",
@@ -325,8 +332,21 @@ def main() -> None:
             ],
         ),
         (
+            "NOTIFY.ITEM.COMPOSITE",
+            "Compose two selected local item images into a new PNG through API and desktop",
+            "implemented_offline_composition_no_download_or_automatic_send",
+            "Panel.exe 0x140627380 and width proof 0x14062b8dd; docs/item-composite.md",
+            [
+                "tests/notifications/test_images.py",
+                "tests/ui/test_item_composite.py",
+                "tests/qa/test_item_composite_boundaries.py",
+                "tests/qa/test_item_composite_ui_boundaries.py",
+                "tests/qa/test_desktop_smoke.py",
+            ],
+        ),
+        (
             "NOTIFY.TELEGRAM.AUTOMATIC",
-            "Complete event templates, automatic fanout, important-bot routing and icon composition",
+            "Complete event templates, automatic fanout, important-bot routing and icon downloads",
             "partial_static_specification_not_wired",
             "Panel.exe selected callers 0x1406cdc00, 0x1406d0460, 0x140627380; docs/telegram.md",
             ["tests/notifications/test_legacy.py"],

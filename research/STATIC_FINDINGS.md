@@ -137,3 +137,20 @@ with the implementation contracts:
   proxy, receipt and fallback behavior; automatic event orchestration remains partial.
 
 All of these observations are static. None establishes original runtime parity.
+
+## October 16 continuation
+
+- `0x140b20930` is console-path discovery, not the content reader. Its full contract
+  establishes different flat/sandbox filename and exact-age rules. The new
+  [read-only utility](../docs/console-logs.md) applies those rules to explicit local
+  copies with bounds, no-link traversal and partial-result diagnostics.
+- The recurring scanner `0x140b48440` is now recovered at call level:
+  [cadence, refresh, tuple consumers, gates and error scopes](../docs/autoaccept-scanner.md).
+  It does not provide process/window ownership or a ready scheduler. The global
+  menu helper used here is the already recovered `0x140b70560`.
+- The content parser is `oAjysWzxGvAh(self, path, linecount=1)` at `0x140b2a590`.
+  Its default was independently checked from constructor registration. Content
+  grammar and timestamp conversion remain a separate bounded investigation.
+- The item producer's width calculation at `0x14062b8dd` is proven multiplication
+  by two through numeric helper `0x142ce6250`. [Offline image composition](../docs/item-composite.md)
+  is implemented; it does not download icons or send automatic notifications.

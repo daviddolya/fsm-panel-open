@@ -1,15 +1,42 @@
 """Exercise the actual synthetic desktop/worker slice in a packaged process."""
 
+import base64
+import io
 import json
 import time
 from pathlib import Path
 
+from PIL import Image
 from PySide6.QtCore import QTimer
 
 from fsm_panel.adapters.account_config import load_config_templates
 from fsm_panel.adapters.gsi_config import load_gsi_template
+from fsm_panel.notifications.images import compose_item_images
 
 from .window import MainWindow
+
+
+def verify_item_composite() -> None:
+    """Load the packaged PNG decoder/encoder with fixed synthetic source bytes."""
+    first = base64.b64decode(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8AgCAAEEgER"
+        "3CXTfwAAAABJRU5ErkJggg=="
+    )
+    second = base64.b64decode(
+        "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAD0lEQVR4nGNgYPgPRmAK"
+        "ABf2A/1+6zfzAAAAAElFTkSuQmCC"
+    )
+    composite = compose_item_images(first, second)
+    with Image.open(io.BytesIO(composite.png)) as decoded:
+        if (
+            (composite.width, composite.height) != (2, 1)
+            or decoded.format != "PNG"
+            or decoded.mode != "RGBA"
+            or decoded.size != (2, 1)
+            or decoded.getpixel((0, 0)) != (255, 0, 0, 17)
+            or decoded.getpixel((1, 0)) != (0, 0, 255, 255)
+        ):
+            raise RuntimeError("item_composite_smoke_failed")
 
 
 class DesktopSmoke:
@@ -17,6 +44,7 @@ class DesktopSmoke:
         self.window, self.report = window, report
         self.passed = False
         self._checks_passed = False
+        self._item_composite_verified = False
         self._code = "smoke_interrupted"
         self.step = 0
         self.deadline = time.monotonic() + 40
@@ -55,6 +83,7 @@ class DesktopSmoke:
                     "shutdown_verified": clean,
                     "config_templates_verified": self.step > 0,
                     "gsi_template_verified": self.step > 0,
+                    "item_composite_verified": self._item_composite_verified,
                 },
                 indent=2,
             )
@@ -78,6 +107,8 @@ class DesktopSmoke:
             # not merely the build machine's source checkout.
             load_config_templates()
             load_gsi_template()
+            verify_item_composite()
+            self._item_composite_verified = True
             if window.repository.list_accounts():
                 self.finish(False, "smoke_requires_empty_data_directory")
                 return

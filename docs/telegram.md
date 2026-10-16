@@ -272,4 +272,7 @@ They do not prove Telegram acceptance of repeated photo parts, live proxy/API
 behavior, original/new runtime parity or actual delivery. No Telegram, Steam CDN
 or original application was contacted. Upstream event templates, nickname/system
 prefixes, omitted callable defaults, item icon lifecycle and full bot command
-handling remain outside this slice. Icon download/composition is not implemented.
+handling remain outside this slice. Icon downloads and automatic producer/fanout
+integration remain open. [Offline image composition](item-composite.md) implements
+the recovered two-image geometry and paste behavior through a separate API and
+desktop subtab, without downloads or automatic delivery.
