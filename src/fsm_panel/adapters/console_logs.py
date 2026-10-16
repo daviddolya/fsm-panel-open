@@ -57,7 +57,8 @@ def _linked(info: os.stat_result) -> bool:
     )
 
 
-def _safe_root(value: str | Path) -> Path:
+def _local_path(value: str | Path) -> Path:
+    """Reject remote/device syntax before touching filesystem metadata."""
     text = os.fspath(value)
     # Reject network/device roots before lstat: merely inspecting a UNC parent
     # can contact a share. Mapped Windows drives need their own locality check.
@@ -69,6 +70,11 @@ def _safe_root(value: str | Path) -> Path:
             raise ValueError("unsafe_console_log_root")
         if ctypes.windll.kernel32.GetDriveTypeW(path.anchor) not in (2, 3, 5, 6):
             raise ValueError("unsafe_console_log_root")
+    return path
+
+
+def _safe_root(value: str | Path) -> Path:
+    path = _local_path(value)
     # lstat every ancestor: resolve() would hide a selected link/junction.
     for part in (*reversed(path.parents), path):
         info = part.lstat()
