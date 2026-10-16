@@ -663,6 +663,59 @@ directory stream and retains that earlier result with `complete=False`.
 These tests do not establish atomic snapshots, hostile filesystem-race safety,
 log-content interpretation, live account state or original runtime parity.
 
+## Copied console content parser
+
+[The independent parser tests](../tests/qa/test_console_parser_boundaries.py)
+add 58 cases against implementation `85fabfee`, locally applied as `06383ba`.
+Their expectations were derived from the sealed sanitized checkpoint-06 contract
+before executing the implementation. Its SHA-256 is
+`254d1a5345327348ce176e752dca610cb3f4d2157b707c2c67f92ab93ee66b17`.
+The reviewed native reader is `0x140b2a590`; the public API and deliberate
+reconstruction boundaries are described in [console-parser.md](console-parser.md).
+
+The tests distinguish the normal eight-slot tuple from the integer-zero file
+fallback, assign different values to all populated slots, and verify independent
+cache observations for identity and the decimal tail budget. Ticket fixtures
+cover ordered duplicates, first-occurrence removal, fixed delimiter offsets,
+empty extraction, literal-space removal, stale timestamps and append-before-date
+failure. AuthStatus remains an unchecked string, including empty strings;
+`identity_verified` stays false even for complete parsing.
+
+Timestamp cases observe separate year/conversion calls for overlapping menu
+markers, explicit UTC versus UTC+05:00 results, first-date selection and backward
+ordinary timestamps. Relay fixtures exercise the exact regex/allowed tuple,
+fresh clock reads after conversion, the inclusive future bound and strict prior
+bound, and ordered relay-before-account proposals. A later line sees earlier
+proposed relay state without mutating the supplied context. Partial-line errors
+retain earlier observations and proposals; fixed diagnostics expose no private
+fixture text or traceback output.
+
+Synthetic real-file audits record one binary open, one absolute seek and one read
+of exactly 2,000,000 or 12,000,000 bytes. Both byte budgets accept their exact bound
+and reject one extra byte before line work. A marker in the first partial tail
+line remains eligible. UTF-8 errors are ignored with a diagnostic, trailing empty
+lines remain observable, and the recovered `linecount` argument has no effect.
+The new line budget and cooperative cancellation report incomplete observations.
+
+Injected read/close failures, short reads with stable size/modification time,
+source changes during read or parsing, cancellation during read, and a propagating
+`KeyboardInterrupt` verify ownership of the actual synthetic file handles.
+Failure before parsing produces no proposals. Late close or post-parse change
+returns the fallback tuple while retaining completed proposals. Fresh-file API
+checks reject remote/device/URL paths, Windows alternate streams/reserved names
+and mapped remote drives before metadata or open. A pure-byte check intercepts
+file opens, socket connections and the implicit machine clock; none is used.
+
+No blocking discrepancy was found in this parser review. The focused run also
+reran existing discovery cases because the implementation extracted their shared
+locality helper; those prior cases are not counted as new parser coverage. The
+strict schemas, finite bounds, explicit providers, local snapshots, fixed
+diagnostics and inert proposals are reconstruction choices. These checks do not
+establish native arbitrary-object/shared-state behavior, original traceback-print
+failures, host-local DST equivalence, hostile filesystem-race safety, live account
+validity or original runtime parity. No original application or real network
+service was accessed; stand comparisons remain deferred.
+
 ## Reproduction environment and results
 
 Windows, Python 3.14.6, PySide6 6.12.0, pytest 9.1.1. Dependencies were installed
@@ -711,6 +764,9 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_item_composite_boundaries.py tests/qa/test_item_composite_ui_boundaries.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_console_log_boundaries.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_console_log_boundaries.py
+.venv/Scripts/python.exe -m pytest tests/qa/test_console_parser_boundaries.py tests/adapters/test_console_parser.py tests/adapters/test_console_logs.py tests/qa/test_console_log_boundaries.py -q
+.venv/Scripts/python.exe -m ruff check tests/qa/test_console_parser_boundaries.py
+.venv/Scripts/python.exe -m ruff format --check tests/qa/test_console_parser_boundaries.py
 ```
 
 - Existing video suite: **81 passed, 4 skipped**. The skipped cases require
@@ -792,6 +848,12 @@ $env:QT_QPA_PLATFORM = 'offscreen'
   0.48 seconds with the 26 author cases. No skips or expected failures on Windows.
   Ruff lint and formatting passed. Baseline and fixed JUnit files remain in the
   ignored `test-results` directory of the QA worktree.
+- Copied console content parser: **58 new independent cases passed** at
+  `85fabfee`; **147 passed** in 1.41 seconds together with the 65 author parser/
+  discovery cases and 24 prior discovery regressions. No skips or expected
+  failures on this Windows host. Ruff lint and formatting passed. The focused
+  JUnit result is retained locally at
+  `test-results/console-parser-focused-85fabfe.xml`, outside tracked artifacts.
 
 Unresolved stand work includes original caller timing, launch/account integration,
 real external application behavior, Windows policy variations and cross-process
