@@ -5,7 +5,8 @@ through CLI integration `44c79da`, BES planner `3caf37c`, launch-settings deriva
 `c78fd79`, desktop config integration `11ac614`, GSI adapter `bdeedba` and GSI CLI
 `3199344`, GSI desktop integration `90f9763`, Telegram transport `50c29ee`, inert
 autoaccept generators `0d7f2d1`, co-op accept caller `8585dae`, and co-op state
-helpers `3dc13f8`, and offline item composition `a93a8af`, in a separate QA worktree.
+helpers `3dc13f8`, offline item composition `a93a8af`, and console-log locality
+fix `bd8ecf9`, in a separate QA worktree.
 The reviewer owns the tests and this report, not the implementation.
 
 The video, BES and launch checks found five issues: lost recovery metadata, a
@@ -629,6 +630,39 @@ delivery, hostile cross-process filesystem-race resistance or power-loss recover
 All images and paths are synthetic. Original execution, real Steam/Telegram
 activity and comparative stand validation remain deferred.
 
+## Copied console-log locality and partial scans
+
+[The independent console tests](../tests/qa/test_console_log_boundaries.py) add
+24 cases against discovery checkpoint `91dafca` and locality fix `bd8ecf9`,
+locally applied as `49a7262` and `23fd631`. This review checks the
+[new discovery contract](console-logs.md), not native content parsing.
+
+Finding CL1, P2: `_safe_root` initially performed ancestor `lstat` operations
+before checking whether a root was local. A selected UNC path therefore reached
+its network-share metadata path; mapped remote drives and Windows device paths
+also reached filesystem inspection. This contradicted the offline local-copy
+boundary. Both the flat root and sandbox roots were affected.
+
+The independent baseline produced **22 failures and 2 passes**. Every failing
+case records attempted `lstat`/`scandir` calls and replaces those operations with
+an immediate synthetic error; the mapped-drive tests also replace
+`GetDriveTypeW` with `DRIVE_REMOTE` (4). No network, device access or remote
+metadata lookup occurred. The baseline JUnit result is retained locally at
+`test-results/console-locality-baseline-91dafca.xml`, outside tracked artifacts.
+
+The fix rejects UNC and slash-UNC paths, device prefixes, URLs, embedded NUL,
+Windows reserved names and alternate streams before metadata. A Windows mapped
+drive classified as remote is rejected before `lstat` or enumeration too. All
+22 regressions independently pass at `bd8ecf9`, returning the fixed partial-result
+issue `root_unavailable_or_unsafe` with no discovered entries.
+
+Two additional passing tests cover unfinished-directory ownership. An entry
+limit discards the unfinished folder while retaining a previously completed
+flat result. Cancellation during sandbox iteration closes the actual synthetic
+directory stream and retains that earlier result with `complete=False`.
+These tests do not establish atomic snapshots, hostile filesystem-race safety,
+log-content interpretation, live account state or original runtime parity.
+
 ## Reproduction environment and results
 
 Windows, Python 3.14.6, PySide6 6.12.0, pytest 9.1.1. Dependencies were installed
@@ -652,6 +686,7 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m pytest tests/qa/test_coop_accept_boundaries.py tests/adapters/test_coop_accept_plan.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_coop_state_boundaries.py tests/adapters/test_coop_state_plan.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_item_composite_boundaries.py tests/qa/test_item_composite_ui_boundaries.py tests/notifications tests/ui/test_item_composite.py tests/ui/test_notifications.py tests/qa/test_notification_ui_boundaries.py tests/ui/test_window.py tests/qa/test_gui_shutdown.py -q
+.venv/Scripts/python.exe -m pytest tests/qa/test_console_log_boundaries.py tests/adapters/test_console_logs.py -q
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_configs.py
@@ -674,6 +709,8 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_coop_state_boundaries.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_item_composite_boundaries.py tests/qa/test_item_composite_ui_boundaries.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_item_composite_boundaries.py tests/qa/test_item_composite_ui_boundaries.py
+.venv/Scripts/python.exe -m ruff check tests/qa/test_console_log_boundaries.py
+.venv/Scripts/python.exe -m ruff format --check tests/qa/test_console_log_boundaries.py
 ```
 
 - Existing video suite: **81 passed, 4 skipped**. The skipped cases require
@@ -750,6 +787,11 @@ $env:QT_QPA_PLATFORM = 'offscreen'
   prior notification QA, MainWindow and GUI shutdown checks. No skips or expected
   failures. The run used Python 3.14.6, Pillow 12.3.0 and the QA worktree's source
   import after `uv sync --frozen --group dev`. Ruff lint and formatting passed.
+- Console-log discovery: baseline **22 failed, 2 passed** at `91dafca`; after
+  locality fix `bd8ecf9`, **24 independent cases passed** and **50 passed** in
+  0.48 seconds with the 26 author cases. No skips or expected failures on Windows.
+  Ruff lint and formatting passed. Baseline and fixed JUnit files remain in the
+  ignored `test-results` directory of the QA worktree.
 
 Unresolved stand work includes original caller timing, launch/account integration,
 real external application behavior, Windows policy variations and cross-process
