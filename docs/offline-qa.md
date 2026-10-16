@@ -1,11 +1,11 @@
 # Independent offline reconstruction QA
 
-Updated: 2026-10-15. Review started at `791cd8a`; fixes were independently checked
+Updated: 2026-10-16. Review started at `791cd8a`; fixes were independently checked
 through CLI integration `44c79da`, BES planner `3caf37c`, launch-settings derivation
 `c78fd79`, desktop config integration `11ac614`, GSI adapter `bdeedba` and GSI CLI
 `3199344`, GSI desktop integration `90f9763`, Telegram transport `50c29ee`, inert
 autoaccept generators `0d7f2d1`, co-op accept caller `8585dae`, and co-op state
-helpers `3dc13f8`, in a separate QA worktree.
+helpers `3dc13f8`, and offline item composition `a93a8af`, in a separate QA worktree.
 The reviewer owns the tests and this report, not the implementation.
 
 The video, BES and launch checks found five issues: lost recovery metadata, a
@@ -583,6 +583,52 @@ test timeout when the operation finished before the expected phase. The
 `dad7ec3` follow-up races phase entry against operation completion; that fix was
 checked read-only, without claiming a further local Node run.
 
+## Offline two-item composition boundaries
+
+[The independent image tests](../tests/qa/test_item_composite_boundaries.py) and
+[Qt ownership tests](../tests/qa/test_item_composite_ui_boundaries.py) add 61 cases
+against author commit `a93a8af`, locally applied as `e63b2b8` on main checkpoint
+`366e0f0`. Review used the sanitized Telegram specification for `0x140627380`,
+the item-composite width addendum, and the [public contract](item-composite.md).
+The addendum resolves the output width as exactly twice the first image's width.
+This review did not access raw native dumps or change the REA session.
+
+Source fixtures use synthetic PNG chunks constructed independently of Pillow.
+Assertions compare decoded output against fixed RGBA pixel values. The expected
+RGB interpolation vector and RGBA rounding were separately checked against the
+installed Pillow 12.3.0 library; no reference compositor duplicates production.
+An initial test assumed a solid semi-transparent pixel retained its exact RGB
+channels when enlarged. Pillow's premultiplied-alpha resize rounds those channels;
+the test oracle was corrected, without changing production code.
+
+| Requirement | Independent check | Result |
+| --- | --- | --- |
+| Preserve geometry and unmasked paste | Unequal source dimensions, two distinct rows, zero/partial/full alpha and an RGBA resize rounding vector; first dimensions determine the entire canvas | Pass |
+| Preserve mode-sensitive defaults | Fixed RGB bicubic vector differs from nearest and bilinear; palette/tRNS source keeps nearest-neighbor indices and per-index transparency; grayscale converts on paste | Pass |
+| Avoid additional image transforms | JPEG EXIF orientation does not change first-image geometry; result is decoded RGBA PNG | Pass |
+| Keep byte composition inert | File-open, socket-connect, URL-open and HTTP client constructors are forbidden during the actual bytes API call | Pass |
+| Bound and validate both sources | Empty, malformed, truncated and non-bytes inputs; oversized declared pixel dimensions before load; encoded input above 8 MiB through both APIs; APNG and GIF rejection | Pass |
+| Preserve source files and exclusive output | Source bytes, modification time and identity survive success; preexisting file/directory, either source path and a hardlink alias are rejected; concurrent creators yield exactly one winner | Pass |
+| Retain local path guards | URL/UNC rejection before access; actual Windows junction ancestors for either input or output; both original-distribution marker forms; replaced output-parent identity rejected after encoding | Pass |
+| Keep failure ownership explicit | Malformed-file handles can be renamed afterward; encode failure creates no destination; failed fsync removes its created file, while failed cleanup reports a retained file with its handle closed | Pass |
+| Honor cooperative cancellation | Cancellation before decoding creates no file; cancellation after exclusive creation finishes the PNG and reports success | Pass |
+| Keep composition separate from delivery | Actual Qt composition works with a denied lease in simulator mode, performs no admission/client construction, and preserves manually selected photo, caption and settings | Pass |
+| Retain GUI ownership until completion | UI stays responsive and blocks duplicate work; stale/foreign completion cannot release an active job; both public-Future cancellation timings, three cancellations of close, and MainWindow shutdown after trade-cleanup failure retain worker ownership | Pass |
+
+Source review identified that cancelling the bridge's public Future could make
+that handle complete before its shielded image worker finished. The author added
+an independent completion ledger and an entry guard before the first tested
+commit. Independent regressions gate an actual exclusive output open and verify
+that shutdown waits for the admitted write. This is a source-derived finding
+with a verified safeguard, not a claim of a reproduced pre-fix runtime failure.
+
+The byte/format/pixel limits, local-path policy, create-exclusive output and
+cancellation protocol are new reconstruction safeguards. Tests do not establish
+the original Pillow version's behavior, icon downloading, automatic notification
+delivery, hostile cross-process filesystem-race resistance or power-loss recovery.
+All images and paths are synthetic. Original execution, real Steam/Telegram
+activity and comparative stand validation remain deferred.
+
 ## Reproduction environment and results
 
 Windows, Python 3.14.6, PySide6 6.12.0, pytest 9.1.1. Dependencies were installed
@@ -605,6 +651,7 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m pytest tests/qa/test_autoaccept_boundaries.py tests/adapters/test_autoaccept_plan.py tests/adapters/test_input_plan.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_coop_accept_boundaries.py tests/adapters/test_coop_accept_plan.py -q
 .venv/Scripts/python.exe -m pytest tests/qa/test_coop_state_boundaries.py tests/adapters/test_coop_state_plan.py -q
+.venv/Scripts/python.exe -m pytest tests/qa/test_item_composite_boundaries.py tests/qa/test_item_composite_ui_boundaries.py tests/notifications tests/ui/test_item_composite.py tests/ui/test_notifications.py tests/qa/test_notification_ui_boundaries.py tests/ui/test_window.py tests/qa/test_gui_shutdown.py -q
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_offline_video.py tests/qa/test_offline_bes.py tests/qa/test_offline_launch.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_offline_configs.py
@@ -625,6 +672,8 @@ $env:QT_QPA_PLATFORM = 'offscreen'
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_coop_accept_boundaries.py
 .venv/Scripts/python.exe -m ruff check tests/qa/test_coop_state_boundaries.py
 .venv/Scripts/python.exe -m ruff format --check tests/qa/test_coop_state_boundaries.py
+.venv/Scripts/python.exe -m ruff check tests/qa/test_item_composite_boundaries.py tests/qa/test_item_composite_ui_boundaries.py
+.venv/Scripts/python.exe -m ruff format --check tests/qa/test_item_composite_boundaries.py tests/qa/test_item_composite_ui_boundaries.py
 ```
 
 - Existing video suite: **81 passed, 4 skipped**. The skipped cases require
@@ -696,6 +745,11 @@ $env:QT_QPA_PLATFORM = 'offscreen'
   execution or real input was performed; the six local skips are symlink scenarios.
 - Pytest emitted an existing Starlette/httpx deprecation warning through the
   shared QA fixture imports; it did not affect these results.
+- Offline item composition: **61 new independent cases passed** at `a93a8af`;
+  **272 passed** in 9.90 seconds with the author image/notification suites,
+  prior notification QA, MainWindow and GUI shutdown checks. No skips or expected
+  failures. The run used Python 3.14.6, Pillow 12.3.0 and the QA worktree's source
+  import after `uv sync --frozen --group dev`. Ruff lint and formatting passed.
 
 Unresolved stand work includes original caller timing, launch/account integration,
 real external application behavior, Windows policy variations and cross-process
