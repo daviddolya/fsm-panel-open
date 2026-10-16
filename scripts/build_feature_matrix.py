@@ -345,6 +345,18 @@ def main() -> None:
             ],
         ),
         (
+            "GAME.CONSOLE.PARSER",
+            "Read an explicit local console-log copy through API and desktop",
+            "implemented_bounded_readonly_parser_and_gui_no_scanner_or_input",
+            "Panel.exe 0x140b2a590, relay predicate 0x140a19140; docs/console-parser.md; sealed checkpoint 06",
+            [
+                "tests/adapters/test_console_parser.py",
+                "tests/qa/test_console_parser_boundaries.py",
+                "tests/ui/test_console_log_panel.py",
+                "tests/qa/test_desktop_smoke.py",
+            ],
+        ),
+        (
             "NOTIFY.TELEGRAM.AUTOMATIC",
             "Complete event templates, automatic fanout, important-bot routing and icon downloads",
             "partial_static_specification_not_wired",
@@ -368,6 +380,14 @@ def main() -> None:
             }
         )
     for item in features:
+        if item["feature_id"] == "GAME.CONSOLE.PARSER":
+            item.update(
+                preconditions="Explicit local copy and chosen year/time providers; no account or game permission inferred",
+                input="UTF-8 tail up to decimal 2M/12M bytes with independent cached identity observations",
+                expected_result="Eight observed values, ordered inert proposals and explicit partial/error diagnostics",
+                state_changes="Private parser shadow only; application state is unchanged",
+                external_effects="Bounded local read only; no input, network or writes",
+            )
         item.setdefault(
             "preconditions",
             "See linked subsystem contract; original unresolved where not documented",
