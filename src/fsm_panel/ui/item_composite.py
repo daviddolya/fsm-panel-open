@@ -186,6 +186,9 @@ class ItemCompositePanel(QWidget):
                     job.cancelled.set()
             result = work.result()
             response["size"] = (result.width, result.height)
+        except asyncio.CancelledError:
+            # The worker itself ended cancelled, rather than merely its caller.
+            response["error"] = "cancelled"
         except ItemCompositeError as error:
             response["error"] = {
                 "image_cancelled": "cancelled",
@@ -254,10 +257,10 @@ class ItemCompositePanel(QWidget):
     async def aclose(self) -> None:
         self._closing = True
         self.closing_started.emit()
-        if self._job is not None:
-            self._job.cancelled.set()
-        if self._job is not None:
-            pending = asyncio.wrap_future(self._job.finished)
+        job = self._job
+        if job is not None:
+            job.cancelled.set()
+            pending = asyncio.wrap_future(job.finished)
             cancelled = False
             while not pending.done():
                 try:

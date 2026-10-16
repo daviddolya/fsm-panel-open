@@ -12,6 +12,40 @@ def test_smoke_checks_packaged_composite_codec():
     verify_item_composite()
 
 
+def test_smoke_checks_console_file_reader_and_date_parser():
+    from fsm_panel.ui.smoke import verify_console_parser
+
+    verify_console_parser()
+
+
+def test_console_failure_cannot_report_success(qtbot, qapp, tmp_path, monkeypatch):
+    qapp.setQuitOnLastWindowClosed(False)
+    report = tmp_path / "smoke-report.json"
+
+    def unavailable_reader(*args, **kwargs):
+        raise OSError("synthetic reader unavailable")
+
+    monkeypatch.setattr("fsm_panel.ui.smoke.read_console_log", unavailable_reader)
+    with AccountRepository(tmp_path / "smoke.sqlite") as repository:
+        coordinator = Coordinator(repository, game=FakeGame(), lease=FakeLease())
+        window = MainWindow(repository, coordinator, MemorySecretStore(), tmp_path, simulate=True)
+        smoke = DesktopSmoke(window, report)
+        try:
+            window.show()
+            qtbot.waitUntil(lambda: window._closed, timeout=10_000)
+            result = json.loads(report.read_text(encoding="utf8"))
+            assert smoke.passed is False and result["passed"] is False
+            assert result["console_parser_verified"] is False
+            assert result["code"] == "smoke_failed"
+            assert repository.list_accounts() == []
+            assert not window.bridge._thread.is_alive()
+        finally:
+            if not window._closed:
+                window.close()
+                qtbot.waitUntil(lambda: window._closed, timeout=5000)
+            window.deleteLater()
+
+
 def test_composite_failure_cannot_report_success(qtbot, qapp, tmp_path, monkeypatch):
     qapp.setQuitOnLastWindowClosed(False)
     report = tmp_path / "smoke-report.json"

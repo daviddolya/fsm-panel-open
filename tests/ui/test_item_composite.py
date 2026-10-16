@@ -188,6 +188,40 @@ def test_external_cancel_before_coroutine_start_completes_without_work(case, qtb
     assert not files[2].exists() and "отменено" in widget.status.text()
 
 
+def test_owned_composer_cancellation_produces_explicit_outcome(case, qtbot):
+    widget, _, _, _, _ = case
+
+    def cancel(*args, **kwargs):
+        raise asyncio.CancelledError()
+
+    widget._composer = cancel
+    widget.compose_button.click()
+    complete(qtbot, widget)
+    assert "отменено" in widget.status.text()
+
+
+def test_close_keeps_job_reference_across_completion_signal(case, qtbot):
+    widget, _, owner, state, _ = case
+    entered, release, finished = blocking_composer(widget, state)
+    widget.compose_button.click()
+    qtbot.waitUntil(entered.is_set)
+    job = widget._job
+    original_set = job.cancelled.set
+
+    def completion_interleaves():
+        original_set()
+        widget._job = None
+
+    job.cancelled.set = completion_interleaves
+    closing = owner.bridge.submit(widget.aclose())
+    pulse = owner.bridge.submit(asyncio.sleep(0, result=True))
+    qtbot.waitUntil(pulse.done)
+    assert not closing.done()
+    release.set()
+    qtbot.waitUntil(closing.done)
+    assert closing.result() is None and finished.is_set() and job.finished.done()
+
+
 def test_cancelled_parent_close_waiter_still_joins_file_worker(case, qtbot):
     widget, parent, owner, state, _ = case
     entered, release, finished = blocking_composer(widget, state)

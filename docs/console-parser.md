@@ -2,8 +2,30 @@
 
 `fsm_panel.adapters.console_parser.read_console_log` reads a caller-selected local
 log copy and returns a typed observation. It does not discover files, write logs,
-change accounts, update GSI, send messages, or authorize game input. No GUI or
-recurring scanner is connected to it.
+change accounts, update GSI, send messages, or authorize game input. A read-only
+desktop tool is connected; the recurring game scanner remains unimplemented.
+
+## Desktop
+
+Open **Журнал → Копия игрового лога**, select a local copy, choose the intended
+calendar year and press **Прочитать копию**. The displayed timestamps use the
+host's local timezone. The year field initially shows the current year; archived
+logs need their own year. The parser does not infer a year from file metadata.
+
+An optional cache identifier is copied into both independent cache inputs for
+this manual tool. Without it the fallback is the clearly labelled value 1, never
+an authenticated account. The relay checkbox selects a fixed enabled snapshot,
+with an initial lost time of zero. Clock readings use the host wall clock. The
+Python API below supports separate cache observations and explicit time providers.
+
+The tool shows the eight observed values, source byte range, diagnostic counts,
+and the number of inert proposals. It never applies proposals. Displayed strings
+are quoted and truncated to 256 characters; raw file contents are not printed in
+the application journal. Failed, partial, and cancelled reads are distinguished.
+New reads clear the previous result. Work runs outside the Qt thread; cancellation
+and window close wait for the owned file worker, including when its public Future
+has already been cancelled. A read already executing in the OS cannot be forcibly
+interrupted. This tool is available without a lease and in simulation mode.
 
 Choose the log's intended calendar year and local timezone explicitly. The native
 log grammar contains neither a year nor a timezone. This example deliberately

@@ -76,6 +76,10 @@ menu dependency is superseded by the resolved global identity above: module
 lookup `0x140b4cd6e`, one-argument call `0x140b4ce43`, checkpoint 04 body.
 
 [Read-only discovery](console-logs.md) is implemented independently with explicit
-local roots and bounded scanning. The content parser at `0x140b2a590`, launched
+local roots and bounded scanning. The [content parser](console-parser.md) at
+`0x140b2a590` is now recovered and implemented for selected copies. Checkpoint 06
+SHA-256 `254d1a5345327348ce176e752dca610cb3f4d2157b707c2c67f92ab93ee66b17`
+records its grammar, timestamp conversion and partial effects. It does not turn
+log observations into proof of ownership or valid input targets. The launched
 account loader, `find_all`, stop-buffer lifecycle and real window/process ownership
-still require their own contracts before the complete workflow can be enabled.
+still require contracts before the complete workflow can be enabled.

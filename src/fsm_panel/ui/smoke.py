@@ -4,16 +4,50 @@ import base64
 import io
 import json
 import time
+from datetime import UTC, datetime
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from PIL import Image
 from PySide6.QtCore import QTimer
 
 from fsm_panel.adapters.account_config import load_config_templates
+from fsm_panel.adapters.console_parser import ConsoleParserContext, read_console_log
 from fsm_panel.adapters.gsi_config import load_gsi_template
 from fsm_panel.notifications.images import compose_item_images
 
 from .window import MainWindow
+
+
+def verify_console_parser() -> None:
+    """Exercise frozen file reading, date parsing and the recovered tuple grammar."""
+    context = ConsoleParserContext(
+        initial_account=None,
+        tail_account=None,
+        fallback_account=1,
+        clock=lambda: 2_000_000_000,
+        year=lambda: 2026,
+        local_timestamp=lambda value: value.replace(tzinfo=UTC).timestamp(),
+    )
+    raw = (
+        b"01/02 03:04:05 CS_App_Lifetime_Gamestats: Recording FriendJoin\n"
+        b"[SteamNetSockets] AuthStatus (steamid: synthetic): ready\n"
+    )
+    with TemporaryDirectory(prefix="fsm-log-") as directory:
+        path = Path(directory) / "synthetic.log"
+        path.write_bytes(raw)
+        result = read_console_log(path, context)
+        expected_time = datetime(2026, 1, 2, 3, 4, 5, tzinfo=UTC).timestamp()
+        if (
+            not result.complete
+            or result.identity_verified
+            or result.observation.as_legacy_tuple()
+            != ("synthetic", "", expected_time, False, 0, 0, 0, 0)
+            or len(result.proposals) != 1
+            or result.read.bytes_read != len(raw)
+            or path.read_bytes() != raw
+        ):
+            raise RuntimeError("console_parser_smoke_failed")
 
 
 def verify_item_composite() -> None:
@@ -45,6 +79,7 @@ class DesktopSmoke:
         self.passed = False
         self._checks_passed = False
         self._item_composite_verified = False
+        self._console_parser_verified = False
         self._code = "smoke_interrupted"
         self.step = 0
         self.deadline = time.monotonic() + 40
@@ -84,6 +119,7 @@ class DesktopSmoke:
                     "config_templates_verified": self.step > 0,
                     "gsi_template_verified": self.step > 0,
                     "item_composite_verified": self._item_composite_verified,
+                    "console_parser_verified": self._console_parser_verified,
                 },
                 indent=2,
             )
@@ -109,6 +145,8 @@ class DesktopSmoke:
             load_gsi_template()
             verify_item_composite()
             self._item_composite_verified = True
+            verify_console_parser()
+            self._console_parser_verified = True
             if window.repository.list_accounts():
                 self.finish(False, "smoke_requires_empty_data_directory")
                 return

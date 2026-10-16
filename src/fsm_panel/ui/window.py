@@ -33,6 +33,7 @@ from fsm_panel.cpu import CpuLimitRuntime
 
 from .bridge import AsyncBridge
 from .config_files import ConfigFilesWidget
+from .console_logs import ConsoleLogPanel
 from .cpu import CpuPanel
 from .gsi_config import GsiConfigPanel
 from .notifications import NotificationPanel
@@ -116,7 +117,11 @@ class MainWindow(QMainWindow):
         self.log = QPlainTextEdit()
         self.log.setReadOnly(True)
         self.log.setMaximumBlockCount(2000)
-        self.tabs.addTab(self.log, "Журнал")
+        self.logs_tabs = QTabWidget()
+        self.logs_tabs.addTab(self.log, "Журнал панели")
+        self.console_logs = ConsoleLogPanel(self)
+        self.logs_tabs.addTab(self.console_logs, "Копия игрового лога")
+        self.tabs.addTab(self.logs_tabs, "Журнал")
         self.setCentralWidget(central)
         self.refresh_accounts()
         self.start_button.setEnabled(False)
@@ -438,7 +443,10 @@ class MainWindow(QMainWindow):
                         try:
                             await self.trades.aclose()
                         finally:
-                            await self.notifications.aclose()
+                            try:
+                                await self.notifications.aclose()
+                            finally:
+                                await self.console_logs.aclose()
                 finally:
                     try:
                         await self.cpu_runtime.close()

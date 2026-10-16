@@ -1948,6 +1948,26 @@
       "verification": "stand_not_run"
     },
     {
+      "feature_id": "GAME.CONSOLE.PARSER",
+      "action": "Read an explicit local console-log copy through API and desktop",
+      "evidence": "Panel.exe 0x140b2a590, relay predicate 0x140a19140; docs/console-parser.md; sealed checkpoint 06",
+      "confidence": "static_contract",
+      "implementation": "implemented_bounded_readonly_parser_and_gui_no_scanner_or_input",
+      "runtime_parity": "not_verified",
+      "tests": [
+        "tests/adapters/test_console_parser.py",
+        "tests/qa/test_console_parser_boundaries.py",
+        "tests/ui/test_console_log_panel.py",
+        "tests/qa/test_desktop_smoke.py"
+      ],
+      "preconditions": "Explicit local copy and chosen year/time providers; no account or game permission inferred",
+      "input": "UTF-8 tail up to decimal 2M/12M bytes with independent cached identity observations",
+      "expected_result": "Eight observed values, ordered inert proposals and explicit partial/error diagnostics",
+      "state_changes": "Private parser shadow only; application state is unchanged",
+      "external_effects": "Bounded local read only; no input, network or writes",
+      "verification": "stand_not_run"
+    },
+    {
       "feature_id": "NOTIFY.TELEGRAM.AUTOMATIC",
       "action": "Complete event templates, automatic fanout, important-bot routing and icon downloads",
       "evidence": "Panel.exe selected callers 0x1406cdc00, 0x1406d0460, 0x140627380; docs/telegram.md",

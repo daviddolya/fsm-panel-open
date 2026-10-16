@@ -149,8 +149,22 @@ All of these observations are static. None establishes original runtime parity.
   It does not provide process/window ownership or a ready scheduler. The global
   menu helper used here is the already recovered `0x140b70560`.
 - The content parser is `oAjysWzxGvAh(self, path, linecount=1)` at `0x140b2a590`.
-  Its default was independently checked from constructor registration. Content
-  grammar and timestamp conversion remain a separate bounded investigation.
+  Its default was independently checked from constructor registration. Checkpoint
+  06 now closes its eight-field grammar, decimal 2M/12M tail selection, per-branch
+  local-year conversion, relay predicate, ordered partial mutations and catches.
+  [The implemented parser](../docs/console-parser.md) reads selected local copies;
+  diagnostics and inert proposals make incomplete or uncertain observations explicit.
+  Private checkpoint SHA-256:
+  `254d1a5345327348ce176e752dca610cb3f4d2157b707c2c67f92ab93ee66b17`;
+  manifest SHA-256:
+  `aee30501b2ed7456ed881d64565f13f917768afb12bd458cf949a373eb8e1b7f`.
+  It verified 236 preceding artifacts without changing them. This is static
+  reconstruction, not execution of the old parser or evidence of live game parity.
 - The item producer's width calculation at `0x14062b8dd` is proven multiplication
   by two through numeric helper `0x142ce6250`. [Offline image composition](../docs/item-composite.md)
   is implemented; it does not download icons or send automatic notifications.
+- Checkpoint 07 closes the launcher's supplied-parent CS2 candidate selector
+  `0x140673f10`: recursive children, first exact name, lazy PID, False on exhaustion.
+  Its caller can retain a stale PID on error. [The launch notes](../docs/launch-plan.md)
+  record the distinction between candidate selection and process ownership.
+  This newly recovered helper is not yet implemented or used for live queries.

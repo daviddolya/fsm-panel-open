@@ -292,6 +292,30 @@ validate this local implementation against the static contract. They do not
 establish original runtime parity, Steam compatibility, Windows privilege effects,
 or complete launch behavior. Private dumps and original files are not distributed.
 
+## Process-candidate dependency recovered on October 16
+
+The launcher's `GZgqOxWnvRTB(self, parent)` at `0x140673f10` constructs a fresh
+`psutil.Process(parent.pid)`, requests `children(recursive=True)` once and examines
+the returned order. It returns the first child's PID whose `str(child.name())`
+equals the case-sensitive string `cs2.exe`; exhaustion returns Boolean False.
+Only reached names are queried, and only the first matching PID is read. There
+is no helper catch, retry, executable-path check or process-birth-time check.
+
+The narrow launcher block at `0x14068654f..0x14068659b` passes the retained Popen
+object and stores the result in `win_csgo_PID`. Its ordinary exception handler
+can leave a previous PID in that field. Earlier it records `procc.pid` as
+`win_steam_PID`. This selection identifies a candidate; it cannot establish
+ownership or authorize process control. The existing owned-process controller's
+birth-time/path verification remains a separate reconstruction requirement.
+
+Private checkpoint 07 SHA-256:
+`e2a3c50e1ead96ec61fe77a134a11544c446b5dd14d841c62cb26ddcbc60e987`;
+manifest `bf2e9ba169b3de1f439517498a6067f5d5e1c34fbd95992a537dd805d97e04e9`.
+All 268 earlier artifacts were checked unchanged. No live process was queried.
+This helper is documented, not implemented or connected to the launcher.
+Next dependencies include the class window lookup at `0x140672790` and callback
+`0x140673180`, broader launch polling, cancellation and lifetime ownership.
+
 ## Offline command
 
 Copy `docs/examples/launch-input.json` to private working data and replace its
