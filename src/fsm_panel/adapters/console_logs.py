@@ -1,5 +1,6 @@
 """Read-only, bounded discovery of copied console logs; no game orchestration."""
 
+import ctypes
 import math
 import os
 import stat
@@ -57,7 +58,17 @@ def _linked(info: os.stat_result) -> bool:
 
 
 def _safe_root(value: str | Path) -> Path:
-    path = Path(os.path.abspath(value))
+    text = os.fspath(value)
+    # Reject network/device roots before lstat: merely inspecting a UNC parent
+    # can contact a share. Mapped Windows drives need their own locality check.
+    if "://" in text or text.startswith(("\\\\", "//")) or "\x00" in text:
+        raise ValueError("unsafe_console_log_root")
+    path = Path(os.path.abspath(text))
+    if os.name == "nt":
+        if ":" in str(path)[2:] or os.path.isreserved(path):
+            raise ValueError("unsafe_console_log_root")
+        if ctypes.windll.kernel32.GetDriveTypeW(path.anchor) not in (2, 3, 5, 6):
+            raise ValueError("unsafe_console_log_root")
     # lstat every ancestor: resolve() would hide a selected link/junction.
     for part in (*reversed(path.parents), path):
         info = part.lstat()

@@ -67,6 +67,9 @@ snapshots. It requires regular files, nonnegative finite age, and reports partia
 scans using fixed issue codes. It skips symbolic links and Windows reparse
 points, including selected-root ancestors. It rechecks metadata before using a
 candidate and rechecks ancestors before scanning a sandbox directory. It does
+not inspect UNC/device/URL roots or Windows drives classified as remote: locality
+is checked before any filesystem metadata access. Local paths with reserved or
+alternate-stream syntax on Windows are also rejected. It does
 not claim an atomic snapshot or protection against hostile concurrent filesystem
 replacement. Use copies under the operator's control.
 
