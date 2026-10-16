@@ -15,6 +15,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QPlainTextEdit,
     QPushButton,
+    QTabWidget,
     QVBoxLayout,
     QWidget,
 )
@@ -30,6 +31,8 @@ from fsm_panel.notifications import (
     TelegramConfigurationError,
 )
 from fsm_panel.notifications.legacy import LegacyInputError, parse_receipt_destination
+
+from .item_composite import ItemCompositePanel
 
 
 @dataclass
@@ -56,7 +59,14 @@ class NotificationPanel(QWidget):
         self._job: _Job | None = None
         self._request = 0
         self._closing = False
-        layout = QVBoxLayout(self)
+        outer = QVBoxLayout(self)
+        tabs = QTabWidget()
+        outer.addWidget(tabs)
+        manual = QWidget()
+        tabs.addTab(manual, "Telegram")
+        self.composite = ItemCompositePanel(owner)
+        tabs.addTab(self.composite, "Два изображения → PNG")
+        layout = QVBoxLayout(manual)
         self.notice = QLabel(
             "Ручные уведомления Telegram. Для отправки нужен действующий допуск. "
             "Симулятор не отправляет сообщения. Автоматического повтора нет; при неизвестном "
@@ -335,14 +345,18 @@ class NotificationPanel(QWidget):
         self._closing = True
         self.closing_started.emit()
         self._cancel_job()
+        tasks: list[asyncio.Future] = [asyncio.ensure_future(self.composite.aclose())]
         if self._future is not None:
-            pending = asyncio.wrap_future(self._future)
-            cancelled = False
-            while not pending.done():
-                try:
-                    await asyncio.shield(pending)
-                except asyncio.CancelledError:
-                    cancelled = True
-            pending.result()
-            if cancelled:
-                raise asyncio.CancelledError()
+            tasks.append(asyncio.wrap_future(self._future))
+        pending = asyncio.gather(*tasks, return_exceptions=True)
+        cancelled = False
+        while not pending.done():
+            try:
+                await asyncio.shield(pending)
+            except asyncio.CancelledError:
+                cancelled = True
+        for result in pending.result():
+            if isinstance(result, BaseException):
+                raise result
+        if cancelled:
+            raise asyncio.CancelledError()
